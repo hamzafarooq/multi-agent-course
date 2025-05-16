@@ -63,6 +63,8 @@ source venv/bin/activate
 - RAG Memory
 - Semantic Cache
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/Module_3/Semantic_Cache/Semantic_cache_from_scratch.ipynb)
+
 ---
 
 ### Week 4: Knowledge Graphs and Multi-Agent Workflows
