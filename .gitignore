@@ -52,3 +52,8 @@ venv.bak/
 .DS_Store
 Thumbs.db
 .DS_Store
+.DS_Store
+Module_3_Agentic_RAG/.DS_Store
+Module_3_Agentic_RAG/Agentic_RAG/.DS_Store
+Module_3_Agentic_RAG/Agentic_RAG/qdrant_data/.DS_Store
+Module_6_Multi_Agents/.DS_Store
