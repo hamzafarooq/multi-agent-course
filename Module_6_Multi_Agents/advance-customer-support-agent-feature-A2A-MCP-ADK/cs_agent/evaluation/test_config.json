@@ -1,0 +1,9 @@
+{
+    "save_results_to": "security_test_results.json",
+    "display_details": true,
+    "fix_tuple_format": true,
+    "expected_steps": {
+      "BLOCKED": ["sanitize_input", "security_judge"],
+      "PASSED": ["sanitize_input", "security_judge", "data_masker"]
+    }
+  }
