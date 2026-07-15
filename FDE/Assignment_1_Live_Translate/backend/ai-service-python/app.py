@@ -63,24 +63,23 @@ async def translate_one(text: str, target: str) -> dict:
 
     t0 = time.perf_counter()
 
-    # -----------------------------------------------------------------------
-    # TODO (YOU) — the caching flow. This is the heart of the assignment.
-    #   1. Ask the cache for `text` (cache.get). If it's a HIT, use it and set
-    #      cached=True — do NOT call the LLM.
-    #   2. On a MISS, call the LLM (translate_text), then store the result
-    #      (cache.set) so the next identical request is a hit. cached=False.
-    #   3. Measure latencyMs from t0 in BOTH paths (a cache hit should be
-    #      dramatically faster — that's the point you're demonstrating).
-    #
-    # cached_value = await cache.get(text, target)
-    # if cached_value is not None:
-    #     ...
-    # else:
-    #     translated = await translate_text(text, target, model=MODEL)
-    #     await cache.set(text, target, translated, model=MODEL)
-    #     ...
-    # -----------------------------------------------------------------------
-    raise NotImplementedError("Implement the cache/LLM flow in translate_one()")
+    cached_value = await cache.get(text, target)
+    if cached_value is not None:
+        return {
+            "translated": cached_value,
+            "cached": True,
+            "latencyMs": int((time.perf_counter() - t0) * 1000),
+            "model": MODEL,
+        }
+
+    translated = await translate_text(text, target, model=MODEL)
+    await cache.set(text, target, translated, model=MODEL)
+    return {
+        "translated": translated,
+        "cached": False,
+        "latencyMs": int((time.perf_counter() - t0) * 1000),
+        "model": MODEL,
+    }
 
 
 @app.post("/translate")

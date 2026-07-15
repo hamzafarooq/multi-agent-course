@@ -29,21 +29,15 @@ const startedAt = Date.now();
 app.use(cors()); // dev: allow every origin so the widget works on any page
 app.use(express.json({ limit: "1mb" }));
 
-/*
- * TODO (YOU) #1 — request logging middleware.
- * Log one line per request AFTER it finishes, including: method, url,
- * status code, and duration in ms. Use res.on("finish", ...) so you can
- * read the final status code and measure elapsed time.
- * Keep it structured enough to grep later.
- *
- * app.use((req, res, next) => {
- *   const t0 = Date.now();
- *   res.on("finish", () => {
- *     // console.log(...method, url, statusCode, Date.now() - t0 + "ms")
- *   });
- *   next();
- * });
- */
+app.use((req, res, next) => {
+  const t0 = Date.now();
+  res.on("finish", () => {
+    console.log(
+      `[gateway] ${req.method} ${req.originalUrl} ${res.statusCode} ${Date.now() - t0}ms`
+    );
+  });
+  next();
+});
 
 // --- serve the widget to the console loader ------------------------------
 app.get("/widget.js", (req, res) => {
@@ -52,17 +46,14 @@ app.get("/widget.js", (req, res) => {
 });
 
 // --- helper: forward a request to the Python AI service ------------------
-/*
- * TODO (YOU) #2 — implement the proxy call.
- * POST `body` as JSON to `${AI_SERVICE_URL}${path}` and return the parsed
- * JSON response. Throw on a non-2xx so callers can turn it into a 502.
- * (Node 18+ has global fetch — no import needed.)
- */
 async function callAiService(path, body) {
-  // const res = await fetch(AI_SERVICE_URL + path, { ... });
-  // if (!res.ok) throw new Error("AI service " + res.status);
-  // return res.json();
-  throw new Error("callAiService not implemented — see TODO (YOU) #2");
+  const res = await fetch(AI_SERVICE_URL + path, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error("AI service " + res.status);
+  return res.json();
 }
 
 // --- routes the widget calls ---------------------------------------------
