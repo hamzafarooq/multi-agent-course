@@ -1,0 +1,29 @@
+# fly.toml app configuration file generated for sarang-livetranslate-ai on 2026-07-16T16:55:57+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'sarang-livetranslate-ai'
+primary_region = 'sjc'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[mounts]
+  source = 'data'
+  destination = '/data'
+
+# Internal-only: opens the port for the private 6PN network (gateway -> here)
+# without creating any public listener. No [ports] means no public exposure.
+[[services]]
+  internal_port = 8000
+  protocol = 'tcp'
+  auto_stop_machines = 'off'
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 1024
