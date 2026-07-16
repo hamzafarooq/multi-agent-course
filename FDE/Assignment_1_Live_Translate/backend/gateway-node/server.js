@@ -16,6 +16,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const crypto = require("crypto");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 8787;
@@ -31,9 +32,19 @@ app.use(express.json({ limit: "1mb" }));
 
 app.use((req, res, next) => {
   const t0 = Date.now();
+  req.requestId = req.headers["x-request-id"] || crypto.randomUUID();
+  res.setHeader("X-Request-Id", req.requestId);
   res.on("finish", () => {
     console.log(
-      `[gateway] ${req.method} ${req.originalUrl} ${res.statusCode} ${Date.now() - t0}ms`
+      JSON.stringify({
+        ts: new Date().toISOString(),
+        event: "request",
+        requestId: req.requestId,
+        method: req.method,
+        url: req.originalUrl,
+        status: res.statusCode,
+        ms: Date.now() - t0,
+      })
     );
   });
   next();
@@ -46,10 +57,10 @@ app.get("/widget.js", (req, res) => {
 });
 
 // --- helper: forward a request to the Python AI service ------------------
-async function callAiService(path, body) {
+async function callAiService(path, body, requestId) {
   const res = await fetch(AI_SERVICE_URL + path, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", "x-request-id": requestId },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error("AI service " + res.status);
@@ -61,7 +72,7 @@ app.post("/translate", async (req, res) => {
   const { text, target } = req.body || {};
   if (typeof text !== "string") return res.status(400).json({ error: "`text` (string) is required" });
   try {
-    const data = await callAiService("/translate", { text, target: target || "es-MX" });
+    const data = await callAiService("/translate", { text, target: target || "es-MX" }, req.requestId);
     res.json(data);
   } catch (err) {
     res.status(502).json({ error: "AI service error: " + err.message });
@@ -72,7 +83,7 @@ app.post("/translate/batch", async (req, res) => {
   const { texts, target } = req.body || {};
   if (!Array.isArray(texts)) return res.status(400).json({ error: "`texts` (array) is required" });
   try {
-    const data = await callAiService("/translate/batch", { texts, target: target || "es-MX" });
+    const data = await callAiService("/translate/batch", { texts, target: target || "es-MX" }, req.requestId);
     res.json(data);
   } catch (err) {
     res.status(502).json({ error: "AI service error: " + err.message });

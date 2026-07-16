@@ -16,9 +16,10 @@ TODOs so the widget lights up. Run:
 """
 import os
 import time
+import uuid
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from pydantic import BaseModel
 
 from lib.cache import TwoTierCache
@@ -83,24 +84,34 @@ async def translate_one(text: str, target: str) -> dict:
 
 
 @app.post("/translate")
-async def translate(body: TranslateIn):
+async def translate(body: TranslateIn, x_request_id: str | None = Header(default=None, alias="X-Request-Id")):
+    request_id = x_request_id or str(uuid.uuid4())
     result = await translate_one(body.text, body.target)
     log.info(
         "translate",
-        extra={"cached": result["cached"], "latencyMs": result["latencyMs"], "chars": len(body.text)},
+        extra={
+            "requestId": request_id,
+            "cached": result["cached"],
+            "latencyMs": result["latencyMs"],
+            "chars": len(body.text),
+        },
     )
     return result
 
 
 @app.post("/translate/batch")
-async def translate_batch(body: BatchIn):
+async def translate_batch(body: BatchIn, x_request_id: str | None = Header(default=None, alias="X-Request-Id")):
+    request_id = x_request_id or str(uuid.uuid4())
     t0 = time.perf_counter()
     results = []
     for t in body.texts:
         results.append(await translate_one(t, body.target))
     latency = int((time.perf_counter() - t0) * 1000)
     hits = sum(1 for r in results if r["cached"])
-    log.info("translate_batch", extra={"count": len(results), "hits": hits, "latencyMs": latency})
+    log.info(
+        "translate_batch",
+        extra={"requestId": request_id, "count": len(results), "hits": hits, "latencyMs": latency},
+    )
     # widget expects {results: [{translated, cached}], latencyMs}
     return {"results": [{"translated": r["translated"], "cached": r["cached"]} for r in results], "latencyMs": latency}
 
