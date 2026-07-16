@@ -1,0 +1,57 @@
+{
+  "assignment": "Assignment 1 — Live Translate",
+  "student": "Sarang",
+  "video": "TODO: add video URL after recording",
+  "target": "http://localhost:8787",
+  "auto_score": 70,
+  "auto_max": 70,
+  "manual_max": 30,
+  "scores": {
+    "widget_lights_up": 15,
+    "caching_correctness": 20,
+    "performance_sla": 15,
+    "logging_observability": 10,
+    "service_separation_contract": 10,
+    "llm_prompt_quality": null,
+    "deploy_docs": null
+  },
+  "notes": {
+    "widget_lights_up": "translate + batch return valid shapes",
+    "caching_correctness": "2nd cached=True, faster=True, sqlite_persisted=True",
+    "performance_sla": "bench SLA gate PASS",
+    "logging_observability": "stats_hit_rate=True, health_reports_ai=True, ai_log_file=True, trace_correlated=True",
+    "service_separation_contract": "400_on_bad_input=True, gateway_nests_ai_health=True"
+  },
+  "evidence": {
+    "sample_translation": "¡Buenos días, bienvenido!",
+    "cache_first_ms": 1388,
+    "cache_second_ms": 0,
+    "bench_tail": "    cost per MISS (avg)         $0.000170\n    @ 500,000/mo, no cache      $84.92\n    @ 500,000/mo, cached        $19.11\n    monthly savings from cache  $65.81\n── SLA GATE ────────────────────────────────────────\n    PASS  cache_hit_p95_ms         11.2 <= 60\n    PASS  cache_miss_p95_ms        1749.3 <= 3500\n    PASS  min_cache_hit_rate_pct   77.5 >= 60\n    PASS  max_error_rate_pct       0.0 <= 1.0\n    PASS  min_throughput_rps       1062.9 >= 20\n\n✅ ALL SLAs MET\n\nWrote /Users/sarang/multi-agent-course/FDE/Assignment_1_Live_Translate/eval/_bench.json",
+    "bench_metrics": {
+      "target": "http://localhost:8787",
+      "rounds": 4,
+      "concurrency": 8,
+      "latency": {
+        "miss_p50": 1471.3536250346806,
+        "miss_p95": 1749.3315330735632,
+        "hit_p50": 6.642332999035716,
+        "hit_p95": 11.164899985305965
+      },
+      "hit_rate_pct": 77.5,
+      "error_rate_pct": 0.0,
+      "throughput_rps": 1062.9337947026345,
+      "cost": {
+        "per_miss_usd": 0.00016983333333333333,
+        "monthly_no_cache_usd": 84.91666666666667,
+        "monthly_cached_usd": 19.106249999999996,
+        "monthly_savings_usd": 65.81041666666667
+      },
+      "sla_pass": true
+    },
+    "trace_correlated": true,
+    "hygiene_flags": [],
+    "provided_files_changed": "",
+    "deploy_url": "https://sarang-livetranslate-gw.fly.dev",
+    "deploy_health_ok": true
+  }
+}
