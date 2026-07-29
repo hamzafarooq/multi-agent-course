@@ -7,11 +7,17 @@
 > database. End to end, built by you.
 
 This is the **fourth and final** assignment of the Forward Deployed Engineer track,
-and it stacks everything before it. A1–A3 built **systems that answer**. EPYHIA
-builds a **system that acts** — it deploys a site, publishes copy, and stands up a
-payment path. The moment an agent can ship and charge, "it looked fine in the demo"
-stops being good enough. That gap — between a slick demo and something you'd hand a
-paying customer — is the whole assignment.
+and it stacks everything before it:
+
+- **A1–A3 built systems that _answer_.**
+- **EPYHIA builds a system that _acts_** — it deploys a site, publishes copy, and
+  stands up a payment path.
+
+The moment an agent can *ship* and *charge*, "it looked fine in the demo" stops
+being good enough.
+
+> **That gap — between a slick demo and something you'd hand a paying customer — is
+> the whole assignment.**
 
 | Assignment | Taught you |
 |---|---|
