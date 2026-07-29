@@ -1,287 +1,219 @@
 # Assignment 4 — EPYHIA (Capstone)
 
-> **An agent that *acts* for one real customer — safely.** Not a chatbot that
-> answers. A small system that senses a customer's world, decides what to do, and
-> then *does* it: sends the message, publishes the post, opens the PR, moves the
-> deal. Unattended on a schedule, on a budget, with an audit trail — but never
-> without you in control.
+> **Your one-person AI agency.** A customer walks in with a business idea. Your
+> system walks out with the business's *front* — a live website, the marketing to
+> launch it, and a working way to take money. Not a deck, not a mockup: a real URL,
+> real copy, and a checkout that takes a (test) card and writes the order to a
+> database. End to end, built by you.
 
 This is the **fourth and final** assignment of the Forward Deployed Engineer track,
 and it stacks everything before it. A1–A3 built **systems that answer**. EPYHIA
-builds a **system that acts** — and the moment an agent can send, publish, deploy,
-or spend, every shortcut becomes someone's incident. Everything that made A1–A3
-merely good engineering (auth, tracing, guardrails, evals) becomes here the
-difference between a product and a liability.
+builds a **system that acts** — it deploys a site, publishes copy, and stands up a
+payment path. The moment an agent can ship and charge, "it looked fine in the demo"
+stops being good enough. That gap — between a slick demo and something you'd hand a
+paying customer — is the whole assignment.
 
 | Assignment | Taught you |
 |---|---|
 | A1 · Live Translate | one LLM, one cache, one contract, two services, one deploy |
-| A2 · Voice Agent | a real-time pipeline, tools vs. retrieval, telemetry, evals, guardrails |
-| A3 · Moment Search at Scale | async work queues, idempotent workers, crash-safety, one shared index |
-| **A4 · EPYHIA** | **a few agents with real authority, running unattended, on a budget, with an audit trail** |
+| A2 · Voice Agent | a real-time pipeline, tools vs. retrieval, telemetry, evals |
+| A3 · Moment Search at Scale | async work queues, idempotent workers, crash-safety |
+| **A4 · EPYHIA** | **a crew of agents that plans, builds, markets, and monetizes one real business** |
 
-**You are given an empty folder and a spec.** No starter repo, no provided
-frontend, no eval harness. That's deliberate — by now you've done the guided
-versions. An FDE walks into a customer with an outcome, not a repo. So do you.
+**You are given an empty folder and this spec.** No starter repo, no provided
+frontend. An FDE walks into a customer with an outcome, not a scaffold. So do you.
 
-> 🤖 **Read this yourself, then design it yourself.** This is a *design*
-> assignment first. Your first commit is `DESIGN.md` and it contains no code — we
-> check `git log`. Point a coding agent at this folder and say "build it" and you
-> will build the wrong thing badly; the whole point is that the architecture is
-> yours. (There's a tripwire for exactly that failure mode. Read [`AGENTS.md`](AGENTS.md).)
-
----
-
-## 1 · Pick your build
-
-Scope this to **one customer and one job done well** — not a company. Pick **one**
-of the four below, or bring your own (see the last row). Each one is genuinely
-shippable in two weeks, and each one *acts* in the real world, so the safety lesson
-is unavoidable no matter which you pick.
-
-| # | Build | The customer | What it actually does | Its one real channel | The hard part |
-|---|---|---|---|---|---|
-| A | **Support Copilot** | A small SaaS with a support inbox | Triages incoming tickets, drafts + sends replies grounded in a real KB, escalates the angry/risky ones to a human, closes the resolved ones | One real mailbox (or one Slack channel) | Knowing when **not** to answer; replies grounded in the KB, never invented policy |
-| B | **Outbound SDR** | A founder who needs pipeline | Researches + enriches leads from a provided list, drafts a personalized sequence, moves each lead through DB-backed pipeline stages, handles replies | Sends to **your own seeded test inboxes only** (cold email to strangers is prohibited — §5) | Idempotent sends (never double-email a lead); personalization grounded in real research, not hallucinated |
-| C | **Content Studio** | A brand with a content calendar | Turns a brief + a brand-voice doc into a calendar, drafts the posts, runs a verifier pass against brand + factual constraints, then schedules/publishes | One real channel: a CMS, a social account, or a real static-site deploy | Generator→verifier split; on-brand and no fabricated claims; scheduling that never double-posts |
-| D | **Repo Guardian** | A team with a GitHub repo | Watches for new PRs/issues, reviews diffs for bugs + security, comments findings, opens issues, and drafts a fix PR | One real GitHub repo (via MCP) | No destructive git; a fix PR is an **approval-tier** action, never auto-merged; the review is grounded in the actual diff |
-| — | **Bring your own** | A real customer you have | Anything that fits the shape below | One real channel | Get a one-paragraph sign-off first (below) |
-
-**Bring-your-own approval.** One paragraph, before you start: who the customer is,
-the one real side effect the agent performs, and how it satisfies §2–§6. If it
-*acts*, runs unattended, and can be made safe under this spec, it's approved.
-
-Whatever you pick, the rest of this document is the same. The idea is the surface;
-the system underneath is the assignment.
+> 🤖 **Read this yourself, then design it yourself.** Your first commit is
+> `DESIGN.md` and it contains no code — we check `git log`. Point a coding agent at
+> this folder and say "build it" and you'll ship the wrong thing well; the point is
+> that the *architecture* is yours. (There's a tripwire for exactly that — see
+> [`AGENTS.md`](AGENTS.md).)
 
 ---
 
-## 2 · What every EPYHIA must be
+## 1 · What your agency ships
 
-One customer. One deployment. For that customer, end to end:
+For **one** business, your system takes a plain-language brief and produces three
+things, all real:
 
-- **Sense** — gather the real state your agent acts on (the inbox, the lead list,
-  the brief, the repo). Real data, not a fixture.
-- **Decide** — an orchestrator produces a ranked, *justified* plan of what to do
-  now, persisted (not just logged).
-- **Act** — specialist agents carry the plan out through real (sandboxed) tools.
-- **Verify** — confirm the effect actually happened. The message left, the row was
-  written, the PR is open. **Never trust a task's own "done" status.**
-- **Report** — a short digest a human reads: what I did, what it cost, what's
-  waiting on you, what I'll do next.
+| Deliverable | What "real" means | Not acceptable |
+|---|---|---|
+| **A live website** | Deployed, on a real URL, on-brand, that someone else can open | A local-only mockup, a screenshot, a generic AI landing page |
+| **A marketing pack** | Landing copy + 3–5 social posts + a launch email, in a consistent brand voice, factually grounded in the brief | Lorem ipsum, hallucinated features/prices, off-brand filler |
+| **A working checkout** | Stripe **test-mode** payment wired into the site; a completed test purchase fires a webhook and writes an order row to a real DB | A "Buy" button that goes nowhere; a fake success screen with no persistence |
 
-Everything else in this spec is the machinery that makes those five steps safe.
+The bar is **"a real brand paid for this,"** not "an AI made this." Generic hero +
+three feature cards + a gradient is the slop you're being graded against. Techniques
+like **[scroll-world](https://github.com/oso95/scroll-world)** (a skill that turns a
+brand into a scrollable 3D world) are the kind of thing that clears that bar — use
+it, or clear it your own way, but clear it.
 
 ---
 
-## 3 · The one architecture we insist on: the Action Gateway
+## 2 · Pick the business (or bring one)
 
-You choose the stack, the framework, the queue, the store. We insist on exactly
-**one** thing: **every side effect goes through a single choke point.**
+Same system every time — you're choosing the **customer**, not a different project.
+Pick one to demo on, or bring a real one you have:
+
+- ☕ A subscription **coffee brand** (monthly bags, recurring checkout)
+- 🐕 A niche **B2B SaaS** (e.g. scheduling for dog-walkers) with a paid plan
+- 🥐 A local **bakery** taking preorders for pickup
+- 📰 A **paid newsletter** or a cohort **course** with a checkout
+- 🎯 **Bring your own** — a real business you'd actually stand up
+
+The idea is the surface. The crew that builds it is the assignment.
+
+---
+
+## 2.5 · Examples worth studying (steal techniques, don't clone)
+
+Real projects that clear the "not slop" bar for pieces of what you're building.
+Study how they're built; **do not** point an agent at one and copy it — your
+architecture is the graded part.
+
+| Project | Use it for | Why it's not slop |
+|---|---|---|
+| **[scroll-world](https://github.com/oso95/scroll-world)** | The **website** | Turns a brand into a scroll-driven 3D world (Apple-style), not a gradient hero |
+| **[rampstackco/claude-skills](https://github.com/rampstackco/claude-skills)** | **Web Builder + Marketer** | Skills spanning the full website lifecycle — brand, design, content, SEO, dev, growth |
+| **[OpenClaudia/openclaudia-skills](https://github.com/OpenClaudia/openclaudia-skills)** | The **Marketer** | 34 focused marketing skills — SEO, content, email, ads, analytics, growth |
+| **[ucsandman/marketing-studio](https://github.com/ucsandman/marketing-studio)** | The **marketing pack** | One command renders a full launch asset suite (logo reveal, demo, social clips, OG) |
+| **[janwilmake/openpolsia](https://github.com/janwilmake/openpolsia)** | The **whole system** | An open take on the autonomous-agency shape you're building a slice of |
+
+> Reddit's r/ClaudeAI project showcases are a good ongoing source for more; the
+> five above are verifiable repos in that vein.
+
+---
+
+## 3 · The crew
+
+Not six abstract "departments" — the four roles an actual agency has. **One
+orchestrator + three specialists.**
+
+| Agent | Owns | Does | Model tier |
+|---|---|---|---|
+| **Strategist** (orchestrator) | The plan | Turns the brief into a positioning + brand-voice doc + a task list, then **delegates**. Makes zero external calls itself. | Top tier — this is the reasoning seat |
+| **Web Builder** | The site | Generates the site and **deploys** it to a real host; returns the live URL | Mid tier |
+| **Marketer** | Demand | Writes the pack (copy, posts, email) against the brand doc; a quick self-review catches off-brand or fabricated claims before it's saved | Mid tier |
+| **Ops** | The money | Wires Stripe test-mode checkout into the site, seeds the DB, confirms a test purchase actually persists | Mid / cheap tier |
+
+**A brand doc is the shared memory.** A small versioned file (voice, palette,
+positioning, do/don't) the Strategist writes and the others read. Edit it, re-run,
+and the output visibly changes — demo that. **Log the model tier and token cost per
+call** so you can show cheaper models did the drafting.
+
+---
+
+## 4 · The one thing we insist on: a gate for spend & publish
+
+You choose the stack, framework, store, and host. We insist on exactly one thing:
+**anything that spends money or goes out to the world passes through a single
+gate** — deploying the site, charging a (test) card, sending an email, publishing a
+post. Not a decorator sprinkled on some calls. One door.
 
 ```
-   agents ──┐
-            ▼
-   ┌────────────────────────────────────────────────────────┐
-   │  ACTION GATEWAY   — nothing side-effecting bypasses it   │
-   │  1 guardrail screen (in + out)   2 authority/policy check│
-   │  3 approval-tier routing         4 idempotency dedupe    │
-   │  5 budget debit                  6 trace span + audit row│
-   └───────┬──────────────────┬──────────────────┬───────────┘
-           ▼                  ▼                  ▼
-      real channel      sandboxed tools      datastore
-      (the ONE)         (mail-catcher,       (Postgres/SQLite,
-                         test APIs)           audit log)
+   agents ──▶  ┌───────────────────────────────────────────────┐
+              │  ACTION GATE  (the only holder of credentials)  │
+              │  · test-mode / sandbox by default                │
+              │  · human approval before anything irreversible   │
+              │  · idempotency key  → the same action, once      │
+              │  · one audit row + cost per call                 │
+              └──────┬───────────────────────┬──────────────────┘
+                     ▼                        ▼
+              deploy · Stripe · send    datastore (orders, audit)
 ```
 
-If an agent can reach the network *without* passing through this door, your
-guardrails are decorative, your audit log lies, and your budget cap is a
-suggestion. **The gateway is the only component that holds credentials.** Agents
-get capability handles, never keys. This is small to build and it's the single
-most important idea in the assignment — build the door before the rooms.
+Why: if an agent can deploy or charge *around* this door, your "approval" is
+theater and your audit log lies. Concretely, that means:
+
+- **Test-mode by default.** Stripe test keys; emails to a catcher, not real
+  inboxes. The **one** thing that's real is the deployed site URL.
+- **Approval before irreversible.** Going live and charging are actions a human
+  clicks "approve" on — they don't just fire. (This is "light but real": one gate,
+  one approval step, one audit trail. Not an enterprise compliance suite.)
+- **Idempotent.** Re-run the build, or crash and restart, and you get **one** site,
+  **one** order per purchase — never doubles. (That's the A3 lesson, with money.)
+- **Traceable.** One run id ties the brief → each agent → each action, with cost.
+  Enough that you can answer "what did it do, and what did it cost?" — not a full
+  OTel deployment.
 
 ---
 
-## 4 · Your agent roster & the heartbeat
+## 5 · Phase 0 — DESIGN.md first (hard gate)
 
-**One orchestrator + 2–4 specialists.** Not a monolith with a personality, and not
-a company. Each specialist has a single responsibility, a scoped toolset, and an
-authority ceiling stated in `DESIGN.md`.
+**Your first commit is `DESIGN.md`, no code.** We check `git log`. In your words,
+with your diagrams:
 
-- **Orchestrator.** Reads state + your constitution, produces the justified plan,
-  dispatches typed tasks. **Makes zero direct external calls** — it delegates,
-  always. Put your best reasoning model here.
-- **Specialists.** The 2–4 that your chosen build needs (e.g. for Support Copilot:
-  a triage agent, a drafting agent, an escalation/verifier agent). Narrow tools,
-  cheaper models where the work is drafting/classification.
-- **A constitution.** A small versioned doc set (your `soul.md` / `agents.md`
-  equivalent: voice, who may do what, the wake procedure). Editing a rule must
-  visibly change behavior on the next cycle. Demo that.
-- **Model routing.** Reasoning on the top tier, drafting on mid, classification on
-  the cheap tier. Log the tier and cost per call and show routing saves money.
-
-**The heartbeat.** A cron-driven cycle that runs with no human present:
-`open cycle → sense → decide → dispatch → execute → verify → close → digest`.
-Demo mode may compress the interval; production semantics are identical. It must be:
-
-- **Unattended & scheduled** — no human trigger. `POST /heartbeat` accepts and
-  returns immediately (202); the cycle runs on a worker, never in the request.
-- **Crash-safe & idempotent** — kill the process mid-cycle; on restart nothing
-  double-sends, nothing double-charges, no task is dropped, and it *resumes*. This
-  is A3's resilience gate with money attached.
-- **Verified** — step `verify` queries the real world, not your DB's opinion of it.
-- **Bounded** — a per-cycle wall-clock and token budget; a cycle that overruns must
-  not stack on the next.
-
-**The approval inbox.** High-risk actions (anything irreversible or above a
-threshold — a production deploy, a fix-PR merge, a refund, a bulk send) **park** in
-an inbox instead of firing. A human approves / rejects / edits, *then* they
-execute. And a **kill switch** stops everything in ≤5 s.
+1. **The business** you'll demo, and what's in / out.
+2. **The crew** — each agent's one job, its tools, its model tier and why, and what
+   it may **never** do (e.g. Web Builder cannot charge a card).
+3. **The Action Gate** — what routes through it, where credentials live, which
+   actions are approval-gated.
+4. **Brand doc & state** — what's shared, what persists.
+5. **Idempotency** — how a re-run or a crash yields one site and one order, not two.
+6. **Five ways this hurts the customer, and the control that stops each.** Steal
+   from [`README-sample.md`](README-sample.md) §1.4 — Polsia shipped "done" tasks
+   that never deployed, wrong-price outbound, duplicate charges. Your gate is the
+   answer to those.
 
 ---
 
-## 5 · The side-effect policy (read it twice)
+## 6 · Build order — two weeks
 
-EPYHIA sends, publishes, deploys, or spends. In a course assignment that's a way to
-hurt real people and run up real bills. So:
+**Week 1 — the pipeline and one real deploy**
+1. `DESIGN.md`, committed first.
+2. The **Action Gate** with one trivial action (a test deploy): approval, idempotency,
+   audit row, cost log. The door before the rooms.
+3. The **Strategist**: brief → brand doc + task list, persisted.
+4. The **Web Builder**: generate a site and **actually deploy it** through the gate.
+5. **Demo:** submit a brief, get back a live URL, show the audit row for the deploy.
 
-- **Sandbox by default.** Mail goes to a mail-catcher; payments hit test mode;
-  external APIs are faked or hit test endpoints. Prove the mechanism, not the blast
-  radius.
-- **Exactly one real channel.** Pick the *one* side effect your build proves for
-  real (the mailbox, the CMS, the repo). Everything else stays sandboxed.
-- **Prohibited outright:** cold outreach to real strangers, publishing to a real
-  audience you don't own, spending real ad money, destructive git, and anything
-  irreversible that skips the approval inbox.
-- **Required regardless:** a dry-run mode on every mutating tool, an idempotency key
-  on every side effect, and an audit row for every action — attempted or blocked.
-
----
-
-## 6 · The four non-negotiables
-
-These are the reason EPYHIA is a *product* and not a demo. They're scoped down from
-a multi-tenant platform to one customer — but not optional.
-
-1. **AuthN/AuthZ.** Real sessions; the dashboard and API reject unauthenticated
-   requests; roles enforced server-side (a human can approve; an agent cannot
-   approve its own action). Agents are distinct principals holding capability
-   handles, not keys.
-2. **Observability.** OpenTelemetry traces with **one `run_id`** correlating
-   `heartbeat → orchestrator → task → agent → tool`. 100% of side effects traced.
-   Per-call cost captured. Secrets/PII redacted. One dashboard a human can read.
-3. **Guardrails.** Llama Guard (or equivalent) on the inbound (untrusted input:
-   emails, issues, briefs) and the outbound (anything leaving the building)
-   boundary. Hard-blocks live **in code**, not in a prompt, so injection can't talk
-   its way past them. Refusals are structured, not a crash.
-4. **Evaluations.** A **trajectory** suite (did it take sane steps?) and an
-   **outcome** suite (did it produce the right result?), plus a small **red-team**
-   set (injection, an irreversible action attempted without approval). **≥10
-   scenarios**, one command, non-zero exit on failure. Wire it into CI.
+**Week 2 — marketing, money, and the proof**
+6. The **Marketer**: the content pack, with the self-review pass, grounded in the brand doc.
+7. **Ops**: Stripe test checkout wired into the site; a completed test purchase writes an order row.
+8. Approval step on go-live + charge; idempotency on re-run and crash.
+9. Deploy the *agency itself* to **[Fly.io](https://fly.io)** (or equivalent): real URL, real auth.
+10. **Demo:** brief in → site + pack + checkout out; approve go-live; buy with a test
+    card and watch the order land; then re-run and show no duplicate site or order.
 
 ---
 
-## 7 · Phase 0 — DESIGN.md first (hard gate)
+## 7 · Grading (100 pts) & how you prove it
 
-**Your first commit is `DESIGN.md` with no code.** In your own words, with your own
-diagrams:
-
-1. **Scope** — which build, which customer, what's explicitly out.
-2. **Agent roster & org chart** — each agent's single responsibility, model tier
-   (and why), exact tool list, authority ceiling, and what it may **never** do.
-3. **The Action Gateway** — how every side effect routes through it; where
-   credentials live.
-4. **State & memory** — what's shared, what persists across heartbeats, where the
-   constitution lives.
-5. **Side-effect design** — every mutating tool: typed schema, idempotency key,
-   dry-run, approval tier (auto / review / blocked).
-6. **The heartbeat** — schedule, state machine, crash/resume semantics, budget.
-7. **Auth, observability, guardrail, and eval plans** — the four above, concretely.
-8. **Failure catalogue** — **five ways EPYHIA hurts this customer, and the specific
-   control that stops each.** (Steal these from Polsia's documented failures in
-   [`README-sample.md`](README-sample.md) §1.4 — tasks marked "done" that never
-   shipped, wrong-name outbound, unauthorized actions, non-idempotent billing.)
-
-A design written after the fact is worth nothing, and we can tell.
-
----
-
-## 8 · Build order — two weeks
-
-Every few days ends with something demoable. The non-negotiables are threaded
-through, not bolted on at the end (retrofitting tracing or the gateway in week two
-is the classic way to fail this).
-
-**Week 1 — the spine and one real agent**
-1. `DESIGN.md`, committed before any code.
-2. Auth + a clean data model; the dashboard/API skeleton.
-3. The **Action Gateway** — even with one trivial tool. Guardrail hook, policy
-   check, idempotency, audit row, trace span. The door before the rooms.
-4. Observability spine: OTel, `run_id` propagation, cost captured on every LLM call.
-5. **One** specialist agent, end to end, through the gateway, fully traced.
-6. **Demo:** run that one agent, show the trace and the audit row for its action.
-
-**Week 2 — the roster, the heartbeat, the proof**
-7. The remaining specialists + the orchestrator (sense → decide → dispatch, with
-   persisted, justified decisions); model routing.
-8. The heartbeat on a cron, with the verify step and crash-safe resume; the
-   approval inbox and the kill switch.
-9. Guardrails live on both boundaries; hard-blocks in code.
-10. Eval suites (trajectory + outcome + red-team, ≥10) — one command, CI.
-11. Deploy to **[Fly.io](https://fly.io)** (or equivalent): real URL, real auth,
-    real cron.
-12. **Demo:** an unattended cycle runs; an approval-tier action parks; you approve
-    it; it executes; the digest arrives. Then kill the process mid-cycle and show
-    nothing double-sends.
-
----
-
-## 9 · Grading (100 pts) & how you prove it
-
-Consistent with the rest of the track: a **measurable rubric** + a **video demo**.
-You write the harness — a capstone means you build your own acceptance check.
-
-- `eval/rubric.json` + `eval/eval.py` — the automated criteria, run against your
-  running app, writing an intermediate `eval/REPORT.md`.
-- `benchmark/sla.json` + `benchmark/bench.py` — your SLA gate, including
-  `--resilience` (kill mid-cycle → assert no loss, no double-send) and `--cost`
-  (cost per cycle + routing savings). Exits non-zero on any failure.
-- Your own eval **skill** in `.claude/skills/`, which runs the above plus a live
-  real-world test and folds it into **`PRODUCT_EVAL.md`** — your submission.
+A **measurable rubric** + a **video demo**, consistent with the track. Ship an
+`eval/` (a `rubric.json` and an `eval.py` you write) that checks the automated
+criteria against your running agency and writes `PRODUCT_EVAL.md` — your submission.
 
 | Area | Pts | What earns them |
 |---|---|---|
-| Design & failure catalogue (`DESIGN.md` first) | 15 | Argued choices; ≥5 real failure modes each with a control |
-| The Action Gateway | 20 | Single choke point; only credential holder; nothing bypasses it |
-| Agents & orchestration | 15 | Orchestrator delegates only; scoped specialists; routing saves money |
-| The heartbeat | 15 | Unattended, verified, crash-safe/idempotent, bounded; approval inbox + kill switch |
-| The four non-negotiables | 20 | Auth, one-`run_id` tracing on 100% of side effects, guardrails in code, ≥10 evals in CI |
-| Ships & runs from clean clone | 15 | Deployed URL with real auth + cron; `.env.example`; one command up; the demo |
+| The three deliverables are **real** | 30 | Live URL, on-brand grounded pack, a test purchase that persists an order |
+| Not slop | 15 | The site reads like a real brand's, not an AI template |
+| The crew & orchestration | 15 | Strategist delegates only; scoped agents; brand doc changes behavior; cost logged |
+| The Action Gate | 20 | Single door for spend/publish; only credential holder; approval before irreversible; idempotent; audit + cost |
+| Design & failure catalogue (`DESIGN.md` first) | 10 | Argued choices; 5 real failure modes each with a control |
+| Ships & runs from clean clone | 10 | Deployed agency URL; `.env.example`; one command up; the demo |
 
-**The two rows that carry it:** *action verification rate* (zero "complete but
-didn't happen") and *duplicate side effects on replay* (zero). Everything else is
-craft; those two are the line between an agent you can point at a customer and one
-you can't.
+**The two rows that carry it:** the checkout **actually persists a real order** (no
+fake success screen), and a **re-run produces no duplicate site or charge**. Those
+are the line between an agency you'd trust with a credit card and one you wouldn't.
 
 ---
 
-## 10 · Submit
+## 8 · Submit
 
-1. **`PRODUCT_EVAL.md`** (or a PDF) — the polished evaluation your skill produced.
-2. A **60–90 s screen recording**: the unattended cycle acting through your gateway,
-   an approval-tier action parking and then being approved, and the kill switch.
-3. A link to the **deployed, reachable URL** someone else can log into.
-
-Runs-from-clean-clone is part of the grade: a documented setup, `.env.example`,
-seeded demo data, one command up.
+1. **`PRODUCT_EVAL.md`** (or PDF) — the evaluation your eval produced.
+2. A **60–90 s recording**: a brief goes in; the site deploys; you approve go-live;
+   a test card completes checkout and the order appears in the DB; a re-run doesn't
+   duplicate anything.
+3. Links to the **deployed agency** and the **generated business site**.
 
 ---
 
 ## Going all the way (optional)
 
-[`README-sample.md`](README-sample.md) is the **north-star** version of this
-assignment: the full multi-tenant, autonomous GTM platform (EPYHIA the *company*),
-modeled as a teardown of [Polsia](https://polsia.com/). It's far more than two
-weeks and it's not what you're graded on — but if you want the stretch, everything
-you build here is the honest core of it. Read it for the depth on the Action
-Gateway, the heartbeat, and why the four non-negotiables exist.
+[`README-sample.md`](README-sample.md) is the **north-star**: the full autonomous,
+multi-tenant version — EPYHIA the *company* that also runs nightly on a heartbeat,
+markets and sells and grows unattended, modeled as a teardown of
+[Polsia](https://polsia.com/). Far more than two weeks and not what you're graded
+on — but the agency you build here is its honest core. The obvious stretch: add the
+**nightly heartbeat** so your agency wakes up, looks at the business, and ships the
+next thing on its own.
