@@ -39,7 +39,7 @@ things, all real:
 | Deliverable | What "real" means | Not acceptable |
 |---|---|---|
 | **A live website** | Deployed, on a real URL, on-brand, that someone else can open | A local-only mockup, a screenshot, a generic AI landing page |
-| **A marketing pack** | Landing copy + 3–5 social posts + a launch email, in a consistent brand voice, factually grounded in the brief | Lorem ipsum, hallucinated features/prices, off-brand filler |
+| **A marketing pack** | Landing copy + 3–5 social posts + a launch email + a short **launch video** with a vertical social cut, in a consistent brand voice, factually grounded in the brief | Lorem ipsum, hallucinated features/prices, off-brand filler, a "video" that's just a static image |
 | **A working checkout** | Stripe **test-mode** payment wired into the site; a completed test purchase fires a webhook and writes an order row to a real DB | A "Buy" button that goes nowhere; a fake success screen with no persistence |
 
 The bar is **"a real brand paid for this,"** not "an AI made this." Generic hero +
@@ -79,8 +79,23 @@ architecture is the graded part.
 | **[ucsandman/marketing-studio](https://github.com/ucsandman/marketing-studio)** | The **marketing pack** | One command renders a full launch asset suite (logo reveal, demo, social clips, OG) |
 | **[janwilmake/openpolsia](https://github.com/janwilmake/openpolsia)** | The **whole system** | An open take on the autonomous-agency shape you're building a slice of |
 
+**Video for the pack.** The launch video is where "not slop" is hardest *and*
+where cost bites — so it's the cleanest thing to route through your Action Gate.
+
+| Skill | Approach | Note |
+|---|---|---|
+| **[heygen-com/hyperframes](https://github.com/heygen-com/hyperframes)** | Write HTML → render a deterministic MP4; ships 19 agent skills | **Recommended default** — cheap, repeatable, no per-clip API bill, agent-native |
+| **[AKCodez/promo-video-skill](https://github.com/AKCodez/promo-video-skill)** | Turns a SaaS/repo into a 30/60/90 s promo, landscape + portrait | Maps 1:1 to the launch-video deliverable |
+| **[kdowswell/veo-tools](https://github.com/kdowswell/veo-tools)** | Generated video via Google Veo 3.1 | Model-API route — **real spend**, so it's an approval-tier action through your gate |
+| **[rediumvex/ai-video-generator-claude](https://github.com/rediumvex/ai-video-generator-claude)** | 10 skills → Seedance 2.0 prompts on Higgsfield (viral hooks, SaaS demos) | Pricey per render (~$/clip) — sandbox first |
+
+> Video-gen APIs cost money per render — exactly the side effect the Action Gate
+> exists for: dry-run/sandbox by default, real spend gated behind approval. A
+> deterministic HTML→MP4 renderer like Hyperframes sidesteps the bill entirely,
+> which is why it's the recommended path for this assignment.
+
 > Reddit's r/ClaudeAI project showcases are a good ongoing source for more; the
-> five above are verifiable repos in that vein.
+> repos above are verifiable ones in that vein.
 
 ---
 
