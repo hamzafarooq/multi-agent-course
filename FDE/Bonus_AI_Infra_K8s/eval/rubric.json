@@ -1,0 +1,75 @@
+{
+  "assignment": "Assignment 3: AI Infra on Kubernetes",
+  "total_points": 100,
+  "automated": [
+    {
+      "id": "cluster_reachable",
+      "points": 5,
+      "check": "kubectl can reach a cluster context"
+    },
+    {
+      "id": "gpu_nodes",
+      "points": 10,
+      "check": "at least one node advertises nvidia.com/gpu capacity"
+    },
+    {
+      "id": "fleet_replicas",
+      "points": 15,
+      "check": "Deployment vllm exists with spec.replicas >= 2 and all replicas Ready"
+    },
+    {
+      "id": "readiness_probe",
+      "points": 15,
+      "check": "readiness probe is httpGet /health on port 8000, not TCP"
+    },
+    {
+      "id": "gpu_request",
+      "points": 10,
+      "check": "container requests nvidia.com/gpu: 1"
+    },
+    {
+      "id": "zero_drop_rollout",
+      "points": 10,
+      "check": "strategy has maxUnavailable 0 and maxSurge >= 1"
+    },
+    {
+      "id": "front_door",
+      "points": 5,
+      "check": "Service vllm has an external LoadBalancer IP"
+    },
+    {
+      "id": "tokens_flow",
+      "points": 10,
+      "check": "POST /v1/chat/completions on the external IP returns choices"
+    }
+  ],
+  "manual": [
+    {
+      "id": "app_end_to_end",
+      "points": 5,
+      "check": "Moment Search answers with citations through the student's fleet (screenshot or video)"
+    },
+    {
+      "id": "experiments_writeup",
+      "points": 5,
+      "check": "one page with three measured timings (Ready gap, scale-up chain, rollout), Rung A vs B notes, and actual spend"
+    },
+    {
+      "id": "video_demo",
+      "points": 5,
+      "check": "60-90s recording: the app answering via the fleet, then pods -w during scale-up"
+    },
+    {
+      "id": "teardown_proof",
+      "points": 5,
+      "check": "post-teardown billing screenshot; no idle cluster left running"
+    }
+  ],
+  "stretch_bonus": [
+    {
+      "id": "stretch_goal",
+      "points": 10,
+      "check": "one of: tensor parallel on 2 GPUs, Kueue queue with 1-GPU quota, or Inference Gateway routing, with evidence"
+    }
+  ]
+}

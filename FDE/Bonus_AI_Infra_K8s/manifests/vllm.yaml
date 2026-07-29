@@ -1,0 +1,62 @@
+# Provided scaffolding: the inference fleet behind Moment Search.
+# Read every field before applying. Each one exists for a reason covered in the session.
+# The model is VISION-capable on purpose: Moment Search shows it actual video frames.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm
+  labels:
+    app: vllm
+spec:
+  replicas: 2                       # the fleet: N identical copies, one per GPU
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0             # never dip below full capacity during a roll
+      maxSurge: 1                   # bring the new pod up before killing the old
+  selector:
+    matchLabels:
+      app: vllm
+  template:
+    metadata:
+      labels:
+        app: vllm
+    spec:
+      terminationGracePeriodSeconds: 120   # let in-flight streams finish
+      tolerations:
+      - key: nvidia.com/gpu               # the velvet rope: only GPU workloads pass
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: vllm
+        image: vllm/vllm-openai:latest
+        args:
+        - "--model"
+        - "Qwen/Qwen2.5-VL-7B-Instruct"   # vision model: it must read frames
+        - "--max-model-len"
+        - "8192"
+        - "--limit-mm-per-prompt"
+        - "image=8"                       # Moment Search sends TOP_K=6 frames
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            nvidia.com/gpu: 1             # whole units, no fractions by default
+        readinessProbe:
+          httpGet:
+            path: /health                 # model in memory, never just "port open"
+            port: 8000
+          initialDelaySeconds: 90         # a 7B VLM takes minutes to load, not seconds
+          periodSeconds: 10
+          failureThreshold: 40
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm
+spec:
+  type: LoadBalancer                      # the front door Moment Search points at
+  selector:
+    app: vllm
+  ports:
+  - port: 80
+    targetPort: 8000

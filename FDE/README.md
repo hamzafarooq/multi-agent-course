@@ -66,10 +66,17 @@ Real-world products, all built end to end — from efficiency to action.
 | 1 | [Live Translate](Assignment_1_Live_Translate/) | A two-service backend (Node gateway + Python AI service) behind a provided browser widget that live-translates any page EN → Mexican Spanish | LLM calls, caching, structured logging + tracing, service separation, API contracts, deploy on Fly.io |
 | 2 | [Voice Agent](Assignment_2_voice_agent/) | A production voice agent (STT → LLM → TTS) with a knowledge router, evals, and telemetry | Real-time pipelines, turn-taking, latency budgeting, retrieval, evaluation |
 | 3 | [Moment Search at Scale](Assignment_3_Moment_Search_Scaled/) | Extend the working [Moment Search](https://github.com/traversaal-ai/momentsearch) video-RAG app to ingest **research papers and slide decks** through an **async work queue**, and answer one question with cited moments across video + page + slide | Async ingestion & work queues (Prefect), multi-format parsing, crash-safe pipelines, one shared vector index, cross-source cited retrieval, deploy on Fly.io |
-| 4 | [Moment Search](Assignment_4_Moment_Search/) | A multimodal, agentic RAG engine plus a Kafka-backed ingestion pipeline that finds the exact moment across text, image, audio, and video | Multimodal embeddings, agentic retrieval, cross-modal re-rank, Kafka, sublinear scale |
+| 4 | [EPYHIA (Capstone)](Assignment_4_Final_Epyhia/) | An end-to-end agent that **acts** for one real customer — pick one of four builds (Support Copilot, Outbound SDR, Content Studio, Repo Guardian) or bring your own — running unattended on a heartbeat, every side effect through one Action Gateway | A few scoped agents + an orchestrator, an autonomous heartbeat (crash-safe, idempotent), an approval inbox, auth, tracing, guardrails, evals, deploy on Fly.io |
 
-> **This week:** Assignment 3 (Moment Search at Scale). A hands-on **AI Infra on
-> Kubernetes** assignment pairs with an upcoming guest-speaker session — details soon.
+**Bonus (optional, on your own time):**
+
+| # | Name | You explore | Core skills |
+|---|------|-------------|-------------|
+| ★ | [AI Infra on Kubernetes](Bonus_AI_Infra_K8s/) | Serve an open-source vision model yourself with vLLM, then run it as a real fleet on GKE — and break it three ways to see what separates a demo from a deploy | Self-hosted inference (vLLM), Kubernetes (kubectl, node pools, probes, rollouts, autoscaling), cost hygiene |
+
+> **This week:** Assignment 3 (Moment Search at Scale). The **AI Infra on
+> Kubernetes** lab is now an optional **bonus** — do it on your own time; it pairs
+> with the guest-speaker session on AI infra.
 
 Each assignment folder is self-contained with its own `README.md`, provided scaffolding,
 an `AGENTS.md` of non-negotiables, and a grading rubric.
