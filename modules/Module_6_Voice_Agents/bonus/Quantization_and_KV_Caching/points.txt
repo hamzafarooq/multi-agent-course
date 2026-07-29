@@ -1,0 +1,40 @@
+Hardware Runpod, A40, Docker: runpod/pytorch:2.2.0-py3.10-cuda12.1.1-devel-ubuntu22
+
+1) Demo 1: Runpod
+2) Demo 2: Maven Text Streamer with Inference metrics with Quantization
+3) Demo 3: Bits and Bytes
+
+pip install nvitop
+
+Need A100 otherwise Quantization part can run easily on Free T4 Colab
+
+OnlineQuestions
+
+Demo 2: Maven Text Streaming + Inference Metrics with/without Quantization--------------------------
+
+Without Quantization, Inference Metrics + text streamer
+
+GPU Computation FP32
+Parameters of LLM: FP32
+GPU Memory: 67.4% (29.9 GB)
+Time To First Token (TTFT): 0.08431720733642578
+Inter-token latency (ITL): 0.056032912731170656
+End-to-end Latency: 5.687963962554932
+Throughput: 17.756793233027555
+
+
+
+
+With Quantization, Inference Metrics + text streamer
+GPU Computation FP16
+Parameters of LLM: FP4
+GPU Memory: 13.1% (5.8 GB)
+Time To First Token (TTFT): 0.07283735275268555
+Inter-token latency (ITL): 0.031188335418701172
+End-to-end Latency: 3.1919054985046387
+Throughput: 31.642540810596376
+
+
+
+
+Demo 3: bitsandbytes--------------------------
