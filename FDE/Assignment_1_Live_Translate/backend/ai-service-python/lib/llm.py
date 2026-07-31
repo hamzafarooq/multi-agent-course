@@ -19,31 +19,37 @@ assignment (and a real production bug — it ships English while looking healthy
 """
 import os
 
+from anthropic import AsyncAnthropic
+
 MODEL_DEFAULT = os.getenv("MODEL", "claude-sonnet-4-6")
+
+_client: AsyncAnthropic | None = None
+
+
+def _get_client() -> AsyncAnthropic:
+    # Lazy init: app.py's load_dotenv() runs after this module is imported,
+    # so building the client at import time would miss ANTHROPIC_API_KEY.
+    global _client
+    if _client is None:
+        _client = AsyncAnthropic()
+    return _client
+
+
+SYSTEM_PROMPT = (
+    "You are a professional translator. Translate the user's English text into "
+    "natural, conversational MEXICAN Spanish (es-MX) — not generic or Castilian "
+    "Spanish. Return ONLY the translation, with no preamble, no notes, and no "
+    "surrounding quotes. Keep numbers, prices (with their currency symbols), "
+    "and product/model codes unchanged."
+)
 
 
 async def translate_text(text: str, target: str = "es-MX", model: str = MODEL_DEFAULT) -> str:
     """Return `text` translated into `target` (Mexican Spanish by default)."""
-    # -----------------------------------------------------------------------
-    # TODO (YOU):
-    #   1. Build a system/user prompt that enforces Mexican Spanish and asks
-    #      for the translation only.
-    #   2. Call your LLM (async if the client supports it).
-    #   3. Clean and return the string.
-    #
-    # --- Example: Anthropic Claude -----------------------------------------
-    # from anthropic import AsyncAnthropic
-    # client = AsyncAnthropic()  # reads ANTHROPIC_API_KEY
-    # msg = await client.messages.create(
-    #     model=model,
-    #     max_tokens=1024,
-    #     system=(
-    #         "You are a professional translator. Translate the user's English text "
-    #         "into natural MEXICAN Spanish (es-MX). Return ONLY the translation — no "
-    #         "quotes, no notes. Keep numbers, prices, and product codes unchanged."
-    #     ),
-    #     messages=[{"role": "user", "content": text}],
-    # )
-    # return msg.content[0].text.strip()
-    # -----------------------------------------------------------------------
-    raise NotImplementedError("Implement translate_text() in lib/llm.py")
+    msg = await _get_client().messages.create(
+        model=model,
+        max_tokens=1024,
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": text}],
+    )
+    return msg.content[0].text.strip().strip('"').strip("'")

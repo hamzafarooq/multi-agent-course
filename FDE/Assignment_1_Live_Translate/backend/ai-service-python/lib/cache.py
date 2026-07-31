@@ -28,11 +28,22 @@ class TwoTierCache:
 
     async def init(self) -> None:
         """Create the translations table if it doesn't exist."""
-        # TODO (YOU): CREATE TABLE IF NOT EXISTS translations(
-        #   key TEXT PRIMARY KEY, source TEXT, target TEXT, translated TEXT,
-        #   model TEXT, access_count INTEGER DEFAULT 1, created_at TIMESTAMP)
-        # and an index on key. Use aiosqlite.connect(self.db_path).
-        raise NotImplementedError("Implement TwoTierCache.init()")
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute(
+                """
+                CREATE TABLE IF NOT EXISTS translations(
+                    key TEXT PRIMARY KEY,
+                    source TEXT,
+                    target TEXT,
+                    translated TEXT,
+                    model TEXT,
+                    access_count INTEGER DEFAULT 1,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
+            await db.execute("CREATE INDEX IF NOT EXISTS idx_translations_key ON translations(key)")
+            await db.commit()
 
     async def get(self, text: str, target: str) -> str | None:
         """Return a cached translation or None. Check memory, then SQLite."""
@@ -45,18 +56,40 @@ class TwoTierCache:
             return self._mem[k]
 
         # 2) SQLite tier
-        # TODO (YOU): SELECT translated FROM translations WHERE key = ?.
-        #   On hit: bump access_count, warm the memory tier (self._mem[k]),
-        #   record self._stats["db_hits"], and return the value.
-        #   On miss: record self._stats["misses"] and return None.
-        raise NotImplementedError("Implement TwoTierCache.get()")
+        async with aiosqlite.connect(self.db_path) as db:
+            async with db.execute(
+                "SELECT translated FROM translations WHERE key = ?", (k,)
+            ) as cur:
+                row = await cur.fetchone()
+            if row is not None:
+                await db.execute(
+                    "UPDATE translations SET access_count = access_count + 1 WHERE key = ?", (k,)
+                )
+                await db.commit()
+                self._stats["db_hits"] += 1
+                self._mem[k] = row[0]
+                return row[0]
+
+        self._stats["misses"] += 1
+        return None
 
     async def set(self, text: str, target: str, translated: str, model: str) -> None:
         """Store a translation in both tiers."""
         k = _key(text, target)
         self._mem[k] = translated
-        # TODO (YOU): INSERT the row (upsert on key) into SQLite.
-        raise NotImplementedError("Implement TwoTierCache.set()")
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute(
+                """
+                INSERT INTO translations(key, source, target, translated, model)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(key) DO UPDATE SET
+                    translated = excluded.translated,
+                    model = excluded.model,
+                    access_count = access_count + 1
+                """,
+                (k, text, target, translated, model),
+            )
+            await db.commit()
 
     async def size(self) -> int:
         async with aiosqlite.connect(self.db_path) as db:
