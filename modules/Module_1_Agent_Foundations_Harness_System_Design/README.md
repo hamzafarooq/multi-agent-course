@@ -9,6 +9,8 @@ framework, no magic — then see what two real frameworks add on top.
 > Open the repo root in Claude Code and type `/start` — Claude reads `CLAUDE.md` and becomes
 > your tutor for this module. The files below are what it teaches from.
 
+> **Project 01 — LUMINA.** This module kicks off the first shipped product, a Perplexity-style AI search engine. Spec: [`Assignment_1_Lumina/PRD.md`](Assignment_1_Lumina/PRD.md).
+
 ## What this module covers
 
 - The agent loop: prompt/context → intent → tool execution → observation → repeat until done

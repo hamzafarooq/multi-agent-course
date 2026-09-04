@@ -7,6 +7,7 @@
 | **Kicks off** | Week 1 (Agent Foundations, Harness & System Design) · due end of Week 2 |
 | **Owner** | Hamza Farooq |
 | **Status** | Draft v0.1 — 2026-09-04 |
+| **Lives in** | `modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/` — the Week 1 project ships with the Week 1 module |
 | **Replaces** | FDE Assignment 1 — Live Translate (see Open Questions) |
 
 > **One line:** ask a question, get a streamed, cited answer built from live web search and your own documents; the system remembers you across sessions; any answer can become a slide deck or an image on demand. Two services, one fixed contract, one deploy, one benchmark that must pass.
@@ -288,7 +289,7 @@ This assignment is graded under the cohort's quality bar (`QUALITY_BAR.md`). Fou
 
 1. **A thing that ran is not a thing that worked.** A streamed answer with a green `done` proves the process did not crash. Grounding, recall, budget, and termination are what prove it worked.
 2. **Assert from declared numbers, never from detection.** Every gating threshold in this PRD is arithmetic against a run log or an eval report. No error-severity check asks a model for its opinion. An LLM judge may *report* on tone or helpfulness at `warn`; it may never block.
-3. **Every rule cites the failure that created it.** Rule IDs below refer to the cohort `rules.json`. One real precedent this assignment already owns: the Live Translate silent-fallback bug recorded in `Assignment_1_Live_Translate/AGENTS.md` (a dependency mismatch made every LLM call throw, the `except` returned the input untouched, and the "translator" served English for weeks). That is rule **A1**'s precedent and should replace its `TODO`. Do not invent others.
+3. **Every rule cites the failure that created it.** Rule IDs below refer to the cohort `rules.json`. One real precedent this assignment already owns: the Live Translate silent-fallback bug recorded in `FDE/Assignment_1_Live_Translate/AGENTS.md` (a dependency mismatch made every LLM call throw, the `except` returned the input untouched, and the "translator" served English for weeks). That is rule **A1**'s precedent and should replace its `TODO`. Do not invent others.
 4. **Gates run in order, and each one blocks.** `eval.py` runs the gates below top to bottom and stops at the first failure.
 
 ### Declared expectations (write these before the first run)

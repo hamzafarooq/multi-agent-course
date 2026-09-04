@@ -94,7 +94,7 @@ Concepts are taught in the modules; the projects are where you ship. Each is a r
 
 | Starts | Project | You build | Spec |
 |---|---|---|---|
-| Week 1 | 🔍 **LUMINA** — Perplexity-style AI search | An AI search experience with retrieval, citations, and structured answers | [FDE track](FDE/README.md) *(spec in progress)* |
+| Week 1 | 🔍 **LUMINA** — Perplexity-style AI search | An AI search experience with retrieval, citations, and structured answers | [PRD](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md) |
 | Week 3 | 📄 **ARGUS** — Multimodal RAG pipeline | A RAG pipeline that understands and retrieves across text, images, documents, and more — with cited moments | [Assignment 3 — Moment Search at Scale](FDE/Assignment_3_Moment_Search_Scaled/) |
 | Week 5 | 🎙️ **VOXA** — Open-source voice agent | A streaming STT → LLM → TTS voice agent that holds a real-time conversation | [Assignment 2 — Voice Agent](FDE/Assignment_2_voice_agent/) |
 | Week 7 | 🏆 **EPYHIA** — End-to-end AI agency (Demo Day) | A production-ready autonomous agency that plans, builds, executes, and delivers value | [Assignment 4 — EPYHIA](FDE/Assignment_4_Final_Epyhia/) |
@@ -172,6 +172,7 @@ Demystify what an agent actually is — the perceive → reason → act loop and
 **Key topics:** the agent loop · ReAct (Reasoning + Acting) · agent vs. workflow vs. chatbot · debugging via the trace · agent frameworks (smolagents) · vertical vs. horizontal scaling for AI systems
 
 **🚀 Project kickoff: LUMINA** — a Perplexity-style AI search experience. Week 1 gives you the loop; the project makes you wrap it in retrieval, citations, and a real frontend.
+[Read the PRD →](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md)
 
 [Open Module 1 →](modules/Module_1_Agent_Foundations_Harness_System_Design/README.md)
 
