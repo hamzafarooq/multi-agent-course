@@ -1,32 +1,32 @@
-/* Alex — Perplexity-inspired UI.
-   Light "paper" theme, pinned regardless of the OS setting so the demo looks
+/* Alex — Perplexity-style layout, Tavily-inspired look (warm cream paper, warm
+   ink, electric-blue accent, 10/15px radii and pills). Light "paper" theme, pinned regardless of the OS setting so the demo looks
    the same on any machine. All colour lives in the tokens below. */
 
 :root {
-  --paper: #fcfcf9;
-  --surface: #ffffff;
-  --surface-2: #f7f7f2;
-  --surface-3: #efefe8;
-  --border: #e4e4dd;
-  --border-strong: #d3d3ca;
-  --text: #13343b;
-  --text-strong: #0b2429;
-  --muted: #64747a;
-  --muted-2: #8a9699;
-  --accent: #20808d;
-  --accent-hover: #1a6b76;
-  --accent-soft: rgba(32, 128, 141, 0.09);
-  --accent-line: rgba(32, 128, 141, 0.28);
-  --warn: #b4600a;
-  --warn-soft: rgba(180, 96, 10, 0.1);
-  --ok: #1a7f5a;
-  --ok-soft: rgba(26, 127, 90, 0.1);
-  --radius: 12px;
-  --radius-lg: 18px;
+  --paper: #fefcf5;
+  --surface: #fffdf9;
+  --surface-2: #f8f4ec;
+  --surface-3: #f1ede4;
+  --border: #eae6dc;
+  --border-strong: #d8d3c7;
+  --text: #3c3a39;
+  --text-strong: #0b0907;
+  --muted: #6f6b66;
+  --muted-2: #9b968e;
+  --accent: #2677ff;
+  --accent-hover: #1f63d6;
+  --accent-soft: rgba(38, 119, 255, 0.10);
+  --accent-line: rgba(38, 119, 255, 0.32);
+  --warn: #b5510a;
+  --warn-soft: rgba(255, 115, 0, 0.12);
+  --ok: #4f8f6f;
+  --ok-soft: rgba(129, 176, 154, 0.18);
+  --radius: 10px;
+  --radius-lg: 15px;
   --radius-pill: 999px;
-  --shadow-sm: 0 1px 2px rgba(19, 52, 59, 0.05);
-  --shadow-md: 0 4px 16px rgba(19, 52, 59, 0.08);
-  --shadow-lg: 0 24px 60px rgba(19, 52, 59, 0.16);
+  --shadow-sm: 0 1px 2px rgba(11, 9, 7, 0.05);
+  --shadow-md: 0 4px 16px rgba(11, 9, 7, 0.07);
+  --shadow-lg: 0 24px 60px rgba(11, 9, 7, 0.14);
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   color-scheme: light;
 }
@@ -44,7 +44,7 @@ body {
 body {
   background: var(--paper);
   color: var(--text);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Suisse Intl", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 15px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -946,7 +946,7 @@ button.citation-badge:hover {
 .debug-panel-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(11, 36, 41, 0.34);
+  background: rgba(11, 9, 7, 0.34);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
@@ -1416,7 +1416,7 @@ button.citation-badge:hover {
 .hiw-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(11, 36, 41, 0.42);
+  background: rgba(11, 9, 7, 0.42);
   z-index: 60;
 }
 
@@ -1521,7 +1521,7 @@ button.citation-badge:hover {
 
 .hiw-box.tool {
   background: var(--warn-soft);
-  border-color: rgba(180, 96, 10, 0.3);
+  border-color: rgba(255, 115, 0, 0.35);
 }
 
 .hiw-box.tool .hiw-box-label {
@@ -1530,7 +1530,7 @@ button.citation-badge:hover {
 
 .hiw-box.rag {
   background: var(--ok-soft);
-  border-color: rgba(26, 127, 90, 0.3);
+  border-color: rgba(129, 176, 154, 0.45);
 }
 
 .hiw-box.rag .hiw-box-label {
