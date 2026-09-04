@@ -13,12 +13,13 @@
 
 | Module | Status | Notes / weak spots |
 |--------|--------|--------------------|
-| 01 — Agents, ReAct & the Harness | not started | |
-| 02 — Skills, Subagents & Multi-Agent Orchestration | not started | |
-| 03 — Agentic RAG, Semantic Cache & Knowledge Graphs | not started | |
-| 04 — Evaluation & Guardrails | not started | |
-| 05 — Multi-Agent Systems (MCP · A2A · ADK) | not started | |
-| 06 — Voice Agents | not started | |
+| 01 — Agent Foundations, Agent Harness & System Design | not started | |
+| 02 — Skills & Subagents: Product Architecture & Coordination | not started | |
+| 03 — Production Agentic RAG & AI Systems | not started | |
+| 04 — Multi-Agent Systems & Orchestration | not started | |
+| 05 — Real-Time Voice Agents & Conversational Systems | not started | |
+| 06 — Leading AI Systems Across Teams | not started | |
+| 07 — Demo Day (EPYHIA) | not started | |
 
 Status values: not started · in progress · completed · needs review
 
