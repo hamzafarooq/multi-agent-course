@@ -72,7 +72,7 @@ Modern AI builders need more than model skills.
 6. [Week 6: Leading AI Systems Across Teams](#week-6-leading-ai-systems-across-teams)
 7. [Week 7: Demo Day, Production-Ready AI Systems](#week-7-demo-day-production-ready-ai-systems)
 
-**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects)
+**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects) · [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback)
 
 ### 🗺️ Course at a glance
 
@@ -105,7 +105,17 @@ Every project ships an `eval/` folder with a `rubric.json` and an `eval.py` that
 
 ## How to Use This Repo
 
-- Content is organized **module by module** under `modules/`, aligned with the live sessions and project milestones. Project specs live under `FDE-01-assignments/`.
+### Start here: understand the course in 15 minutes
+
+1. **Read the outline above**, then the [course at a glance](#quick-links) table: seven weeks, six modules, four shipped projects.
+2. **Open one module folder.** Every module lives at `modules/Module_N_Name/` and follows the same shape: a `README.md` that says what the week covers and what's inside, a `study-material/` folder with `lesson.md`, `key-concepts.md`, `exercises.md`, `quiz.md`, and `recap-and-preview.md`, and the notebooks, apps, and specs next to them. Module 1 is the best first stop: it holds the [LUMINA PRD](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md) and [Alex](modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/README.md), the reference app you'll clone before you build.
+3. **Let an agent walk you through it.** Open the repo in Claude Code and type `/start`, or point any other coding agent at [`AGENTS.md`](AGENTS.md). Either way you get a tutor that teaches one concept at a time and tracks you in `progress/learner-progress.md`. See [Learn with Claude](#learn-with-claude-ai-tutor).
+4. **Read one project spec end to end** before touching code. The LUMINA PRD shows the shape every project follows: a fixed API contract, a provided UI that is the acceptance test, an SLA you prove with a benchmark, and a rubric. This is a *reading* course first.
+5. **Know how work gets judged** and how to give feedback that helps: [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback).
+
+### Layout
+
+- Content is organized **module by module** under `modules/`, aligned with the live sessions and project milestones. The Week 1 project spec (LUMINA) lives inside Module 1; the previous cohort's specs, still used for VOXA, ARGUS, and EPYHIA, live under `FDE-01-assignments/`. Ungraded practice apps live in `Starter_Projects/`.
 - **Google Colab Pro** is the preferred environment for the notebooks. You can also **clone locally** and run them in Jupyter or your IDE.
 - Most notebooks include their own dependencies via `!pip install`; where a module needs more, a `requirements.txt` sits alongside it.
 
@@ -357,6 +367,42 @@ self-contained: read its README, copy `.env.example` to `.env`, run it. None shi
 Also worth a look, hosted elsewhere: [word-humanizer](https://github.com/hamzafarooq/word-humanizer/) ·
 [seo-writer](https://github.com/hamzafarooq/seo-writer) · [linkedin-growth](https://github.com/hamzafarooq/linkedin-growth).
 The previous cohort's graded FDE projects live in [`FDE-01-assignments/`](FDE-01-assignments/README.md).
+
+---
+
+## The Quality Bar: how work is judged, and how to give feedback
+
+Everything in this repo, a module, a project submission, a pull request, is held to one standard, and it is the same standard your agents will be held to in production. If you review someone's work here, or file feedback on the repo itself, use it.
+
+### The four laws
+
+1. **A thing that ran is not a thing that worked.** A notebook that finished, an eval that passed, a demo that streamed an answer: each proves the process did not crash. Correctness is proven separately, against numbers.
+2. **Assert from declared numbers, never from detection.** Every gating threshold is written down *before* the run (latency, cost, recall, grounding) and checked by arithmetic against a run log. Asking a model whether the output was good is detection. An LLM judge may *report* on tone or helpfulness; it may never *block*.
+3. **Every rule cites the failure that created it.** A rule with no incident behind it is an opinion. Rules in this course carry IDs (`A1` tool errors surface, `A2` the loop finished rather than hit a cap, `R2` forbidden tools were not called, `E2` declared eval thresholds met, `B1`–`B3` token, latency, and cost budgets, `P1` a human read the trajectory) and each cites the real incident that made it a rule.
+4. **Gates run in order, and each one blocks.** Static checks, then the declared contract, then a smoke run, then the trajectory, then the eval, then a human. Cheap and deterministic first; expensive and human last. Nothing downstream runs on upstream garbage.
+
+The [LUMINA PRD, section 13](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md#13--quality-bar--how-done-is-proven) is the worked example: the declared `expectations.json`, the run-log shape, the six gates, and the rubric rows mapped to rule IDs.
+
+### How to give feedback that helps
+
+Whether you are reviewing a classmate's capstone or opening an issue on this repo:
+
+- **Read the trajectory, not the answer.** Before you say a project works, read one complete *successful* run and one complete *failing* run, every step. If you cannot produce a failing run, you do not understand the failure surface yet. Say which two runs you read.
+- **Cite a rule ID, then the evidence.** "`A1`: the fetch on step 3 failed and returned an empty string the model read as a normal result" is a better review than a paragraph. It points at the precedent and tells the author exactly what to fix.
+- **Bring the number, not the adjective.** "Slow" is a vibe. "p95 6.4 s against a declared 12 s budget, but 3 of 30 runs hit the 90 s cap" is feedback.
+- **When you hit a failure the rules do not cover, write the rule.** One executable sentence, the real incident as its precedent (date, what broke, what it cost), and a self-check question a reviewer can answer out loud. That is the highest-value contribution you can make to this repo, because it is the actual job. Never invent a precedent to make a rule look grounded; a lessons file full of fiction is worse than an empty one.
+- **For the repo itself:** file issues the same way. Which module, which file, what you expected, what happened, and which of the four laws it violates. A broken link or a stale path is a `T` (teaching quality) finding; say so.
+
+### Before you claim anything is done
+
+- [ ] Every gate passes, or each failure is waived in writing with a reason.
+- [ ] You read one full successful trajectory and one full failing trajectory.
+- [ ] Budget numbers were checked against what was declared, not eyeballed.
+- [ ] Nothing that must not break is verified by a model's opinion.
+- [ ] Any new failure found is now a rule, with its precedent.
+- [ ] The precedents you wrote are true.
+
+That last box is the whole system.
 
 ---
 
