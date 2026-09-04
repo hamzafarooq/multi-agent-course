@@ -1,0 +1,11 @@
+# Extracted frames — regenerate locally with ffmpeg (see README Step 4)
+frames/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp

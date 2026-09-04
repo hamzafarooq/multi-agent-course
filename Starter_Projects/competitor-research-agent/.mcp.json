@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "brave-search": {
+      "command": "bash",
+      "args": [
+        "scripts/with-env.sh",
+        "npx", "-y", "@brave/brave-search-mcp-server", "--transport", "stdio"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}

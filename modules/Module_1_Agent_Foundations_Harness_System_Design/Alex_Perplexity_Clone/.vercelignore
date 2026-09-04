@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Build-time only. The index already contains every chunk's text, so the
+# function never reads the source documents.
+Project-Management-2nd-Edition-1729807212.pdf
+data/
+basic_keyword_semantic_search.py
+requirements-build.txt
+
+# The Search Lab ships too, mounted at /lab by api/lab.py. Its own
+# requirements pull in torch (~525MB, past the function size limit) and are
+# only for running the offline embedding provider locally.
+search-lab/requirements.txt

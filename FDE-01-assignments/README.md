@@ -7,6 +7,7 @@
 > **LUMINA**, whose PRD lives in
 > [`modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/`](../modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md).
 > New-cohort assignments ship inside their module folders.
+> Smaller, ungraded apps to practice on live in [`Starter_Projects/`](../Starter_Projects/README.md).
 
 > **"Full stack" here means full-stack SWE *and* AI engineering.** You build the
 > whole product — the frontend, the agent logic, the model serving, the caching,

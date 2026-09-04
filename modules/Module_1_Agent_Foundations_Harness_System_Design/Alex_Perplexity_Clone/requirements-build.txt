@@ -1,0 +1,9 @@
+# Only needed to rebuild the index (python backend/build_index.py), never at
+# request time.
+-r requirements.txt
+pypdf==4.3.1
+
+# Optional: EMBEDDING_PROVIDER=local builds an index with no API key, at the
+# cost of ~525MB of torch. Not needed if you build with OpenAI.
+# sentence-transformers>=3.0.0
+# einops>=0.8.0

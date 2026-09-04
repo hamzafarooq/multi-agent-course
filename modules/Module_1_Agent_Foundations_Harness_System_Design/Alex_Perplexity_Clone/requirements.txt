@@ -1,0 +1,9 @@
+# Runtime. Deliberately small: the deployed function loads a prebuilt index,
+# so it needs no PDF parser, no scikit-learn, and no model weights.
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+anthropic>=0.40.0
+openai>=1.40.0
+numpy>=1.26.4
+requests==2.32.3
+python-dotenv==1.0.1

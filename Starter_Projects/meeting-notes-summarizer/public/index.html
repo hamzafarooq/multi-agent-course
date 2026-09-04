@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meeting Notes Summarizer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #111;
+    }
+
+    header p {
+      margin-top: 6px;
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    textarea {
+      width: 100%;
+      height: 220px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      line-height: 1.5;
+      transition: border-color 0.15s;
+      color: #1a1a1a;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 6px;
+    }
+
+    .char-count.warn { color: #e85d04; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 10px 20px;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    #summarize-btn {
+      background: #4f46e5;
+      color: #fff;
+      flex: 1;
+    }
+
+    #summarize-btn:hover:not(:disabled) { background: #4338ca; }
+    #summarize-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    #reset-btn {
+      background: #f0f0f0;
+      color: #555;
+    }
+
+    #reset-btn:hover { background: #e4e4e4; }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: #fff1f0;
+      border: 1px solid #ffa39e;
+      color: #cf1322;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      margin-top: 16px;
+    }
+
+    #output { display: none; }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .output-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    #copy-btn {
+      background: #f0f0f0;
+      color: #333;
+      font-size: 0.85rem;
+      padding: 7px 14px;
+    }
+
+    #copy-btn:hover { background: #e4e4e4; }
+    #copy-btn.copied { background: #d4edda; color: #155724; }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .summary-text {
+      font-size: 0.97rem;
+      line-height: 1.65;
+      color: #222;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #f0f0f0;
+      margin: 20px 0;
+    }
+
+    .list-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .list-items li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .bullet {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .bullet-decision {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    .bullet-action {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .owner-tag {
+      display: inline-block;
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .empty-state {
+      color: #aaa;
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    .privacy-note {
+      font-size: 0.78rem;
+      color: #bbb;
+      text-align: center;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Meeting Notes Summarizer</h1>
+      <p>Paste your raw notes. Get a clean summary with action items in seconds.</p>
+    </header>
+
+    <div class="card">
+      <label for="notes-input">Your meeting notes</label>
+      <textarea
+        id="notes-input"
+        placeholder="Paste your notes here — as messy as they are..."
+        maxlength="20000"
+      ></textarea>
+      <div class="char-count" id="char-count">0 / 20,000</div>
+
+      <div id="error-msg" class="error-msg" style="display:none"></div>
+
+      <div class="actions">
+        <button id="summarize-btn">Summarize</button>
+        <button id="reset-btn">Clear</button>
+      </div>
+
+      <p class="privacy-note">Your notes are sent to Claude AI for processing and are not stored.</p>
+    </div>
+
+    <div class="card" id="output">
+      <div class="output-header">
+        <h2>Summary</h2>
+        <button id="copy-btn">Copy all</button>
+      </div>
+
+      <div class="section-label">Overview</div>
+      <p class="summary-text" id="summary-text"></p>
+
+      <hr class="divider" />
+
+      <div class="section-label">Key Decisions</div>
+      <ul class="list-items" id="decisions-list"></ul>
+
+      <hr class="divider" />
+
+      <div class="section-label">Action Items</div>
+      <ul class="list-items" id="actions-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    const notesInput = document.getElementById("notes-input");
+    const charCount = document.getElementById("char-count");
+    const summarizeBtn = document.getElementById("summarize-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const errorMsg = document.getElementById("error-msg");
+    const output = document.getElementById("output");
+    const summaryText = document.getElementById("summary-text");
+    const decisionsList = document.getElementById("decisions-list");
+    const actionsList = document.getElementById("actions-list");
+    const copyBtn = document.getElementById("copy-btn");
+
+    notesInput.addEventListener("input", () => {
+      const len = notesInput.value.length;
+      charCount.textContent = `${len.toLocaleString()} / 20,000`;
+      charCount.classList.toggle("warn", len > 18000);
+    });
+
+    summarizeBtn.addEventListener("click", async () => {
+      const notes = notesInput.value.trim();
+      if (!notes) {
+        showError("Please paste some meeting notes first.");
+        return;
+      }
+
+      hideError();
+      output.style.display = "none";
+      summarizeBtn.disabled = true;
+      summarizeBtn.innerHTML = '<span class="spinner"></span>Summarizing…';
+
+      try {
+        const res = await fetch("/api/summarize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notes }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || "Something went wrong. Please try again.");
+          return;
+        }
+
+        renderOutput(data);
+      } catch {
+        showError("Could not reach the server. Make sure it is running.");
+      } finally {
+        summarizeBtn.disabled = false;
+        summarizeBtn.textContent = "Summarize";
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      notesInput.value = "";
+      charCount.textContent = "0 / 20,000";
+      charCount.classList.remove("warn");
+      hideError();
+      output.style.display = "none";
+      notesInput.focus();
+    });
+
+    copyBtn.addEventListener("click", () => {
+      const text = buildPlainText();
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = "Copied!";
+        copyBtn.classList.add("copied");
+        setTimeout(() => {
+          copyBtn.textContent = "Copy all";
+          copyBtn.classList.remove("copied");
+        }, 2000);
+      }).catch(() => {
+        // Fallback: select the visible text
+        window.getSelection().selectAllChildren(output);
+      });
+    });
+
+    function renderOutput(data) {
+      summaryText.textContent = data.summary || "No summary available.";
+
+      decisionsList.innerHTML = "";
+      if (data.keyDecisions && data.keyDecisions.length > 0) {
+        data.keyDecisions.forEach(d => {
+          const li = document.createElement("li");
+          li.innerHTML = `<span class="bullet bullet-decision">✓</span><span>${escHtml(d)}</span>`;
+          decisionsList.appendChild(li);
+        });
+      } else {
+        decisionsList.innerHTML = `<li class="empty-state">No decisions recorded</li>`;
+      }
+
+      actionsList.innerHTML = "";
+      if (data.actionItems && data.actionItems.length > 0) {
+        data.actionItems.forEach(item => {
+          const li = document.createElement("li");
+          const ownerTag = item.owner
+            ? `<span class="owner-tag">${escHtml(item.owner)}</span>`
+            : "";
+          li.innerHTML = `<span class="bullet bullet-action">→</span><span>${escHtml(item.task)}${ownerTag}</span>`;
+          actionsList.appendChild(li);
+        });
+      } else {
+        actionsList.innerHTML = `<li class="empty-state">No action items identified</li>`;
+      }
+
+      output.style.display = "block";
+      output.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function buildPlainText() {
+      const decisions = Array.from(decisionsList.querySelectorAll("li span:last-child"))
+        .map(el => `- ${el.textContent.trim()}`)
+        .join("\n");
+      const actions = Array.from(actionsList.querySelectorAll("li span:last-child"))
+        .map(el => `- ${el.textContent.trim()}`)
+        .join("\n");
+
+      return [
+        "SUMMARY",
+        summaryText.textContent,
+        "",
+        "KEY DECISIONS",
+        decisions || "No decisions recorded",
+        "",
+        "ACTION ITEMS",
+        actions || "No action items identified",
+      ].join("\n");
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = "block";
+    }
+
+    function hideError() {
+      errorMsg.style.display = "none";
+    }
+
+    function escHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>

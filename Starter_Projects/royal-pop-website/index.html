@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Royal Pop — Audemars Piguet × Swatch</title>
+<meta name="description" content="An icon, pocketed. Eight shades of Bioceramic. One movement, fifty-one parts." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- 1. Loader -->
+<div id="loader">
+  <div class="loader-brand">ROYAL&nbsp;POP</div>
+  <div id="loader-bar"><span id="loader-bar-fill"></span></div>
+  <div id="loader-percent">0%</div>
+</div>
+
+<!-- 2. Header -->
+<header class="site-header">
+  <nav>
+    <div class="logo">AP × SWATCH</div>
+    <ul>
+      <li><a href="#heritage">Heritage</a></li>
+      <li><a href="#bioceramic">Bioceramic</a></li>
+      <li><a href="#movement">Movement</a></li>
+      <li><a href="#shades">Shades</a></li>
+      <li><a class="nav-cta" href="https://www.swatch.com/en-us/royal-pop.html" target="_blank" rel="noopener">Boutique</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- 3. Hero (standalone 100vh) -->
+<section class="hero-standalone">
+  <div class="hero-inner">
+    <span class="section-label">2026 · Audemars Piguet × Swatch</span>
+    <h1 class="hero-heading">
+      <span>Royal</span> <span>Pop.</span>
+    </h1>
+    <p class="hero-tagline">An icon, pocketed. Eight shades of Bioceramic. One movement, fifty-one parts.</p>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <svg width="14" height="22" viewBox="0 0 14 22" fill="none" aria-hidden="true">
+      <path d="M7 1v20m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- 4. Canvas (revealed via circle-wipe) -->
+<div class="canvas-wrap">
+  <canvas id="canvas"></canvas>
+</div>
+
+<!-- 5. Dark overlay (for stats section) -->
+<div id="dark-overlay"></div>
+
+<!-- 6. Marquee -->
+<div class="marquee-wrap" data-scroll-speed="-25" data-enter="38" data-leave="62">
+  <div class="marquee-text">ROYAL POP · ROYAL POP · ROYAL POP · ROYAL POP · ROYAL POP ·</div>
+</div>
+
+<!-- 7. Scroll container (900vh) -->
+<div id="scroll-container">
+
+  <!-- 001 Heritage -->
+  <section id="heritage" class="scroll-section section-content align-left"
+           data-enter="8" data-leave="20" data-animation="slide-left">
+    <div class="section-inner">
+      <span class="section-label">001 / Heritage</span>
+      <h2 class="section-heading">The pocket watch, reborn.</h2>
+      <p class="section-body">Two icons converge. The octagonal silhouette of the 1972 Royal Oak meets the playful loop of the 1980s Swatch POP. Worn on a chain, a belt loop, a lanyard — never on the wrist.</p>
+    </div>
+  </section>
+
+  <!-- 002 Bioceramic -->
+  <section id="bioceramic" class="scroll-section section-content align-right"
+           data-enter="22" data-leave="34" data-animation="slide-right">
+    <div class="section-inner">
+      <span class="section-label">002 / Material</span>
+      <h2 class="section-heading">Bioceramic.</h2>
+      <p class="section-body">Two-thirds ceramic powder. One-third bio-sourced material from castor oil. The result is a case that feels lighter than it looks and harder than it feels.</p>
+    </div>
+  </section>
+
+  <!-- 003 Movement -->
+  <section id="movement" class="scroll-section section-content align-left"
+           data-enter="36" data-leave="48" data-animation="clip-reveal">
+    <div class="section-inner">
+      <span class="section-label">003 / Movement</span>
+      <h2 class="section-heading">SISTEM51, hand-wound.</h2>
+      <p class="section-body">Swatch's SISTEM51 movement, reimagined as a hand-wound caliber. Fifty-one components. Fifteen active patents. Assembled in a single automated step. No wrist required.</p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="scroll-section section-stats"
+           data-enter="52" data-leave="66" data-animation="stagger-up">
+    <div class="stats-grid">
+      <div class="stat">
+        <span class="stat-number" data-value="8" data-decimals="0">0</span>
+        <span class="stat-label">Models</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-value="51" data-decimals="0">0</span>
+        <span class="stat-label">Components</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-value="15" data-decimals="0">0</span>
+        <span class="stat-label">Active patents</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-value="1972" data-decimals="0">0</span>
+        <span class="stat-label">Royal Oak origin</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 004 Silhouettes -->
+  <section class="scroll-section section-content align-right"
+           data-enter="68" data-leave="78" data-animation="rotate-in">
+    <div class="section-inner">
+      <span class="section-label">004 / Silhouettes</span>
+      <h2 class="section-heading">Two ways to wear it.</h2>
+      <p class="section-body"><strong>Lépine</strong> — winding crown at 12. Six models. The clean read.</p>
+      <p class="section-body"><strong>Savonnette</strong> — crown at 3, small seconds at 6. Two models. The technical read.</p>
+    </div>
+  </section>
+
+  <!-- 005 Shades -->
+  <section id="shades" class="scroll-section section-content align-left"
+           data-enter="80" data-leave="88" data-animation="scale-up">
+    <div class="section-inner">
+      <span class="section-label">005 / Eight shades</span>
+      <h2 class="section-heading">From cold mono to tutti-frutti.</h2>
+      <p class="section-body">LAN BA · BLAUE ACHT · OCHO NEGRO · and five more. Each Bioceramic shell is a study in confident color.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="scroll-section section-cta"
+           data-enter="92" data-leave="100" data-animation="fade-up" data-persist="true">
+    <div class="section-inner cta-inner">
+      <span class="section-label">Find your shade</span>
+      <h2 class="section-heading">Available now.</h2>
+      <p class="section-body">Selected Swatch boutiques only. One per person, per store, per day.</p>
+      <a class="cta-button" href="https://www.swatch.com/en-us/royal-pop.html" target="_blank" rel="noopener">Locate a boutique →</a>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

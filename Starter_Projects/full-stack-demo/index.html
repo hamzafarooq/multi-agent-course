@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How the Web Works — Frontend · Backend · AI Backend</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f4f6f9;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .topbar-left h1 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.3px; }
+    .topbar-left p  { font-size: 0.78rem; color: #888; margin-top: 2px; }
+
+    .cta-banner {
+      background: linear-gradient(90deg, #6c63ff 0%, #a78bfa 100%);
+      color: #fff;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .cta-banner span { opacity: 0.92; }
+    .cta-btn {
+      background: #fff;
+      color: #6c63ff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 5px 14px;
+      border-radius: 20px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .cta-btn:hover { opacity: 0.85; }
+
+    .api-key-row { display: flex; align-items: center; gap: 8px; }
+    .api-key-row label { font-size: 0.78rem; font-weight: 600; color: #666; white-space: nowrap; }
+    .api-key-row input {
+      padding: 7px 12px; border: 1px solid #ddd; border-radius: 6px;
+      font-size: 0.82rem; font-family: monospace; width: 260px;
+      outline: none; transition: border-color 0.15s;
+    }
+    .api-key-row input:focus { border-color: #6c63ff; }
+
+    .key-status { font-size: 0.75rem; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+    .key-status.set   { background: #d1fae5; color: #065f46; }
+    .key-status.unset { background: #fee2e2; color: #991b1b; }
+
+    /* ── Layout ── */
+    .main {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      height: calc(100vh - 61px);
+    }
+
+    /* ── Left: input panel (this IS the frontend) ── */
+    .panel-left {
+      background: #fff;
+      border-right: 1px solid #e8e8e8;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .layer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      width: fit-content;
+    }
+    .badge-frontend { background: #dbeafe; color: #1d4ed8; }
+    .badge-backend  { background: #fef3c7; color: #92400e; }
+    .badge-ai       { background: #ede9fe; color: #5b21b6; }
+
+    .panel-left h2 { font-size: 1rem; font-weight: 700; margin-top: 4px; }
+    .panel-left p.desc { font-size: 0.82rem; color: #666; line-height: 1.5; }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 0.83rem; font-weight: 600; color: #444; }
+    .form-group .hint { font-size: 0.74rem; color: #aaa; }
+
+    textarea {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+      transition: border-color 0.15s;
+      line-height: 1.5;
+    }
+    textarea:focus { border-color: #6c63ff; }
+
+    .btn-send {
+      background: #6c63ff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-send:hover:not(:disabled) { background: #5a52d5; }
+    .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .examples { display: flex; flex-direction: column; gap: 6px; }
+    .example-chip {
+      font-size: 0.78rem;
+      color: #6c63ff;
+      background: #f5f3ff;
+      border: 1px solid #e0dbff;
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .example-chip:hover { background: #ede9fe; }
+
+    /* ── Right: flow panels ── */
+    .panel-right {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .flow-section {
+      flex: 1;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: background 0.3s;
+    }
+    .flow-section:last-child { border-bottom: none; }
+    .flow-section.active-backend { background: #fffbeb; }
+    .flow-section.active-ai      { background: #faf5ff; }
+
+    .flow-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .flow-header h3 { font-size: 0.9rem; font-weight: 700; }
+    .flow-header .subtitle { font-size: 0.75rem; color: #888; }
+
+    .what-is {
+      font-size: 0.78rem;
+      color: #666;
+      background: #f9fafb;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      padding: 8px 12px;
+      line-height: 1.5;
+    }
+    .what-is strong { color: #1a1a2e; }
+
+    .log-box {
+      background: #1e1e2e;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #cdd6f4;
+      min-height: 60px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .log-box .log-dim   { color: #585b70; }
+    .log-box .log-ok    { color: #a6e3a1; }
+    .log-box .log-warn  { color: #f9e2af; }
+    .log-box .log-info  { color: #89dceb; }
+    .log-box .log-ai    { color: #cba6f7; }
+
+    .response-box {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.84rem;
+      line-height: 1.65;
+      color: #1a1a2e;
+      min-height: 60px;
+      white-space: pre-wrap;
+    }
+    .response-box.empty { color: #bbb; font-style: italic; }
+
+    .spinner {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 2px solid #cba6f7;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .step-indicator {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.72rem;
+      color: #aaa;
+    }
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #e8e8e8;
+      transition: background 0.3s;
+    }
+    .step-dot.done   { background: #a6e3a1; }
+    .step-dot.active { background: #89b4fa; animation: pulse 0.8s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  </style>
+</head>
+<body>
+
+<!-- CTA Banner -->
+<div class="cta-banner">
+  <span>Become an Agent-Native PM in 1 Day with Claude Code</span>
+  <a class="cta-btn" href="https://maven.com/boring-bot/claude-code-in-practice" target="_blank" rel="noopener">Join the Workshop →</a>
+</div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>How the Web Works</h1>
+    <p>Frontend · Backend · AI Backend — live demo</p>
+  </div>
+  <div class="api-key-row">
+    <label for="apiKey">Anthropic API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." />
+    <span class="key-status unset" id="keyStatus">Not set</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Left: Frontend panel (this is the frontend!) -->
+  <div class="panel-left">
+    <span class="layer-badge badge-frontend">Layer 1 — Frontend</span>
+    <h2>Ask anything</h2>
+    <p class="desc">
+      This form is the <strong>frontend</strong> — the part you see and interact with.
+      It captures your input and sends it to the backend when you click Send.
+    </p>
+
+    <div class="form-group">
+      <label for="userQuestion">Your question</label>
+      <span class="hint">Ask something simple. The backend will process it and the AI will answer.</span>
+      <textarea id="userQuestion" placeholder="e.g. What is a database?"></textarea>
+    </div>
+
+    <div class="examples">
+      <div class="example-chip" onclick="fillExample('What is a backend?')">What is a backend?</div>
+      <div class="example-chip" onclick="fillExample('What is an API?')">What is an API?</div>
+      <div class="example-chip" onclick="fillExample('What is the difference between frontend and backend?')">What is the difference between frontend and backend?</div>
+      <div class="example-chip" onclick="fillExample('Explain AI backends in one paragraph.')">Explain AI backends in one paragraph.</div>
+    </div>
+
+    <button class="btn-send" id="sendBtn" onclick="handleSend()">Send →</button>
+
+    <div class="step-indicator">
+      <div class="step-dot" id="dot1"></div> Frontend captured
+      <div class="step-dot" id="dot2"></div> Backend processed
+      <div class="step-dot" id="dot3"></div> AI responded
+    </div>
+  </div>
+
+  <!-- Right: the three layers -->
+  <div class="panel-right">
+
+    <!-- Layer 1: Frontend (echo) -->
+    <div class="flow-section" id="sec-frontend">
+      <div class="flow-header">
+        <span class="layer-badge badge-frontend">Layer 1 — Frontend</span>
+        <span class="subtitle">What the browser sees</span>
+      </div>
+      <div class="what-is">
+        <strong>What is the frontend?</strong> Everything the user sees and touches.
+        HTML structures the page, CSS styles it, JavaScript makes it interactive.
+        The frontend collects your input and sends it somewhere — but it can't store data
+        or call AI on its own. It needs to talk to a backend.
+      </div>
+      <div class="log-box" id="frontend-log"><span class="log-dim">// Waiting for input...</span></div>
+    </div>
+
+    <!-- Layer 2: Backend -->
+    <div class="flow-section" id="sec-backend">
+      <div class="flow-header">
+        <span class="layer-badge badge-backend">Layer 2 — Backend</span>
+        <span class="subtitle">What the server does</span>
+      </div>
+      <div class="what-is">
+        <strong>What is the backend?</strong> Code running on a server that the user never sees.
+        It receives requests from the frontend, validates and processes them, talks to databases,
+        calls external APIs (like Claude), and sends a response back. Without a backend,
+        the frontend is just a static page.
+      </div>
+      <div class="log-box" id="backend-log"><span class="log-dim">// Waiting for request...</span></div>
+    </div>
+
+    <!-- Layer 3: AI Backend -->
+    <div class="flow-section" id="sec-ai">
+      <div class="flow-header">
+        <span class="layer-badge badge-ai">Layer 3 — AI Backend</span>
+        <span class="subtitle">What Claude does</span>
+      </div>
+      <div class="what-is">
+        <strong>What is an AI backend?</strong> A special backend that routes requests to a
+        language model (like Claude) instead of — or in addition to — a traditional database.
+        The backend formats your input into a prompt, sends it to the AI API, and returns
+        the generated response to the frontend. This is the layer Claude Code builds for you.
+      </div>
+      <div class="response-box empty" id="ai-response">AI response will appear here...</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const apiKeyInput = document.getElementById('apiKey');
+  const keyStatus   = document.getElementById('keyStatus');
+
+  apiKeyInput.addEventListener('input', () => {
+    const v = apiKeyInput.value.trim();
+    if (v.startsWith('sk-ant-') && v.length > 20) {
+      keyStatus.textContent = 'Set';
+      keyStatus.className = 'key-status set';
+    } else {
+      keyStatus.textContent = 'Not set';
+      keyStatus.className = 'key-status unset';
+    }
+  });
+
+  function fillExample(text) {
+    document.getElementById('userQuestion').value = text;
+  }
+
+  function setDot(id, state) {
+    const dot = document.getElementById(id);
+    dot.className = 'step-dot' + (state ? ' ' + state : '');
+  }
+
+  function setLog(id, html) {
+    document.getElementById(id).innerHTML = html;
+  }
+
+  async function handleSend() {
+    const question = document.getElementById('userQuestion').value.trim();
+    const apiKey   = apiKeyInput.value.trim();
+
+    if (!question) { alert('Please enter a question.'); return; }
+    if (!apiKey.startsWith('sk-ant-')) {
+      alert('Please enter a valid Anthropic API key (starts with sk-ant-).'); return;
+    }
+
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    // Reset state
+    setDot('dot1', 'active');
+    setDot('dot2', '');
+    setDot('dot3', '');
+    document.getElementById('sec-backend').className  = 'flow-section';
+    document.getElementById('sec-ai').className       = 'flow-section';
+    document.getElementById('ai-response').className  = 'response-box empty';
+    document.getElementById('ai-response').textContent = 'AI response will appear here...';
+
+    // ── Layer 1: Frontend captured ──
+    await delay(300);
+    setLog('frontend-log',
+      `<span class="log-ok">✓ Input captured</span>\n` +
+      `<span class="log-dim">  question: </span>"${escHtml(question)}"\n` +
+      `<span class="log-dim">  timestamp: </span>${new Date().toISOString()}\n` +
+      `<span class="log-info">→ Sending to backend...</span>`
+    );
+    setDot('dot1', 'done');
+
+    // ── Layer 2: Backend processing ──
+    await delay(500);
+    setDot('dot2', 'active');
+    document.getElementById('sec-backend').className = 'flow-section active-backend';
+    setLog('backend-log',
+      `<span class="log-ok">✓ POST /api/ask received</span>\n` +
+      `<span class="log-dim">  validating input... </span><span class="log-ok">ok</span>\n` +
+      `<span class="log-dim">  sanitizing input...  </span><span class="log-ok">ok</span>\n` +
+      `<span class="log-dim">  building prompt...   </span><span class="log-ok">ok</span>`
+    );
+
+    await delay(700);
+    setLog('backend-log',
+      `<span class="log-ok">✓ POST /api/ask received</span>\n` +
+      `<span class="log-dim">  validating input... </span><span class="log-ok">ok</span>\n` +
+      `<span class="log-dim">  sanitizing input...  </span><span class="log-ok">ok</span>\n` +
+      `<span class="log-dim">  building prompt...   </span><span class="log-ok">ok</span>\n` +
+      `<span class="log-warn">→ Calling Claude API (claude-haiku-4-5)...</span>`
+    );
+    setDot('dot2', 'done');
+
+    // ── Layer 3: AI Backend call ──
+    await delay(400);
+    setDot('dot3', 'active');
+    document.getElementById('sec-ai').className = 'flow-section active-ai';
+    document.getElementById('ai-response').className = 'response-box';
+    document.getElementById('ai-response').innerHTML =
+      '<span class="spinner"></span> Claude is thinking...';
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 300,
+          system: 'You are a helpful assistant explaining web concepts to product managers. Keep answers clear, concise, and jargon-free. 2-4 sentences max.',
+          messages: [{ role: 'user', content: question }]
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || 'API error');
+      }
+
+      const data = await response.json();
+      const answer = data.content[0].text;
+
+      setLog('backend-log',
+        `<span class="log-ok">✓ POST /api/ask received</span>\n` +
+        `<span class="log-dim">  validating input... </span><span class="log-ok">ok</span>\n` +
+        `<span class="log-dim">  sanitizing input...  </span><span class="log-ok">ok</span>\n` +
+        `<span class="log-dim">  building prompt...   </span><span class="log-ok">ok</span>\n` +
+        `<span class="log-ok">✓ Claude API responded (${data.usage?.output_tokens || '?'} tokens)</span>\n` +
+        `<span class="log-ai">→ Returning response to frontend</span>`
+      );
+
+      document.getElementById('ai-response').className = 'response-box';
+      document.getElementById('ai-response').textContent = answer;
+      setDot('dot3', 'done');
+
+    } catch (err) {
+      document.getElementById('ai-response').className = 'response-box';
+      document.getElementById('ai-response').textContent = 'Error: ' + err.message;
+      setDot('dot3', '');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Send →';
+  }
+
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+  function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>

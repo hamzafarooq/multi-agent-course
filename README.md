@@ -174,6 +174,9 @@ Demystify what an agent actually is — the perceive → reason → act loop and
 **🚀 Project kickoff: LUMINA** — a Perplexity-style AI search experience. Week 1 gives you the loop; the project makes you wrap it in retrieval, citations, and a real frontend.
 [Read the PRD →](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md)
 
+**🔎 Reference app: Alex** — a finished Perplexity-style assistant you can clone and take apart before you build LUMINA. Four levels (LLM → chatbot → tool-using agent → RAG assistant), a debug panel that shows the exact API request behind every answer, and a keyword-vs-semantic Search Lab. Hosted at https://lumina-perplexity-clone.vercel.app (password shared in class).
+[Open Alex →](modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/README.md)
+
 [Open Module 1 →](modules/Module_1_Agent_Foundations_Harness_System_Design/README.md)
 
 ---
@@ -311,6 +314,11 @@ This course goes beyond theory. Across seven weeks you'll ship real, portfolio-r
 ## Full Stack Projects
 
 End-to-end, build-along projects that tie the course concepts together.
+
+> **Want something smaller to tinker with?** [`Starter_Projects/`](Starter_Projects/README.md) holds nine
+> complete, ungraded apps imported from [claude-code-starter](https://github.com/hamzafarooq/claude-code-starter) —
+> research agents, a meeting-notes summarizer, a multi-agent visualizer, a scroll-driven landing page — to read
+> alongside the modules and point Claude Code at.
 
 ### 🚀 Sprint Zero — a multi-agent product team in your terminal
 

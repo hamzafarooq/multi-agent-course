@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-orange: #d97757;
+  --color-orange-soft: #fef7f2;
+  --color-orange-border: #f0d4c1;
+  --color-ink: #1a1a1a;
+  --color-ink-2: #4a4a4a;
+  --color-ink-3: #888888;
+  --color-line: #ececec;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html, body {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+body {
+  font-family: -apple-system, "Inter", system-ui, sans-serif;
+}

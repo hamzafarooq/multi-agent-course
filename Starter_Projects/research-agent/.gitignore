@@ -1,0 +1,13 @@
+# Per-user local Claude Code settings (permission allowlists, etc.)
+.claude/settings.local.json
+
+# Local environment variables (API keys for MCP servers)
+.env
+.env.local
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

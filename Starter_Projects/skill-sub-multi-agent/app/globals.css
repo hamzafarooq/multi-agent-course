@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --bg:       #F6F3EC;
+  --surface:  #FBFAF5;
+  --plate:    #EFEBE0;
+  --ink:      #1A1815;
+  --ink-2:    #4A4842;
+  --ink-3:    #84817A;
+  --rule:     #DAD4C4;
+  --rule-2:   #ECE7D8;
+  --accent:   oklch(0.58 0.16 38);
+  --accent-2: oklch(0.92 0.04 60);
+  --done:     oklch(0.45 0.09 145);
+  --done-2:   oklch(0.92 0.04 145);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button { font: inherit; color: inherit; }
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image:
+    radial-gradient(circle at 25% 30%, rgba(0,0,0,0.025) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 60%, rgba(0,0,0,0.018) 0 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  z-index: 1;
+}
+
+@keyframes dashflow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -32; }
+}
+@keyframes agentpulse {
+  0%   { transform: scale(0.6); opacity: 0.85; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes tipfade {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes tipdot {
+  0%, 100% { opacity: 0.3; transform: scale(0.7); }
+  50%      { opacity: 1;   transform: scale(1); }
+}
+@keyframes rise {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }

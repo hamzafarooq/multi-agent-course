@@ -1,0 +1,6 @@
+# Search Lab only. Deliberately separate from the module's requirements.txt:
+# torch is ~525MB, which is far past Vercel's function size limit, and the
+# main assistant does not need it.
+-r ../requirements.txt
+sentence-transformers>=3.0.0
+einops>=0.8.0

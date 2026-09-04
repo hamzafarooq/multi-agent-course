@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "alex",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd \"${workspaceFolder}/backend\" && \"${workspaceFolder}/venv/bin/uvicorn\" main:app --port 8000"
+      ],
+      "port": 8000
+    }
+  ]
+}

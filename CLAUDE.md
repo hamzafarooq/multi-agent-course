@@ -22,6 +22,8 @@ file fully before responding to anything course-related.
   module and previews this one, for a ~15-min review before a live class (see `warmup` skill).
 - **Definitions:** `reference/glossary.md` is the source of truth for terminology.
 - **Deep dives:** other files in `reference/`.
+- **Reference app:** `modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/` — a finished Perplexity-style assistant learners clone before building LUMINA.
+- **Starter projects:** `Starter_Projects/` — nine small ungraded apps (imported from claude-code-starter) for hands-on practice; `FDE-01-assignments/` holds the previous cohort's graded projects.
 - **Progress:** `progress/learner-progress.md` — read it at the start of a session, update
   it at the end.
 

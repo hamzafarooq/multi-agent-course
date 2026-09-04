@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRD Builder — Powered by Claude</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f4f6f9;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .topbar-left h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .topbar-left p {
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .api-key-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .api-key-row label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .api-key-row input {
+      padding: 7px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-family: monospace;
+      width: 260px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .api-key-row input:focus { border-color: #6c63ff; }
+
+    .key-status {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .key-status.set   { background: #d1fae5; color: #065f46; }
+    .key-status.unset { background: #fee2e2; color: #991b1b; }
+
+    /* ── Main layout ── */
+    .main {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 0;
+      height: calc(100vh - 61px);
+    }
+
+    /* ── Left panel ── */
+    .panel-left {
+      background: #fff;
+      border-right: 1px solid #e8e8e8;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #aaa;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 5px;
+    }
+
+    .form-group .hint {
+      font-size: 0.74rem;
+      color: #aaa;
+      font-weight: 400;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: vertical;
+      background: #fafafa;
+      color: #1a1a2e;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #6c63ff;
+      background: #fff;
+    }
+
+    .form-group textarea { min-height: 80px; }
+    .form-group textarea.tall { min-height: 110px; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #f0f0f0;
+      margin: 16px 0;
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 13px;
+      background: #6c63ff;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .generate-btn:hover:not(:disabled) { background: #574fd6; }
+    .generate-btn:active:not(:disabled) { transform: scale(0.99); }
+    .generate-btn:disabled { background: #b5b0f0; cursor: not-allowed; }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Right panel ── */
+    .panel-right {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .output-header {
+      padding: 14px 24px;
+      border-bottom: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+    }
+
+    .output-header h2 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .output-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #555;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover { background: #f4f4f4; border-color: #ccc; }
+    .action-btn.primary { background: #6c63ff; color: #fff; border-color: #6c63ff; }
+    .action-btn.primary:hover { background: #574fd6; border-color: #574fd6; }
+    .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .action-btn.build { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .action-btn.build:hover:not(:disabled) { background: #2d2d4e; border-color: #2d2d4e; }
+
+    /* ── Start Building panel ── */
+    .build-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 36px 0 24px;
+    }
+    .build-divider::before,
+    .build-divider::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid #e8e8e8;
+    }
+    .build-divider-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #aaa;
+      white-space: nowrap;
+    }
+
+    .build-panel {
+      background: #f8f7ff;
+      border: 1px solid #e0dcff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .build-panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .build-panel p {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.6;
+      margin: 0 0 16px;
+    }
+
+    .build-send-btn {
+      width: 100%;
+      padding: 12px;
+      background: #6c63ff;
+      color: #fff;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .build-send-btn:hover:not(:disabled) { background: #574fd6; }
+    .build-send-btn:disabled { background: #b5b0f0; cursor: not-allowed; }
+
+    .build-spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    /* Next-steps card shown after generation */
+    .next-steps-card {
+      display: none;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0dcff;
+    }
+
+    .next-steps-card .success-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .next-steps-card .success-icon {
+      width: 32px;
+      height: 32px;
+      background: #d1fae5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .next-steps-card .success-text strong {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #065f46;
+    }
+
+    .next-steps-card .success-text span {
+      font-size: 0.78rem;
+      color: #888;
+    }
+
+    .next-steps-card h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .prompt-chip {
+      background: #fff;
+      border: 1px solid #d4cfff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      color: #333;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .prompt-chip:hover { border-color: #6c63ff; background: #f8f7ff; }
+
+    .prompt-chip .copy-hint {
+      font-size: 0.7rem;
+      color: #bbb;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .prompt-chip:hover .copy-hint { color: #6c63ff; }
+
+    .prompt-chip.featured {
+      background: #f0eeff;
+      border-color: #6c63ff;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #1a1a2e;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 999;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .output-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #bbb;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .empty-state .icon {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+
+    .empty-state p {
+      font-size: 0.9rem;
+      max-width: 280px;
+      line-height: 1.6;
+    }
+
+    /* ── PRD rendered output ── */
+    #prd-output {
+      display: none;
+      max-width: 720px;
+    }
+
+    #prd-output h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    #prd-output .meta {
+      font-size: 0.82rem;
+      color: #888;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    #prd-output h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    #prd-output h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    #prd-output p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    #prd-output ul, #prd-output ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    #prd-output li {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    #prd-output table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
+    #prd-output th {
+      text-align: left;
+      padding: 8px 10px;
+      background: #f8f8f8;
+      font-weight: 600;
+      border: 1px solid #e8e8e8;
+      color: #555;
+      font-size: 0.78rem;
+    }
+
+    #prd-output td {
+      padding: 8px 10px;
+      border: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    #prd-output blockquote {
+      border-left: 3px solid #6c63ff;
+      padding: 10px 16px;
+      background: #f8f7ff;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 12px;
+    }
+
+    #prd-output blockquote p {
+      margin-bottom: 0;
+      color: #555;
+      font-style: italic;
+    }
+
+    #prd-output code {
+      background: #f4f4f8;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.82rem;
+      color: #6c63ff;
+    }
+
+    /* Streaming cursor */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: #6c63ff;
+      animation: blink 0.8s infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Error banner */
+    .error-banner {
+      background: #fff5f5;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: #991b1b;
+      margin-bottom: 16px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>PRD Builder</h1>
+    <p>Describe your idea — Claude writes the PRD</p>
+  </div>
+  <div class="api-key-row">
+    <label for="apiKey">API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-…" autocomplete="off" />
+    <span class="key-status unset" id="keyStatus">Not set</span>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="main">
+
+  <!-- LEFT: Input form -->
+  <div class="panel-left">
+    <p class="section-label">Your Product Idea</p>
+
+    <div class="form-group">
+      <label for="productName">Product Name</label>
+      <input type="text" id="productName" placeholder="e.g. DataPulse, NoteToTicket, PulseBoard…" />
+    </div>
+
+    <div class="form-group">
+      <label for="problem">Problem Statement</label>
+      <span class="hint">What pain point are you solving, and for whom?</span>
+      <textarea id="problem" class="tall" placeholder="e.g. Product managers waste 2-3 hours a week converting raw call notes into structured Jira tickets. It's manual, inconsistent, and slows down sprint planning."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="users">Target Users</label>
+      <span class="hint">Who experiences this problem most?</span>
+      <input type="text" id="users" placeholder="e.g. B2B product managers at Series A–C startups" />
+    </div>
+
+    <div class="form-group">
+      <label for="features">Key Features</label>
+      <span class="hint">List the main things this product should do (one per line)</span>
+      <textarea id="features" class="tall" placeholder="Paste or type raw call notes&#10;Get a structured ticket draft in seconds&#10;Edit before exporting to Jira&#10;One-click export"></textarea>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="form-group">
+      <label for="metrics">Success Metrics</label>
+      <span class="hint">How will you know it's working? (optional)</span>
+      <textarea id="metrics" placeholder="e.g. Reduce time-to-ticket from 90 min to under 5 min&#10;80% of PMs adopt within 60 days"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="nongoals">What this is NOT</label>
+      <span class="hint">Explicit non-goals or out-of-scope items (optional)</span>
+      <textarea id="nongoals" placeholder="e.g. We are not replacing Jira&#10;No auto-filing — human always reviews first"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="tone">PRD style</label>
+      <select id="tone">
+        <option value="professional">Professional (standard PM doc)</option>
+        <option value="concise">Concise (startup, fast-moving team)</option>
+        <option value="detailed">Detailed (enterprise, stakeholder review)</option>
+      </select>
+    </div>
+
+    <div class="error-banner" id="errorBanner"></div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generatePRD()">
+      <div class="spinner" id="spinner"></div>
+      <span id="btnText">Generate PRD</span>
+    </button>
+  </div>
+
+  <!-- RIGHT: Output -->
+  <div class="panel-right">
+    <div class="output-header">
+      <h2 id="outputTitle">Output</h2>
+      <div class="output-actions">
+<button class="action-btn" id="downloadBtn" onclick="downloadMarkdown()" disabled>Download .md</button>
+        <button class="action-btn build" id="buildBtn" onclick="showBuildPanel()" disabled>▶ Start Building</button>
+      </div>
+    </div>
+    <div class="output-area" id="outputArea">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">📄</div>
+        <p>Fill in your product idea on the left and click <strong>Generate PRD</strong>.</p>
+        <p style="font-size:0.78rem; color:#ccc;">Claude will write a complete, structured PRD — ready to share or edit.</p>
+      </div>
+      <div id="prd-output"></div>
+
+      <!-- Start Building panel (hidden until button clicked) -->
+      <div id="build-section" style="display:none; max-width:720px;">
+        <div class="build-divider">
+          <span class="build-divider-label">Start Building</span>
+        </div>
+        <div class="build-panel">
+          <p>Save your PRD into a project folder on your computer, then use the prompt below to start building in Claude Code.</p>
+          <button class="build-send-btn" id="buildSendBtn" onclick="runBuildPrompt()">
+            <div class="build-spinner" id="buildSpinner"></div>
+            <span id="buildBtnText">Save PRD to Folder</span>
+          </button>
+          <div class="next-steps-card" id="nextStepsCard">
+            <div class="success-row">
+              <div class="success-icon">✓</div>
+              <div class="success-text">
+                <strong id="folderSuccessMsg">Project folder created.</strong>
+                <span id="folderSubtitle"></span>
+              </div>
+            </div>
+            <h4>Open Claude Code in that folder and paste this prompt</h4>
+            <div class="prompt-chip featured" onclick="copyChip(this)">
+              <span id="chip1"></span>
+              <span class="copy-hint">click to copy</span>
+            </div>
+            <h4 style="margin-top:14px;">Or try one of these follow-ups</h4>
+            <div class="prompt-chip" onclick="copyChip(this)">
+              <span>"What's the riskiest assumption in this PRD and how should we validate it before building?"</span>
+              <span class="copy-hint">click to copy</span>
+            </div>
+            <div class="prompt-chip" onclick="copyChip(this)">
+              <span>"Break the first sprint into daily tasks for a team of two engineers."</span>
+              <span class="copy-hint">click to copy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────
+  let rawMarkdown = '';
+  let isGenerating = false;
+
+  // ── API key persistence ────────────────────────────────────────
+  const apiKeyInput = document.getElementById('apiKey');
+  const keyStatus   = document.getElementById('keyStatus');
+
+  const savedKey = localStorage.getItem('anthropic_api_key');
+  if (savedKey) {
+    apiKeyInput.value = savedKey;
+    setKeyStatus(true);
+  }
+
+  apiKeyInput.addEventListener('input', () => {
+    const val = apiKeyInput.value.trim();
+    if (val) {
+      localStorage.setItem('anthropic_api_key', val);
+      setKeyStatus(true);
+    } else {
+      localStorage.removeItem('anthropic_api_key');
+      setKeyStatus(false);
+    }
+  });
+
+  function setKeyStatus(set) {
+    keyStatus.textContent = set ? 'Set' : 'Not set';
+    keyStatus.className   = 'key-status ' + (set ? 'set' : 'unset');
+  }
+
+  // ── Generate ───────────────────────────────────────────────────
+  async function generatePRD() {
+    if (isGenerating) return;
+
+    const apiKey      = apiKeyInput.value.trim();
+    const productName = document.getElementById('productName').value.trim();
+    const problem     = document.getElementById('problem').value.trim();
+    const users       = document.getElementById('users').value.trim();
+    const features    = document.getElementById('features').value.trim();
+    const metrics     = document.getElementById('metrics').value.trim();
+    const nongoals    = document.getElementById('nongoals').value.trim();
+    const tone        = document.getElementById('tone').value;
+
+    hideError();
+
+    if (!productName) return showError('Please enter a product name.');
+    if (!problem)     return showError('Please describe the problem you are solving.');
+    if (!features)    return showError('Please list the key features.');
+
+    // ── Demo fast-path: render pre-written PRD instantly ──────────
+    const isDemo = productName === 'DataPulse';
+    if (isDemo) {
+      setGenerating(true);
+      document.getElementById('emptyState').style.display = 'none';
+      const prdDiv = document.getElementById('prd-output');
+      prdDiv.style.display = 'block';
+      prdDiv.innerHTML     = '<span class="cursor"></span>';
+      document.getElementById('outputTitle').textContent = 'DataPulse — PRD';
+      // Reset build panel for re-runs
+      document.getElementById('build-section').style.display = 'none';
+      document.getElementById('nextStepsCard').style.display = 'none';
+      document.getElementById('buildSendBtn').style.display  = 'flex';
+
+      await new Promise(r => setTimeout(r, 420)); // brief pause so the button feels responsive
+      rawMarkdown      = DEMO_PRD;
+      prdDiv.innerHTML = markdownToHtml(rawMarkdown);
+      document.getElementById('downloadBtn').disabled = false;
+      document.getElementById('buildBtn').disabled = false;
+      setGenerating(false);
+      return;
+    }
+
+    if (!apiKey) return showError('Please enter your Anthropic API key at the top right.');
+
+    setGenerating(true);
+    rawMarkdown = '';
+
+    const toneGuide = {
+      professional: 'Write in a clear, professional PM style. Balance detail with readability.',
+      concise:      'Write in a lean startup style. Be direct, use short sentences, avoid padding.',
+      detailed:     'Write in a thorough enterprise style with detailed explanations, rationale, and comprehensive edge cases.',
+    }[tone];
+
+    const prompt = `You are an expert product manager. Generate a complete, well-structured PRD (Product Requirements Document) for the following product idea.
+
+Product Name: ${productName}
+Problem Statement: ${problem}
+Target Users: ${users || 'Not specified — infer from the problem'}
+Key Features: ${features}
+${metrics ? `Success Metrics: ${metrics}` : ''}
+${nongoals ? `Non-Goals / Out of Scope: ${nongoals}` : ''}
+
+Style guide: ${toneGuide}
+
+Generate a PRD with these sections in this exact order:
+1. **Problem Statement** — what pain are we solving and for whom? Why does this matter now?
+2. **Goals** — 3–5 measurable outcomes. Format: "Increase [metric] by [amount] within [timeframe]"
+3. **Non-Goals** — what this feature explicitly will NOT do. Be specific to prevent scope creep.
+4. **Users & Use Cases** — who uses this and in what context? Include 2–3 concrete scenarios written as short narratives (not bullet points).
+5. **User Stories** — written as "As a [user type], I want to [action] so that [outcome]." Group into: ### Must-have / ### Should-have / ### Nice-to-have
+6. **Acceptance Criteria** — for each Must-have story, write criteria in Given/When/Then format, specific enough for a QA engineer to write a test.
+7. **Risks & Assumptions** — use a two-column markdown table: | Risks | Assumptions |. Risks = what could go wrong or what dependencies exist. Assumptions = what we're treating as true but haven't confirmed.
+8. **Open Questions** — what must be decided before engineering starts? Format as questions, not statements. Assign an owner where possible.
+9. **Success Metrics** — how will we measure success? Include leading indicators (early signals) and lagging indicators (final outcomes).
+
+Rules:
+- Mark any section where you made an assumption with [ASSUMPTION]
+- Mark anything that needs the PM's input with [NEEDS INPUT]
+- Write in plain English, avoid technical jargon
+- Format the output as clean Markdown. Use ## for section headers, ### for subsections.
+- Start directly with the PRD — no preamble, no "here is your PRD" intro.
+- End with: "Review the [ASSUMPTION] and [NEEDS INPUT] sections before sharing with engineering."
+- Begin with: # ${productName}`;
+
+    // Show output area, reset build panel
+    document.getElementById('emptyState').style.display  = 'none';
+    document.getElementById('build-section').style.display = 'none';
+    document.getElementById('nextStepsCard').style.display  = 'none';
+    document.getElementById('buildSendBtn').style.display   = 'flex';
+    const prdDiv = document.getElementById('prd-output');
+    prdDiv.style.display = 'block';
+    prdDiv.innerHTML = '<span class="cursor"></span>';
+    document.getElementById('outputTitle').textContent = productName + ' — PRD';
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type':                           'application/json',
+          'x-api-key':                              apiKey,
+          'anthropic-version':                      '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model:      'claude-opus-4-6',
+          max_tokens: 4096,
+          stream:     true,
+          messages:   [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `API error ${response.status}`);
+      }
+
+      // Parse SSE stream
+      const reader  = response.body.getReader();
+      const decoder = new TextDecoder();
+      let   buffer  = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+
+          try {
+            const evt = JSON.parse(data);
+            if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+              rawMarkdown += evt.delta.text;
+              prdDiv.innerHTML = markdownToHtml(rawMarkdown) + '<span class="cursor"></span>';
+              // Auto-scroll
+              const area = document.getElementById('outputArea');
+              area.scrollTop = area.scrollHeight;
+            }
+          } catch (_) {}
+        }
+      }
+
+      // Final render (no cursor)
+      prdDiv.innerHTML = markdownToHtml(rawMarkdown);
+      document.getElementById('downloadBtn').disabled = false;
+      document.getElementById('buildBtn').disabled    = false;
+
+    } catch (err) {
+      prdDiv.innerHTML = '';
+      prdDiv.style.display = 'none';
+      document.getElementById('emptyState').style.display = 'flex';
+      showError(err.message || 'Something went wrong. Please try again.');
+    }
+
+    setGenerating(false);
+  }
+
+  // ── Markdown → HTML (minimal, safe renderer) ──────────────────
+  function markdownToHtml(md) {
+    // Escape HTML first (then selectively re-add tags)
+    let h = md
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Tables (must come before other block processing)
+    h = h.replace(/^(\|.+\|)\n(\|[-| :]+\|)\n((?:\|.+\|\n?)*)/gm, (_, header, sep, rows) => {
+      const ths = header.split('|').filter(Boolean).map(c =>
+        `<th>${c.trim()}</th>`).join('');
+      const trs = rows.trim().split('\n').map(row => {
+        const tds = row.split('|').filter(Boolean).map(c =>
+          `<td>${c.trim()}</td>`).join('');
+        return `<tr>${tds}</tr>`;
+      }).join('');
+      return `<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+    });
+
+    // Code blocks
+    h = h.replace(/```[\w]*\n?([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    // Inline code
+    h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // Headers
+    h = h.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    h = h.replace(/^## (.+)$/gm,  '<h2>$1</h2>');
+    h = h.replace(/^# (.+)$/gm,   '<h1>$1</h1>');
+
+    // Bold
+    h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Italic
+    h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+    // Blockquotes
+    h = h.replace(/^&gt; (.+)$/gm, '<blockquote><p>$1</p></blockquote>');
+
+    // Checkboxes
+    h = h.replace(/^- \[ \] (.+)$/gm, '<li><label><input type="checkbox" disabled> $1</label></li>');
+    h = h.replace(/^- \[x\] (.+)$/gm, '<li><label><input type="checkbox" checked disabled> $1</label></li>');
+
+    // Unordered lists
+    h = h.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+    // Ordered lists
+    h = h.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+    // Wrap consecutive <li> in <ul>
+    h = h.replace(/(<li>.*<\/li>\n?)+/g, match => `<ul>${match}</ul>`);
+
+    // Paragraphs (double newlines)
+    h = h.replace(/\n\n+/g, '</p><p>');
+    h = '<p>' + h + '</p>';
+
+    // Clean up empty paragraphs and paragraphs wrapping block elements
+    h = h.replace(/<p>\s*<\/p>/g, '');
+    h = h.replace(/<p>(<h[1-3]>)/g, '$1');
+    h = h.replace(/(<\/h[1-3]>)<\/p>/g, '$1');
+    h = h.replace(/<p>(<ul>)/g, '$1');
+    h = h.replace(/(<\/ul>)<\/p>/g, '$1');
+    h = h.replace(/<p>(<table>)/g, '$1');
+    h = h.replace(/(<\/table>)<\/p>/g, '$1');
+    h = h.replace(/<p>(<blockquote>)/g, '$1');
+    h = h.replace(/(<\/blockquote>)<\/p>/g, '$1');
+    h = h.replace(/<p>(<pre>)/g, '$1');
+    h = h.replace(/(<\/pre>)<\/p>/g, '$1');
+
+    // Add metadata line after first h1
+    const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+    h = h.replace(/(<\/h1>)/, `$1<p class="meta">Generated ${today} · Claude Opus 4.6</p>`);
+
+    return h;
+  }
+
+  // ── Copy / Download ────────────────────────────────────────────
+  function copyMarkdown() {
+    if (!rawMarkdown) return;
+    navigator.clipboard.writeText(rawMarkdown).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Markdown'; }, 2000);
+    });
+  }
+
+  function downloadMarkdown() {
+    if (!rawMarkdown) return;
+    const name    = document.getElementById('productName').value.trim() || 'PRD';
+    const slug    = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const blob    = new Blob([rawMarkdown], { type: 'text/markdown' });
+    const url     = URL.createObjectURL(blob);
+    const a       = document.createElement('a');
+    a.href        = url;
+    a.download    = `prd-${slug}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Toast ───────────────────────────────────────────────────────
+  let toastTimer = null;
+
+  function showToast(msg) {
+    let toast = document.getElementById('toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.className = 'toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 4000);
+  }
+
+  // ── UI helpers ─────────────────────────────────────────────────
+  function setGenerating(val) {
+    isGenerating = val;
+    const btn     = document.getElementById('generateBtn');
+    const spinner = document.getElementById('spinner');
+    const text    = document.getElementById('btnText');
+    btn.disabled         = val;
+    spinner.style.display = val ? 'block' : 'none';
+    text.textContent      = val ? 'Generating…' : 'Generate PRD';
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorBanner');
+    el.textContent     = msg;
+    el.style.display   = 'block';
+  }
+
+  function hideError() {
+    document.getElementById('errorBanner').style.display = 'none';
+  }
+
+  // Allow Enter in single-line inputs to trigger generate
+  ['productName', 'users'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') generatePRD();
+    });
+  });
+
+  // ── Start Building ─────────────────────────────────────────────
+  function showBuildPanel() {
+    const section = document.getElementById('build-section');
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  async function runBuildPrompt() {
+    if (!rawMarkdown) return;
+
+    const sendBtn = document.getElementById('buildSendBtn');
+    const spinner = document.getElementById('buildSpinner');
+    const btnText = document.getElementById('buildBtnText');
+
+    const name = document.getElementById('productName').value.trim() || 'this product';
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+    const dateStr    = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+    const prdContent = `# ${name} — PRD\n_Generated ${dateStr}_\n\n---\n\n${rawMarkdown}`;
+
+    let folderMsg      = '';
+    let folderSubtitle = '';
+
+    sendBtn.disabled      = true;
+    spinner.style.display = 'block';
+    btnText.textContent   = 'Saving…';
+
+    try {
+      if (window.showDirectoryPicker) {
+        const rootDir    = await window.showDirectoryPicker({ mode: 'readwrite', startIn: 'documents' });
+        const projectDir = await rootDir.getDirectoryHandle(slug, { create: true });
+        const fh         = await projectDir.getFileHandle('prd.md', { create: true });
+        const writable   = await fh.createWritable();
+        await writable.write(prdContent);
+        await writable.close();
+        folderMsg      = `"${slug}/prd.md" saved.`;
+        folderSubtitle = 'Open your terminal in that folder and run: claude';
+      } else {
+        // Fallback: download the file
+        const a = Object.assign(document.createElement('a'), {
+          href:     URL.createObjectURL(new Blob([prdContent], {type:'text/markdown'})),
+          download: `${slug}-prd.md`,
+        });
+        a.click();
+        URL.revokeObjectURL(a.href);
+        folderMsg      = `Downloaded: ${slug}-prd.md`;
+        folderSubtitle = 'Move it into a folder, then open Claude Code there.';
+      }
+
+      document.getElementById('folderSuccessMsg').textContent = folderMsg;
+      document.getElementById('folderSubtitle').textContent   = folderSubtitle;
+      document.getElementById('chip1').textContent =
+        `I have a new project called ${name}. The PRD is in prd.md. Read it and help me plan what to build in the first sprint.`;
+      document.getElementById('nextStepsCard').style.display = 'block';
+      sendBtn.style.display = 'none';
+      document.getElementById('nextStepsCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        // User cancelled the folder picker — reset quietly
+        sendBtn.disabled      = false;
+        spinner.style.display = 'none';
+        btnText.textContent   = 'Save PRD to Folder';
+        return;
+      }
+      sendBtn.disabled      = false;
+      spinner.style.display = 'none';
+      btnText.textContent   = 'Save PRD to Folder';
+      showToast(err.message || 'Something went wrong. Please try again.');
+    }
+  }
+
+  function copyChip(el) {
+    const text = el.querySelector('span:first-child').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const hint = el.querySelector('.copy-hint');
+      hint.textContent = '✓ copied';
+      setTimeout(() => { hint.textContent = 'click to copy'; }, 2000);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Prefill form fields ─────────────────────────────────────────
+  document.getElementById('productName').value = 'DataPulse';
+
+  document.getElementById('problem').value =
+    'Product managers need data to make decisions, but getting answers from raw ' +
+    'data requires SQL knowledge or a data analyst\'s time. Requests pile up, ' +
+    'analysts become bottlenecks, and PMs are left making gut-feel decisions ' +
+    'while waiting days for a simple chart or metric. Self-serve BI tools exist ' +
+    'but require training and still assume technical literacy.';
+
+  document.getElementById('users').value =
+    'Non-technical product managers and business stakeholders at B2B SaaS companies';
+
+  document.getElementById('features').value =
+    'Ask a question in plain English and get a chart or table instantly\n' +
+    'Connect to common data sources (Postgres, BigQuery, Snowflake, CSV)\n' +
+    'AI explains the result in plain language alongside the visualization\n' +
+    'Save and share analyses as reusable reports\n' +
+    'Schedule reports to auto-refresh and land in Slack or email';
+
+  document.getElementById('metrics').value =
+    'PMs get answers in under 2 minutes vs. 2-day analyst turnaround\n' +
+    '70% of ad-hoc data requests handled without analyst involvement\n' +
+    'NPS ≥ 45 among active PM users at 90 days';
+
+  document.getElementById('nongoals').value =
+    'We are not replacing full BI tools like Looker or Tableau\n' +
+    'No predictive modeling or ML features in v1\n' +
+    'No write-back to data sources — read-only\n' +
+    'Not designed for data engineers or analysts as primary users';
+
+  // ── Pre-render DataPulse PRD on load ────────────────────────────
+  const DEMO_PRD = `# DataPulse
+
+## Overview
+DataPulse is an AI-powered data analysis tool that lets product managers ask questions in plain English and instantly get charts, tables, and plain-language explanations — no SQL, no analyst bottleneck. By making data self-serve for non-technical users, DataPulse reduces the time from question to insight from days to minutes.
+
+## Problem Statement
+Product managers rely on data to prioritize features, measure impact, and make the case for investment — but accessing that data is slow and frustrating. Writing SQL is out of reach for most PMs, and routing requests through data analysts creates a bottleneck that delays decisions by 1–3 days. Existing self-serve BI tools (Looker, Tableau) require training and still assume technical fluency. The result: PMs default to gut feel or stale dashboards, and analysts spend their time on low-complexity queries instead of high-value work.
+
+## Goals
+- [ ] Answer ad-hoc data questions in under 2 minutes from a plain-English prompt
+- [ ] Reduce analyst involvement in ad-hoc queries by 70% within 90 days of launch
+- [ ] Support connections to the top 4 data sources used by target customers at launch
+- [ ] 80% of generated charts are used as-is or with minor edits (no full regeneration needed)
+- [ ] Reach NPS ≥ 45 among active PM users at 90 days
+
+## Non-Goals
+- We are not replacing full BI platforms like Looker, Tableau, or Metabase
+- No predictive modeling, ML, or forecasting features in v1
+- No write-back to data sources — DataPulse is read-only
+- Data engineers and analysts are not the primary users
+- We are not building a data transformation or ETL layer
+
+## Target Users
+
+### Primary: Non-Technical Product Managers
+PMs at B2B SaaS companies who need frequent access to product and usage data but lack SQL skills or dedicated analyst support.
+
+### Secondary: Business Stakeholders (Growth, Marketing, Operations)
+Non-technical leads who need ad-hoc visibility into KPIs without filing requests or waiting for reports.
+
+## User Stories
+
+### Must Have (v1)
+- As a **PM**, I want to type a question like "how many users activated last week?" and get a chart instantly so that I don't have to wait for a data request.
+- As a **PM**, I want the AI to explain the result in plain English so that I can understand what the data means without interpreting it myself.
+- As a **PM**, I want to connect my team's Postgres or BigQuery instance so that DataPulse works with our existing data stack.
+- As a **PM**, I want to save a chart as a named report so that I can revisit it without re-asking the question.
+- As a **PM**, I want to share a report link with my team so that everyone works off the same numbers.
+
+### Nice to Have (v1.1+)
+- As a **PM**, I want to schedule a report to refresh weekly and post to our Slack channel so that my team gets key metrics without manual effort.
+- As a **PM**, I want to filter a chart by date range or segment with a click so that I can explore the data without typing a new question.
+- As a **stakeholder**, I want a personal dashboard of my saved reports so that my most-used metrics are always one click away.
+
+## Key Flows
+
+### Flow 1: Ask a question and get an answer
+1. PM types a plain-English question into the search bar (e.g. "What's our activation rate by signup cohort this quarter?")
+2. DataPulse translates the question into a query against the connected data source
+3. A chart and plain-language summary appear within seconds
+4. PM can refine by typing a follow-up ("break it down by plan type") or asking a new question
+
+### Flow 2: Save and share a report
+1. PM reviews the chart and clicks **Save as Report**
+2. PM names the report and optionally adds it to a folder
+3. PM copies the shareable link and pastes it into a Slack message or doc
+4. Recipients open the link and see the live, auto-refreshing chart
+
+## Edge Cases & Open Questions
+
+| # | Question | Owner | Status |
+|---|----------|-------|--------|
+| 1 | How do we handle ambiguous questions where multiple interpretations are valid? | PM | Open |
+| 2 | What happens when the AI-generated query returns no results? | Eng | Proposed: show empty state with suggested rephrasing |
+| 3 | How do we prevent exposure of sensitive columns (e.g. PII) to non-admin users? | Security | Open |
+| 4 | Do we cache query results? For how long? | Eng | Open |
+| 5 | How do we handle very large datasets that time out? | Eng | Open |
+| 6 | Which data sources do we support at launch? | PM | Proposed: Postgres, BigQuery, Snowflake, CSV upload |
+
+## Success Metrics
+- **Time to insight**: Median time from question to chart < 2 minutes (baseline: 1–3 days via analyst)
+- **Analyst offload**: 70% of ad-hoc data requests handled without analyst involvement at 90 days
+- **Chart acceptance rate**: ≥ 80% of generated charts used as-is or with minor edits
+- **Adoption**: ≥ 60% of invited PMs are weekly active users at 60 days
+- **Satisfaction**: NPS ≥ 45 among active users at 90 days
+
+## Out of Scope
+- Predictive analytics, ML models, or forecasting (planned v2)
+- Write-back or data mutation of any kind
+- ETL, data transformation, or pipeline management
+- Support for more than 4 data sources at launch
+- Mobile app (web-only for v1)
+
+## Backlog
+- [ ] Natural language filters and drill-downs on existing charts
+- [ ] Scheduled Slack/email report delivery
+- [ ] Personal and team dashboards
+- [ ] Row-level security and column masking for sensitive data
+- [ ] Support for REST APIs and webhooks as data sources`;
+
+  // DEMO_PRD is ready — it will render instantly on first "Generate PRD" click.
+</script>
+</body>
+</html>
