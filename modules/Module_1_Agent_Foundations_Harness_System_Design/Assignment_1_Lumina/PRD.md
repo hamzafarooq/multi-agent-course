@@ -289,7 +289,7 @@ This assignment is graded under the cohort's quality bar (`QUALITY_BAR.md`). Fou
 
 1. **A thing that ran is not a thing that worked.** A streamed answer with a green `done` proves the process did not crash. Grounding, recall, budget, and termination are what prove it worked.
 2. **Assert from declared numbers, never from detection.** Every gating threshold in this PRD is arithmetic against a run log or an eval report. No error-severity check asks a model for its opinion. An LLM judge may *report* on tone or helpfulness at `warn`; it may never block.
-3. **Every rule cites the failure that created it.** Rule IDs below refer to the cohort `rules.json`. One real precedent this assignment already owns: the Live Translate silent-fallback bug recorded in `FDE/Assignment_1_Live_Translate/AGENTS.md` (a dependency mismatch made every LLM call throw, the `except` returned the input untouched, and the "translator" served English for weeks). That is rule **A1**'s precedent and should replace its `TODO`. Do not invent others.
+3. **Every rule cites the failure that created it.** Rule IDs below refer to the cohort `rules.json`. One real precedent this assignment already owns: the Live Translate silent-fallback bug recorded in `FDE-01-assignments/Assignment_1_Live_Translate/AGENTS.md` (a dependency mismatch made every LLM call throw, the `except` returned the input untouched, and the "translator" served English for weeks). That is rule **A1**'s precedent and should replace its `TODO`. Do not invent others.
 4. **Gates run in order, and each one blocks.** `eval.py` runs the gates below top to bottom and stops at the first failure.
 
 ### Declared expectations (write these before the first run)

@@ -4,7 +4,7 @@ Six modules taught the concepts. Four projects made you ship them. Demo Day is w
 the last one — **EPYHIA**, your end-to-end AI agency — live, and defend it on the numbers.
 
 > **New here?** This is the final week of the [FDE Agent Engineering Bootcamp](../../README.md).
-> The project you're demoing is specified in [`FDE/Assignment_4_Final_Epyhia/`](../../FDE/Assignment_4_Final_Epyhia/).
+> The project you're demoing is specified in [`FDE-01-assignments/Assignment_4_Final_Epyhia/`](../../FDE-01-assignments/Assignment_4_Final_Epyhia/).
 
 ## What happens on Demo Day
 
@@ -29,4 +29,4 @@ A thing that ran is not a thing that worked. Demo Day grades on whether the syst
 right thing for the right reasons, measurably, and whether you can name the worst bug you shipped
 into and what caught it.
 
-[EPYHIA spec →](../../FDE/Assignment_4_Final_Epyhia/) · [Module 6 — Leading AI Systems Across Teams](../Module_6_Leading_AI_Systems_Across_Teams/README.md)
+[EPYHIA spec →](../../FDE-01-assignments/Assignment_4_Final_Epyhia/) · [Module 6 — Leading AI Systems Across Teams](../Module_6_Leading_AI_Systems_Across_Teams/README.md)

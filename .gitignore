@@ -15,7 +15,7 @@ market-sizing-sdk/
 modules/Module_4_Multi_Agent_Systems_Orchestration/advance-customer-support-agent-feature-A2A-MCP-ADK/handoff.md
 
 # Handoffs (local working notes)
-FDE/handoff.md
+FDE-01-assignments/handoff.md
 
 # Browser-driven screenshots / Playwright output
 .playwright-mcp/
@@ -26,13 +26,13 @@ node_modules/
 
 # FDE Assignment 1 — generated / local artifacts (scaffold ships without these)
 *.db
-FDE/Assignment_1_Live_Translate/eval/REPORT.md
-FDE/Assignment_1_Live_Translate/eval/report.json
-FDE/Assignment_1_Live_Translate/eval/_bench.json
-FDE/Assignment_1_Live_Translate/benchmark/_bench.json
-FDE/Assignment_1_Live_Translate/PRODUCT_EVAL.md
-FDE/Assignment_1_Live_Translate/PRODUCT_EVAL.pdf
-FDE/full-stack-developer-track.md
+FDE-01-assignments/Assignment_1_Live_Translate/eval/REPORT.md
+FDE-01-assignments/Assignment_1_Live_Translate/eval/report.json
+FDE-01-assignments/Assignment_1_Live_Translate/eval/_bench.json
+FDE-01-assignments/Assignment_1_Live_Translate/benchmark/_bench.json
+FDE-01-assignments/Assignment_1_Live_Translate/PRODUCT_EVAL.md
+FDE-01-assignments/Assignment_1_Live_Translate/PRODUCT_EVAL.pdf
+FDE-01-assignments/full-stack-developer-track.md
 
 # FDE decks — confidential, never in the public repo
 fde-decks/

@@ -5,7 +5,7 @@ This folder provides the room and browser stage of the Aurora workshop. It runs 
 ## Install
 
 ```bash
-cd FDE/Assignment_2_voice_agent/livekit
+cd FDE-01-assignments/Assignment_2_voice_agent/livekit
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt

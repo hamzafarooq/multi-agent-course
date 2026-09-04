@@ -29,7 +29,7 @@ file fully before responding to anything course-related.
 
 The course is the **FDE Agent Engineering Bootcamp** (cohort 2026-03) — seven weeks: six
 teaching modules, then Demo Day. Four shipped projects run alongside (LUMINA, ARGUS, VOXA,
-EPYHIA; specs in `FDE/`). Modules run in this order:
+EPYHIA; specs in `FDE-01-assignments/`). Modules run in this order:
 
 1. `Module_1_Agent_Foundations_Harness_System_Design` — Agent & system foundations, the agentic loop and the agent harness, components & responsibilities, state/communication trade-offs, scale up vs. scale out. Project kickoff: LUMINA.
 2. `Module_2_Skills_Subagents_Product_Architecture` — Skills, subagents, and multi-agent product architecture: Supervisor / Plan-and-Execute patterns, coordination, tools/skills/MCP, memory, governance & guardrails; defining subagents in `.claude/agents/`; the Sprint Zero capstone.

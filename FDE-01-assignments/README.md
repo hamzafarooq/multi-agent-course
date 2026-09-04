@@ -1,5 +1,13 @@
 # Forward Deployed Engineer (FDE) Track
 
+> **Previous cohort's assignments (2026-02).** These four projects and the bonus lab were the
+> FDE track before it merged with Agent Engineering. In the 2026-03 course, Assignment 2 (Voice
+> Agent) is the spec for **VOXA**, Assignment 3 (Moment Search at Scale) for **ARGUS**, and
+> Assignment 4 (EPYHIA) for **Demo Day**. Assignment 1 (Live Translate) is superseded by
+> **LUMINA**, whose PRD lives in
+> [`modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/`](../modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md).
+> New-cohort assignments ship inside their module folders.
+
 > **"Full stack" here means full-stack SWE *and* AI engineering.** You build the
 > whole product — the frontend, the agent logic, the model serving, the caching,
 > and the deployment. One product, fully under your control.

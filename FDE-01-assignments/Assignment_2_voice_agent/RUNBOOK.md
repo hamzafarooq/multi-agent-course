@@ -11,7 +11,7 @@ Complete installation before the workshop.
 Pipeline:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/pipeline
+cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -47,7 +47,7 @@ Use `PROVIDER=mock` in commands when no key is available.
 Before the session, confirm the offline checks pass:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/pipeline
+cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
 source .venv/bin/activate
 python smoke_test.py
 python -m unittest -v test_features.py
@@ -77,7 +77,7 @@ I need a room from August 12 to August 14 for two guests.
 ## Stage 1: Deterministic Text Agent
 
 ```bash
-cd FDE/Assignment_2_voice_agent/pipeline
+cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
 source .venv/bin/activate
 python smoke_test.py
 PROVIDER=mock python voice_loop.py --text
@@ -133,7 +133,7 @@ off-topic refusal cannot prevent grounding.
 Exit text mode, then run the automated routing proof:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/evals
+cd FDE-01-assignments/Assignment_2_voice_agent/evals
 python run_evals.py --suite core --verbose
 ```
 
@@ -206,14 +206,14 @@ Use three terminals.
 Terminal 1:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/livekit
+cd FDE-01-assignments/Assignment_2_voice_agent/livekit
 ./start_local_server.sh
 ```
 
 Terminal 2:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/livekit
+cd FDE-01-assignments/Assignment_2_voice_agent/livekit
 source .venv/bin/activate
 python create_room.py
 python talk_server.py
@@ -281,7 +281,7 @@ The workshop browser demonstrates playback barge-in. A production streaming syst
 Inspect the browser runtime trace and the local JSONL file:
 
 ```bash
-cd FDE/Assignment_2_voice_agent
+cd FDE-01-assignments/Assignment_2_voice_agent
 tail -n 1 logs/voice-events.jsonl | python3 -m json.tool
 ```
 
@@ -301,7 +301,7 @@ Conversation text is omitted and sensitive tool fields are redacted by default. 
 ## Stage 8: Evaluation And Red Teaming
 
 ```bash
-cd FDE/Assignment_2_voice_agent/evals
+cd FDE-01-assignments/Assignment_2_voice_agent/evals
 python3 run_evals.py --suite red-team --verbose
 ```
 
@@ -310,7 +310,7 @@ The core suite was already used during language routing. The red-team suite chec
 ## Stage 9: Scale Check
 
 ```bash
-cd FDE/Assignment_2_voice_agent/pipeline
+cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
 python3 scale_check.py --dau 1000000
 ```
 
@@ -328,7 +328,7 @@ python3 scale_check.py \
 ## Stage 10: SIP Mapping
 
 ```bash
-cd FDE/Assignment_2_voice_agent/mocks
+cd FDE-01-assignments/Assignment_2_voice_agent/mocks
 python3 demo_call.py
 python3 demo_call.py --transfer
 ```

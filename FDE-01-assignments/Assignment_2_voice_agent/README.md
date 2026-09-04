@@ -60,7 +60,7 @@ Assignment_2_voice_agent/
 The complete agent, tool, RAG, routing, evaluation, and scale paths run without network access or paid requests.
 
 ```bash
-cd FDE/Assignment_2_voice_agent/pipeline
+cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
 python3 smoke_test.py
 python3 -m unittest -v test_features.py
 PROVIDER=mock python3 voice_loop.py --text
@@ -80,7 +80,7 @@ Connect me to the front desk.
 ## OpenAI Setup
 
 ```bash
-cd FDE/Assignment_2_voice_agent/pipeline
+cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -129,7 +129,7 @@ The commands remain the same.
 Install the room demo once:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/livekit
+cd FDE-01-assignments/Assignment_2_voice_agent/livekit
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -141,14 +141,14 @@ Use three terminals.
 Terminal 1 starts the self-contained LiveKit development server:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/livekit
+cd FDE-01-assignments/Assignment_2_voice_agent/livekit
 ./start_local_server.sh
 ```
 
 Terminal 2 creates the room and starts the browser application:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/livekit
+cd FDE-01-assignments/Assignment_2_voice_agent/livekit
 source .venv/bin/activate
 python create_room.py
 python talk_server.py
@@ -208,7 +208,7 @@ Important production measures include endpoint delay, STT latency, LLM time to f
 Run all deterministic scenarios:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/evals
+cd FDE-01-assignments/Assignment_2_voice_agent/evals
 python3 run_evals.py --suite all
 ```
 
@@ -226,7 +226,7 @@ The suites verify expected tools, actions, languages, sources, allowed text, and
 The calculator converts product assumptions into peak concurrency and service demand without calling a provider:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/pipeline
+cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
 python3 scale_check.py --dau 1000000
 ```
 
@@ -247,7 +247,7 @@ PSTN caller -> carrier -> SIP trunk -> SBC or SIP edge -> LiveKit room -> agent 
 Run the local signaling demonstrations:
 
 ```bash
-cd FDE/Assignment_2_voice_agent/mocks
+cd FDE-01-assignments/Assignment_2_voice_agent/mocks
 python3 demo_call.py
 python3 demo_call.py --transfer
 python3 ivr_menu_mock.py

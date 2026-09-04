@@ -90,22 +90,22 @@ Modern AI builders need more than model skills.
 
 ## The Four Projects
 
-Concepts are taught in the modules; the projects are where you ship. Each is a real product built end to end — frontend, agent logic, model serving, caching, deployment — and graded against a **measurable rubric plus a short video demo, not vibes**. The specs, rubrics, and evaluators live in the [FDE track](FDE/README.md).
+Concepts are taught in the modules; the projects are where you ship. Each is a real product built end to end — frontend, agent logic, model serving, caching, deployment — and graded against a **measurable rubric plus a short video demo, not vibes**. LUMINA's PRD ships inside Module 1; the other three specs, rubrics, and evaluators live in the [previous cohort's FDE assignments](FDE-01-assignments/README.md) until their 2026-03 versions land in their module folders.
 
 | Starts | Project | You build | Spec |
 |---|---|---|---|
 | Week 1 | 🔍 **LUMINA** — Perplexity-style AI search | An AI search experience with retrieval, citations, and structured answers | [PRD](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md) |
-| Week 3 | 📄 **ARGUS** — Multimodal RAG pipeline | A RAG pipeline that understands and retrieves across text, images, documents, and more — with cited moments | [Assignment 3 — Moment Search at Scale](FDE/Assignment_3_Moment_Search_Scaled/) |
-| Week 5 | 🎙️ **VOXA** — Open-source voice agent | A streaming STT → LLM → TTS voice agent that holds a real-time conversation | [Assignment 2 — Voice Agent](FDE/Assignment_2_voice_agent/) |
-| Week 7 | 🏆 **EPYHIA** — End-to-end AI agency (Demo Day) | A production-ready autonomous agency that plans, builds, executes, and delivers value | [Assignment 4 — EPYHIA](FDE/Assignment_4_Final_Epyhia/) |
+| Week 3 | 📄 **ARGUS** — Multimodal RAG pipeline | A RAG pipeline that understands and retrieves across text, images, documents, and more — with cited moments | [Assignment 3 — Moment Search at Scale](FDE-01-assignments/Assignment_3_Moment_Search_Scaled/) |
+| Week 5 | 🎙️ **VOXA** — Open-source voice agent | A streaming STT → LLM → TTS voice agent that holds a real-time conversation | [Assignment 2 — Voice Agent](FDE-01-assignments/Assignment_2_voice_agent/) |
+| Week 7 | 🏆 **EPYHIA** — End-to-end AI agency (Demo Day) | A production-ready autonomous agency that plans, builds, executes, and delivers value | [Assignment 4 — EPYHIA](FDE-01-assignments/Assignment_4_Final_Epyhia/) |
 
-Every project ships an `eval/` folder with a `rubric.json` and an `eval.py` that scores your running deployment, captures evidence, and produces a **Product Evaluation** report you submit with a 60–90s demo. [See a sample scorecard →](FDE/Assignment_1_Live_Translate/README.md#sample-scorecard)
+Every project ships an `eval/` folder with a `rubric.json` and an `eval.py` that scores your running deployment, captures evidence, and produces a **Product Evaluation** report you submit with a 60–90s demo. [See a sample scorecard →](FDE-01-assignments/Assignment_1_Live_Translate/README.md#sample-scorecard)
 
 ---
 
 ## How to Use This Repo
 
-- Content is organized **module by module** under `modules/`, aligned with the live sessions and project milestones. Project specs live under `FDE/`.
+- Content is organized **module by module** under `modules/`, aligned with the live sessions and project milestones. Project specs live under `FDE-01-assignments/`.
 - **Google Colab Pro** is the preferred environment for the notebooks. You can also **clone locally** and run them in Jupyter or your IDE.
 - Most notebooks include their own dependencies via `!pip install`; where a module needs more, a `requirements.txt` sits alongside it.
 
@@ -286,7 +286,7 @@ You can build the system. Now lead the people and decisions around it: set the s
 
 **Showcase · Evaluate · Feedback · Next steps.** You demo **EPYHIA**, your end-to-end AI agency, live: it plans, builds, executes, and delivers value for one real customer, unattended, with every side effect going through one action gateway. It is graded on the rubric, not the pitch.
 
-[Demo Day brief →](modules/Module_7_Demo_Day/README.md) · [EPYHIA spec →](FDE/Assignment_4_Final_Epyhia/)
+[Demo Day brief →](modules/Module_7_Demo_Day/README.md) · [EPYHIA spec →](FDE-01-assignments/Assignment_4_Final_Epyhia/)
 
 ---
 
