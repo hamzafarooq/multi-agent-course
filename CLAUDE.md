@@ -27,14 +27,17 @@ file fully before responding to anything course-related.
 
 ## Course modules (update this list when modules change)
 
-The course runs in this order — six modules, "from efficiency to action":
+The course is the **FDE Agent Engineering Bootcamp** (cohort 2026-03) — seven weeks: six
+teaching modules, then Demo Day. Four shipped projects run alongside (LUMINA, ARGUS, VOXA,
+EPYHIA; specs in `FDE/`). Modules run in this order:
 
-1. `Module_1_Agent_Loop` — The agent loop, ReAct, and what a production harness adds on top of a bare loop.
-2. `Module_2_Skills_Sub_Agents` — Skills, subagents, and the orchestrator pattern for multi-agent systems; defining subagents in `.claude/agents/`, specialization, failure modes, and the Sprint Zero capstone.
-3. `Module_3_Agentic_RAG` — Agentic RAG, semantic caching, and Knowledge Graphs for hybrid memory.
-4. `Module_4_AI_Evaluation` — Production guardrails (Llama Guard) and trajectory-vs-outcome evaluation.
-5. `Module_5_Multi_Agents` — Multi-agent coordination and the protocol layer: MCP, A2A, and ADK.
-6. `Module_6_Voice_Agents` — Voice agents (STT → LLM → TTS, turn-taking, latency budgeting), the cascade vs. speech-to-speech architectures, and benchmarking them head-to-head.
+1. `Module_1_Agent_Foundations_Harness_System_Design` — Agent & system foundations, the agentic loop and the agent harness, components & responsibilities, state/communication trade-offs, scale up vs. scale out. Project kickoff: LUMINA.
+2. `Module_2_Skills_Subagents_Product_Architecture` — Skills, subagents, and multi-agent product architecture: Supervisor / Plan-and-Execute patterns, coordination, tools/skills/MCP, memory, governance & guardrails; defining subagents in `.claude/agents/`; the Sprint Zero capstone.
+3. `Module_3_Production_Agentic_RAG_AI_Systems` — Production agentic RAG, advanced retrieval (re-ranking, query transformation, hybrid search), semantic caching, Knowledge Graphs, moment-level video RAG, and — in `Evaluation_and_Guardrails/` — the eval pyramid and guardrails (Llama Guard). Project kickoff: ARGUS.
+4. `Module_4_Multi_Agent_Systems_Orchestration` — Multi-agent coordination and orchestration, A2A communication, shared state/memory/context, observability & debugging; the protocol layer: MCP, A2A, ADK.
+5. `Module_5_Voice_Agents_Conversational_Systems` — Real-time voice agents (STT → LLM → TTS, turn-taking, latency budgeting), cascade vs. speech-to-speech architectures, benchmarking them head-to-head, evaluation & deployment. Project kickoff: VOXA.
+6. `Module_6_Leading_AI_Systems_Across_Teams` — Leadership & team alignment, AI strategy & roadmapping, organizational change & adoption, ethics/governance/compliance, measuring impact & ROI.
+7. `Module_7_Demo_Day` — Demo Day: showcase, evaluate, feedback, next steps. The EPYHIA capstone is demoed and graded against its rubric.
 
 
 **Module folder structure.** Each module lives under `modules/Module_N_Name/`. The five
@@ -44,10 +47,10 @@ live in that module's `study-material/` subfolder, alongside the module's suppor
 files and pull in the supporting material for hands-on work. Copy `modules/_TEMPLATE/` (whose
 five files become the module's `study-material/`) when adding a new module.
 
-> Note: `Module_1_Agent_Loop`, `Module_2_Skills_Sub_Agents`, `Module_5_Multi_Agents`, and
-> `Module_6_Voice_Agents` currently have the full `study-material/` set. The remaining modules
-> so far contain only supporting material (notebooks, code, READMEs); their teaching files still
-> need to be authored.
+> Note: Modules 1, 2, 4, and 5 have the full `study-material/` set. Module 3 has rich supporting
+> material (notebooks, apps, READMEs) but its teaching files are not yet authored — teach from its
+> README and the folder READMEs. Module 6's `study-material/` is a filled-in template awaiting
+> authoring; Module 7 is a README brief only.
 
 ## Teaching style
 
