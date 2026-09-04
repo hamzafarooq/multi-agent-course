@@ -14,6 +14,7 @@ honestly on cost, latency, and capability.
 | [`advance-customer-support-agent-feature-A2A-MCP-ADK_cascading`](advance-customer-support-agent-feature-A2A-MCP-ADK_cascading/) | **Cascade voice agent** — STT → sanitize → A2A judge (gate) → ADK agent (+MCP tools, Mem0) → TTS. A pipeline of separately-owned stages. |
 | [`advance-customer-support-agent-feature-A2A-MCP-ADK-s2s`](advance-customer-support-agent-feature-A2A-MCP-ADK-s2s/) | **Speech-to-speech voice agent** — Gemini Live, native audio in/out, tools via function calling, judge as a concurrent monitor. One model instead of a pipeline. |
 | [`benchmarking_voice_agents`](benchmarking_voice_agents/) | **Cascade vs. S2S benchmark** — runs the *same* agent through both architectures on 15 audio queries and compares cost, latency, and agentic capability. |
+| [`bonus/`](bonus/) 🎁 | **Optional** — LLM inference optimization: 4-bit quantization + KV caching, and speculative decoding from scratch. Not required to finish the module. |
 
 > **Note:** Like Module 4, this module is taught primarily through its hands-on projects — the
 > two capstone variants and the benchmark *are* the lesson. The conceptual companion lives in
@@ -53,3 +54,19 @@ Each subfolder is self-contained with its own `README.md` and `requirements.txt`
 `advance-customer-support-agent-feature-A2A-MCP-ADK_cascading` (`./run.sh setup` provisions the
 conda env, Postgres, seed data, and `.env`), then run the `-s2s` variant, then compare them with
 `benchmarking_voice_agents/reproduce.py`.
+
+---
+
+## Bonus (optional) — LLM inference optimization
+
+> Not required to complete the module. These are self-contained deep-dives for the curious —
+> the inference-level techniques that decide *where* a voice agent's latency and cost land.
+
+- [`bonus/Quantization_and_KV_Caching`](bonus/Quantization_and_KV_Caching/) — 4-bit
+  quantization with bitsandbytes + Transformers, and measuring TTFT / inter-token latency /
+  throughput full-precision vs. quantized (Llama-3.1-8B goes ~30 GB → ~6 GB VRAM).
+- [`bonus/Speculative_Decoding_from_scratch`](bonus/Speculative_Decoding_from_scratch/) — a
+  small draft model proposes tokens, a large model verifies them in parallel; built from
+  scratch to show the accept/reject mechanics.
+
+A GPU is recommended (the notebooks benchmark on an NVIDIA A40 via RunPod).
