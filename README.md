@@ -72,7 +72,7 @@ Modern AI builders need more than model skills.
 6. [Week 6 — Leading AI Systems Across Teams](#week-6--leading-ai-systems-across-teams)
 7. [Week 7 — Demo Day: Production-Ready AI Systems](#week-7--demo-day-production-ready-ai-systems)
 
-**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects)
+**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects)
 
 ### 🗺️ Course at a glance
 
@@ -315,11 +315,6 @@ This course goes beyond theory. Across seven weeks you'll ship real, portfolio-r
 
 End-to-end, build-along projects that tie the course concepts together.
 
-> **Want something smaller to tinker with?** [`Starter_Projects/`](Starter_Projects/README.md) holds nine
-> complete, ungraded apps imported from [claude-code-starter](https://github.com/hamzafarooq/claude-code-starter) —
-> research agents, a meeting-notes summarizer, a multi-agent visualizer, a scroll-driven landing page — to read
-> alongside the modules and point Claude Code at.
-
 ### 🚀 Sprint Zero — a multi-agent product team in your terminal
 
 > **Point it at a product. Answer three questions. Get back a complete spec set and a working app.**
@@ -337,6 +332,31 @@ A Claude Code kit that runs a full sub-agent product team on your laptop — sco
 [![Open Sprint Zero](https://img.shields.io/badge/▶%20Open-Sprint%20Zero-6E40C9?style=for-the-badge)](Full_Stack_Projects/Sprint_Zero)
 
 Built by [Yousuf Alvi](https://github.com/yousuf-alvi) and [Hamza Farooq](https://www.linkedin.com/in/hamzafarooq/).
+
+---
+
+## Starter Projects
+
+Nine small, complete apps you can clone, run, break, and rebuild — imported from
+[claude-code-starter](https://github.com/hamzafarooq/claude-code-starter) (MIT). Ungraded. They exist so you
+have working code to read alongside the modules and something real to point Claude Code at. Each folder is
+self-contained: read its README, copy `.env.example` to `.env`, run it. None ship secrets.
+
+| Project | What it does | Pairs with |
+|---------|-------------|------------|
+| [skill-sub-multi-agent](Starter_Projects/skill-sub-multi-agent/) | Interactive 4-level visualization of how skills, sub-agents, and multi-agent pipelines work — Next.js | Module 2 |
+| [research-frontend](Starter_Projects/research-frontend/) | Chat UI that teaches LLM modes one switch at a time: tools, memory, RAG, long-term storage | Modules 1, 3 |
+| [full-stack-demo](Starter_Projects/full-stack-demo/) | Visual explainer of how a frontend, a backend, and an AI backend talk to each other | Module 1 |
+| [competitor-research-agent](Starter_Projects/competitor-research-agent/) | End-to-end competitor research using sub-agents (pricing-fetcher + review-miner) | Module 2 |
+| [research-agent](Starter_Projects/research-agent/) | Claude Code agent for deep competitive-landscape research with MCP | Module 2 |
+| [meetingmemo](Starter_Projects/meetingmemo/) | Turns raw meeting notes into a structured standup update — Next.js + Anthropic API | Module 1 |
+| [meeting-notes-summarizer](Starter_Projects/meeting-notes-summarizer/) | Summarizes meeting notes into action items — Node.js + Express | Module 1 |
+| [prd-generator](Starter_Projects/prd-generator/) | Single-page PRD generator | Module 2 |
+| [royal-pop-website](Starter_Projects/royal-pop-website/) | Scroll-driven product landing page built from a 15-second video — GSAP, Lenis, canvas frame playback | Module 2 / EPYHIA |
+
+Also worth a look, hosted elsewhere: [word-humanizer](https://github.com/hamzafarooq/word-humanizer/) ·
+[seo-writer](https://github.com/hamzafarooq/seo-writer) · [linkedin-growth](https://github.com/hamzafarooq/linkedin-growth).
+The previous cohort's graded FDE projects live in [`FDE-01-assignments/`](FDE-01-assignments/README.md).
 
 ---
 
