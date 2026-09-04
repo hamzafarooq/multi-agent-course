@@ -5,15 +5,15 @@
 
 **From a 50-line agent loop to a production-ready AI agency — seven weeks, four shipped products, built by you.**
 
-[![Course](https://img.shields.io/badge/Maven-Live%20Cohort-6E40C9?style=for-the-badge)](https://maven.com/boring-bot/advanced-llm)
+[![Agent Engineering Bootcamp](https://img.shields.io/badge/Maven-Agent%20Engineering%20Bootcamp%20★%204.8-6E40C9?style=for-the-badge)](https://maven.com/boring-bot/advanced-llm)
 &nbsp;
-![Rating](https://img.shields.io/badge/★%204.8%2F5-107%20reviews-FF6F61?style=for-the-badge)
+[![FDE Bootcamp](https://img.shields.io/badge/Maven-Forward%20Deployed%20Engineering%20Bootcamp%20★%204.9-FF6F61?style=for-the-badge)](https://maven.com/boring-bot/ai-system-design)
 &nbsp;
 ![Weeks](https://img.shields.io/badge/7%20Weeks-6%20modules%20%2B%20Demo%20Day-2EA043?style=for-the-badge)
 &nbsp;
 [![Built with Claude](https://img.shields.io/badge/Built%20with-Claude%20Code-D97757?style=for-the-badge&logo=anthropic&logoColor=white)](https://claude.com/claude-code)
 
-[**Course page**](https://maven.com/boring-bot/advanced-llm) · [**Curriculum**](#course-curriculum) · [**The four projects**](#the-four-projects) · [**What you'll build**](#what-youll-build) · [**Learn with Claude**](#learn-with-claude-ai-tutor)
+[**Agent Engineering Bootcamp**](https://maven.com/boring-bot/advanced-llm) · [**FDE Bootcamp**](https://maven.com/boring-bot/ai-system-design) · [**Curriculum**](#course-curriculum) · [**The four projects**](#the-four-projects) · [**What you'll build**](#what-youll-build) · [**Learn with Claude**](#learn-with-claude-ai-tutor)
 
 <img width="1000" alt="FDE Agent Engineering Bootcamp — 2026-03 course outline: seven weeks and four projects" src="assets/course-outline-2026-03.png" />
 
@@ -23,7 +23,12 @@
 
 ---
 
-Welcome to the official course repository for the **FDE Agent Engineering Bootcamp** — all the code, notebooks, exercises, and project specs used throughout the course. This cohort merges two tracks that used to run separately: **Agent Engineering** (the loop, the harness, RAG, multi-agent coordination, voice) and the **Forward Deployed Engineer (FDE) track** (ship the whole product — frontend, backend, model serving, caching, deploy — and prove it works). Six modules teach the concepts; four projects make you ship them.
+Welcome to the official course repository for the **FDE Agent Engineering Bootcamp** — all the code, notebooks, exercises, and project specs used throughout the course. This cohort merges two Maven courses that used to run separately:
+
+- [**Agent Engineering Bootcamp: Developers Edition**](https://maven.com/boring-bot/advanced-llm) (★ 4.8, 132 reviews) — the loop, the harness, agentic RAG, multi-agent coordination, voice; *"master the full agent stack from first principles to production."*
+- [**Forward Deployed Engineering Bootcamp**](https://maven.com/boring-bot/ai-system-design) (★ 4.9, 54 reviews) — *"build full-stack AI products, from MVP to deployment"*: React frontend, Node backend, hosted models, four real deployments.
+
+Six modules teach the concepts; four projects make you ship them.
 
 > **Looking for a previous cohort?** The prior version of this course is preserved on the [`2026-02`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-02) branch (and `2026-01` before it).
 
@@ -328,7 +333,12 @@ Built by [Yousuf Alvi](https://github.com/yousuf-alvi) and [Hamza Farooq](https:
 
 ## About the Course
 
-**FDE Agent Engineering Bootcamp** · ⭐ 4.8/5 (107 reviews)
+**FDE Agent Engineering Bootcamp** — the merger of two Maven courses:
+
+| Course | Rating | What it brought |
+|---|---|---|
+| [Agent Engineering Bootcamp: Developers Edition](https://maven.com/boring-bot/advanced-llm) | ⭐ 4.8/5 (132 reviews) | Agentic RAG, voice, and multi-agent systems from first principles to production |
+| [Forward Deployed Engineering Bootcamp](https://maven.com/boring-bot/ai-system-design) | ⭐ 4.9/5 (54 reviews) | Full-stack AI products — frontend, backend, hosted models — shipped through four real deployments |
 
 **Instructor:** [Hamza Farooq](https://www.linkedin.com/in/hamzafarooq/) — Founder @ [traversaal.ai](https://traversaal.ai) · Ex-Google, Walmart Labs · 15+ years in machine learning · Adjunct Professor at Stanford & UCLA
 
