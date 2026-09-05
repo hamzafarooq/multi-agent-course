@@ -1,0 +1,27 @@
+{
+  "$comment": "LUMINA. Declared BEFORE the first run. Asserted by arithmetic via quality/check.mjs. A threshold set after seeing the score is not a threshold.",
+  "project": "LUMINA",
+  "quality": { "rules": true, "budget": true },
+
+  "budget": {
+    "maxTokensPerRun": 40000,
+    "maxToolCalls": 8,
+    "maxWallClockSec": 90,
+    "maxCostUsd": 0.05
+  },
+
+  "trajectory": {
+    "mustCallTools": [],
+    "mustNotCallTools": ["generate_image", "make_presentation"],
+    "maxConsecutiveSameTool": 3,
+    "mustTerminate": true
+  },
+
+  "eval": {
+    "goldSetPath": "eval/gold/rag_gold.jsonl",
+    "minCitationGrounding": 0.95,
+    "minRecallAt5": 0.70,
+    "minRetrievalRate": 1.0,
+    "maxErrorRate": 0.01
+  }
+}

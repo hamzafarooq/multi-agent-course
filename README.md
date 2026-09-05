@@ -381,7 +381,7 @@ Everything in this repo, a module, a project submission, a pull request, is held
 3. **Every rule cites the failure that created it.** A rule with no incident behind it is an opinion. Rules in this course carry IDs (`A1` tool errors surface, `A2` the loop finished rather than hit a cap, `R2` forbidden tools were not called, `E2` declared eval thresholds met, `B1`–`B3` token, latency, and cost budgets, `P1` a human read the trajectory) and each cites the real incident that made it a rule.
 4. **Gates run in order, and each one blocks.** Static checks, then the declared contract, then a smoke run, then the trajectory, then the eval, then a human. Cheap and deterministic first; expensive and human last. Nothing downstream runs on upstream garbage.
 
-The [LUMINA PRD, section 13](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md#13--quality-bar--how-done-is-proven) is the worked example: the declared `expectations.json`, the run-log shape, the six gates, and the rubric rows mapped to rule IDs.
+The [LUMINA PRD, section 13](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md#13--quality-bar-how-done-is-proven) is the worked example: the declared `expectations.json`, the run-log shape, the six gates, and the rubric rows mapped to rule IDs.
 
 ### How to give feedback that helps
 

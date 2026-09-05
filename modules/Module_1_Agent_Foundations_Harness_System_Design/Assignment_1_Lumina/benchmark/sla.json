@@ -1,0 +1,42 @@
+{
+  "_comment": "Targets your LUMINA deployment must meet, declared BEFORE the first run, plus the cost model bench.mjs uses. Tune the workload to your corpus; do not loosen the gates to pass. PRICES ARE PLACEHOLDERS: set them to your providers' published rates before trusting the dollar figures.",
+  "target": "http://localhost:8787",
+  "user_id": "bench",
+
+  "sla": {
+    "ttft_p95_ms": 2500,
+    "answer_p95_ms": 12000,
+    "accept_202_p95_ms": 300,
+    "search_p95_during_ingest_ratio_max": 1.3,
+    "min_citation_grounding": 0.95,
+    "min_recall_at_5": 0.70,
+    "min_search_cache_hit_rate_pct": 50,
+    "deck_p95_s": 60,
+    "image_p95_s": 45,
+    "max_error_rate_pct": 1.0,
+    "max_cost_per_answer_usd": 0.05
+  },
+
+  "cost_model": {
+    "llm_provider": "anthropic",
+    "llm_model": "claude-sonnet-5",
+    "input_usd_per_mtok": 3.0,
+    "output_usd_per_mtok": 15.0,
+    "embedding_model": "text-embedding-3-small",
+    "embedding_usd_per_mtok": 0.02,
+    "search_usd_per_call": 0.008,
+    "image_usd_each": 0.04,
+    "monthly_answer_volume": 100000
+  },
+
+  "workload": {
+    "web_queries": 40,
+    "repeat_fraction": 0.5,
+    "doc_queries_from_gold": 30,
+    "concurrency": 4,
+    "ingest_during_search_pdf_pages": 60,
+    "decks": 3,
+    "images": 3,
+    "image_dry_run": true
+  }
+}
