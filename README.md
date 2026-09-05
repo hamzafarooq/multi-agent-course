@@ -72,7 +72,7 @@ Modern AI builders need more than model skills.
 6. [Week 6: Leading AI Systems Across Teams](#week-6-leading-ai-systems-across-teams)
 7. [Week 7: Demo Day, Production-Ready AI Systems](#week-7-demo-day-production-ready-ai-systems)
 
-**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects) · [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback)
+**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects) · [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback) · [How to submit](SUBMISSION.md)
 
 ### 🗺️ Course at a glance
 
@@ -111,7 +111,7 @@ Every project ships an `eval/` folder with a `rubric.json` and an `eval.py` that
 2. **Open one module folder.** Every module lives at `modules/Module_N_Name/` and follows the same shape: a `README.md` that says what the week covers and what's inside, a `study-material/` folder with `lesson.md`, `key-concepts.md`, `exercises.md`, `quiz.md`, and `recap-and-preview.md`, and the notebooks, apps, and specs next to them. Module 1 is the best first stop: it holds the [LUMINA PRD](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md) and [Alex](modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/README.md), the reference app you'll clone before you build.
 3. **Let an agent walk you through it.** Open the repo in Claude Code and type `/start`, or point any other coding agent at [`AGENTS.md`](AGENTS.md). Either way you get a tutor that teaches one concept at a time and tracks you in `progress/learner-progress.md`. See [Learn with Claude](#learn-with-claude-ai-tutor).
 4. **Read one project spec end to end** before touching code. The LUMINA PRD shows the shape every project follows: a fixed API contract, a provided UI that is the acceptance test, an SLA you prove with a benchmark, and a rubric. This is a *reading* course first.
-5. **Know how work gets judged** and how to give feedback that helps: [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback).
+5. **Know how work gets judged** and how to give feedback that helps: [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback). And how you submit: a Vercel link to your deployed app with an `/evals` sub page that proves itself. See [`SUBMISSION.md`](SUBMISSION.md).
 
 ### Layout
 

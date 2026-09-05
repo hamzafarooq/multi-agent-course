@@ -101,6 +101,7 @@ The full contract, with every SSE event and status code, is in [`PRD.md` §7](PR
 - `POST /spaces/{id}/documents` and `POST /artifacts` return `202` in < 300 ms. The work happens on the `jobs` worker.
 - `X-User-Id` is required on every route except `/health` (`401` without it). `429` for rate limit or image cap. `502` for any upstream failure.
 - `GET /health` names the LLM, search provider, and vector backend. `GET /stats` reconciles with your logs.
+- `GET /evals/report.json` serves the Product Evaluation your eval skill wrote (shape in [`SUBMISSION.md`](../../../SUBMISSION.md)); the provided UI renders it at `/evals`.
 
 ---
 
@@ -139,12 +140,13 @@ CORS · `X-User-Id` check · `X-Request-Id` (reuse inbound or generate) · `pino
 ### Part 3: see it live
 `npm run dev`, open the UI, ask a question, click a citation. Save a preference, open a new thread, watch it apply. Upload a PDF to a Space, ask about it, see `filename, p. N`. Make a deck. Generate an image with `DRY_RUN=true` first.
 
-### Part 4: ship it on Fly.io
+### Part 4: ship it, and submit a URL
 ```bash
 cd backend/agent   && fly launch --no-deploy && fly secrets set MONGODB_URI=... ANTHROPIC_API_KEY=... TAVILY_API_KEY=... OPENAI_API_KEY=... && fly deploy
 cd ../gateway      && fly launch --no-deploy && fly secrets set AGENT_URL=https://<your-agent>.fly.dev && fly deploy
+cd ../../web       && vercel --prod          # VITE_API_URL=https://<your-gateway>.fly.dev
 ```
-Atlas stays where it is. Keep the agent service private (Fly private networking) so only the gateway reaches it. Your eval must pass against the **deployed** gateway.
+Atlas stays where it is. Keep the agent service private (Fly private networking) so only the gateway reaches it. The **Vercel URL of the UI is your submission**; it must serve `/evals` (rendered by the provided UI from `GET /evals/report.json` on your gateway). Your eval must pass against the **deployed** gateway. Running the gateway itself as Vercel functions is fine too.
 
 ---
 
@@ -187,8 +189,8 @@ node benchmark/bench.mjs --json out.json # machine-readable
 - [ ] **Observability**: `pino` JSON lines in both services; one `X-Request-Id` correlates a request end to end; `/stats` reconciles with the log.
 - [ ] **Run logs**: `runs/<requestId>.json` per answer; `node quality/check.mjs .` exits ≤ 1.
 - [ ] **Performance**: `node benchmark/bench.mjs` exits 0.
-- [ ] **Deploy**: both services on Fly.io against Atlas; the UI works against the public gateway.
-- [ ] **Product evaluation**: `PRODUCT_EVAL.md` from `/fde-lumina-eval`, naming the two trajectories you read.
+- [ ] **Deploy**: services on Fly.io (or Vercel) against Atlas; the UI on Vercel works against the public gateway.
+- [ ] **Product evaluation**: `/fde-lumina-eval` ran against the deployed app and wrote `report.json`; `/evals` renders it, naming the two trajectories you read.
 
 ---
 
@@ -239,7 +241,7 @@ curl -sf https://<your-gateway>.fly.dev/health                                  
 | Performance & SLA | 10 | `node benchmark/bench.mjs` exits 0 | B1–B3, A2, A3 |
 | Observability | 5 | One request id across both logs; `/stats` reconciles; trace explains citations | A1 |
 | Human gate & answer quality | 5 | You name one successful and one failing trajectory you read end to end; grader samples five answers | P1 |
-| Deploy & docs | 5 | Fly.io + Atlas; UI on the public gateway; `npm run dev` works; `.env.example`; run notes | |
+| Deploy & docs | 5 | UI on Vercel with `/evals` live; services on Fly.io or Vercel against Atlas; `npm run dev` works; `.env.example`; run notes | |
 
 **Red lines (auto-flagged):** secrets committed · provided `web/`, `packages/contract/`, `benchmark/`, `eval/` edited · any fabricated citation in the bench sample (E2) · a `2xx` answer on a provider exception (A1) · a capped run reported as `done` (A2) · an artifact tool called from the ask path (R2).
 
@@ -282,9 +284,12 @@ Illustrative only. Your numbers come from your own run; fabricating them is an a
 
 ## Submit
 
-1. **Generate the evaluation with the skill.** In Claude Code run **`/fde-lumina-eval`**. It runs the six gates (`quality/check.mjs`, `benchmark/bench.mjs`, `eval/eval.mjs`) against your **deployed** gateway and writes `PRODUCT_EVAL.md`, attaching `reports/quality.json` and `reports/eval.json` and the two trajectories you read.
-2. **Submit `PRODUCT_EVAL.md` (or PDF)** and a **60–90 s recording**: a fresh question streams with citations; a memory carries into a new thread; a document question cites a page; the deck downloads and opens; an image generates and `/stats` shows its cost.
-3. Push your repo with both `backend/` services implemented and a short **"How I ran it"** noting your LLM, search provider, and Atlas tier. Do **not** commit `.env`, `node_modules/`, `runs/`, or `reports/`.
+You submit **one Vercel URL**. Course-wide rules in [`SUBMISSION.md`](../../../SUBMISSION.md). For LUMINA:
+
+1. **Run the eval against the deployed app.** In Claude Code run **`/fde-lumina-eval --deploy-url https://<your-gateway>`**. It runs the six gates (`quality/check.mjs`, `benchmark/bench.mjs`, `eval/eval.mjs`), asks you for the video link and the two trajectories you read, and writes `report.json` where your gateway serves it at `GET /evals/report.json`. Redeploy.
+2. **Check `/evals` on your Vercel URL.** The provided UI renders the scored rubric, the SLA numbers, the gate results, your embedded video, and the repo link. Every number must come from that run.
+3. **The video (60 to 90 s)** shows: a fresh question streaming with citations; a memory carrying into a new thread; a document question citing a page; the deck downloading and opening; an image generating and `/stats` showing its cost.
+4. **Post the Vercel URL.** Your repo is public, its first commit is `DESIGN.md`, and it contains no `.env`, `node_modules/`, `runs/`, or `reports/`. Add a short **"How I ran it"** noting your LLM, search provider, and Atlas tier.
 
 ---
 

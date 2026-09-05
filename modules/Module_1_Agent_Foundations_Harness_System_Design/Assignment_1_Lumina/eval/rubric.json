@@ -80,7 +80,7 @@
       "label": "Deploy & docs",
       "points": 5,
       "rules": [],
-      "check": "both Express services on Fly.io against an Atlas cluster; agent service not publicly reachable; UI works against the public gateway URL (pass --deploy-url); npm run dev brings everything up locally; .env.example complete; short run notes; DESIGN.md is the first commit"
+      "check": "UI deployed on Vercel (the submitted URL) with /evals rendering GET /evals/report.json from this run; services on Fly.io or Vercel against an Atlas cluster; agent service not publicly reachable; npm run dev brings everything up locally; .env.example complete; short run notes; DESIGN.md is the first commit"
     }
   ],
   "stretch_bonus": [

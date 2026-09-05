@@ -95,7 +95,9 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
   git-ignored. The Atlas connection string is a secret.
 
 ### Evidence
-- Numbers in `PRODUCT_EVAL.md` come from a real `node benchmark/bench.mjs` run and a real
+- The submission is the Vercel URL. `GET /evals/report.json` on the gateway serves the eval
+  skill's output and the provided UI renders it at `/evals`. Never hand-edit that file.
+- Numbers on `/evals` come from a real `node benchmark/bench.mjs` run and a real
   `node quality/check.mjs .` run against the **deployed** gateway. Name the one successful and one
   failing trajectory you read end to end. If you cannot produce a failing one, kill the search key
   and run again.
