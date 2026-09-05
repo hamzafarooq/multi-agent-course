@@ -1,4 +1,7 @@
-# Alex — a Perplexity-style assistant you can take apart
+# Alex — the world's simplest agent
+
+> A harness wrapped around one ordinary LLM call. Turn the harness on one layer
+> at a time and watch a language model become an agent.
 
 > **Module 1 reference app.** This is the finished Perplexity-style clone the
 > [LUMINA PRD](../Assignment_1_Lumina/PRD.md) asks you to build your own version
@@ -10,15 +13,23 @@
 > keeps that framing where it still teaches.
 
 
-Meet **Alex**, an assistant you can take apart. Alex runs at four levels, and each
-level turns on exactly one more capability, so you can watch a plain language
-model become a grounded enterprise assistant one piece at a time.
+Meet **Alex**, the world's simplest agent - and at Level 1, not an agent at all.
 
-`LLM -> Chatbot -> Tool-Using Agent -> RAG-Enabled Assistant`
+The model never changes. Same call, same weights, every level. What changes is the
+**harness** wrapped around it: the conversation history, the tools, the loop that
+runs them, and the retrieval step that decides what the model is allowed to see.
+Strip the harness away and you are left with a chatbot.
 
-The point of this module is not that RAG is impressive. It is that RAG is
-**string concatenation with a search step in front of it**, and this app is built
-so you can prove that to yourself rather than take it on faith.
+`LLM only  ->  + history  ->  + tool calling and the loop  ->  + retrieval`
+
+Levels 1 and 2 are a chatbot. **Level 3 is where it becomes an agent**: the model
+decides for itself to call a tool, reads the result, and goes round again until it
+stops asking. That is `run_tool_loop` in `backend/main.py` - about forty lines, and
+the entire difference between a language model and an agent.
+
+The second lesson is that RAG is **string concatenation with a search step in front
+of it**. This app is built so you can prove both to yourself rather than take them
+on faith.
 
 ## The four levels
 

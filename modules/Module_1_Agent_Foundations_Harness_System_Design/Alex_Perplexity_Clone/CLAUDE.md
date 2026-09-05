@@ -2,13 +2,16 @@
 
 ## What this module is
 
-A working four-level assistant called **Alex**, built so a room can watch a plain
-language model turn into a grounded enterprise assistant one capability at a
-time. Unlike most of the course, this folder *does* contain a finished app — the
-hands-on part is taking it apart, changing it, and seeing what breaks.
+A working four-level assistant called **Alex** — the world's simplest agent, and
+at Level 1 not an agent at all. The model is identical at every level; what gets
+switched on is the **harness** around it: history, then tool calling and the loop,
+then retrieval. Unlike most of the course, this folder *does* contain a finished
+app — the hands-on part is taking it apart, changing it, and seeing what breaks.
 
-The thesis the whole app is built to prove: **RAG is string concatenation with a
-search step in front of it.** There is no special "retrieval channel" to a model.
+The first thesis the app is built to prove: **the harness, not the model, is what
+makes something an agent.** Level 3's `run_tool_loop` is the whole difference.
+
+The second: **RAG is string concatenation with a search step in front of it.** There is no special "retrieval channel" to a model.
 Retrieved text is pasted into the prompt like any other text. The debug panel
 exists so nobody has to take that on faith.
 

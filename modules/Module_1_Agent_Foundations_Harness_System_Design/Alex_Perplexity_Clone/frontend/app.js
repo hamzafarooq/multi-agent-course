@@ -144,22 +144,22 @@ const LEVEL_INFO = {
   1: {
     label: "Level 1: LLM Only",
     explanation:
-      "Level 1 enabled: Each message is sent to the LLM completely on its own, with no memory of earlier turns.",
+      "Level 1 enabled: No harness at all. Each message goes to the model on its own, with no memory of earlier turns. This is a language model, not an agent.",
   },
   2: {
     label: "Level 2: LLM + Conversation History",
     explanation:
-      "Level 2 enabled: The chatbot now includes the full conversation history, so it can answer follow-up questions.",
+      "Level 2 enabled: The first harness layer, memory. The whole transcript is re-sent every turn, so follow-ups work. Still a chatbot, still not an agent.",
   },
   3: {
-    label: "Level 3: LLM + Web Search Tool",
+    label: "Level 3: Tool Calling + the Loop",
     explanation:
-      "Level 3 enabled: The chatbot can now decide when to search the web for external or up-to-date information.",
+      "Level 3 enabled: This is the layer that makes it an agent. The model decides to call the web search tool, reads the result, and loops until it stops asking.",
   },
   4: {
     label: "Level 4: LLM + RAG + Web Search",
     explanation:
-      "Level 4 enabled: Everything from Level 3, plus retrieval. Alex answers from the Project Management document first and falls back to web search only when the document does not cover the question.",
+      "Level 4 enabled: The context layer on top of the loop. Alex answers from the Project Management document first and falls back to web search only when the document does not cover the question.",
   },
 };
 

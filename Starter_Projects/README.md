@@ -26,5 +26,5 @@ and run it. None of them ship secrets.
 [linkedin-growth](https://github.com/hamzafarooq/linkedin-growth) ·
 [sprint-zero](https://github.com/yousuf-labs/sprint-zero) (also in [`Full_Stack_Projects/Sprint_Zero`](../Full_Stack_Projects/Sprint_Zero)).
 
-For the course's own reference app, **Alex**, a Perplexity-style assistant you can take apart,
+For the course's own reference app, **Alex**, the world's simplest agent - a harness you can take apart,
 see [`modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/`](../modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/).
