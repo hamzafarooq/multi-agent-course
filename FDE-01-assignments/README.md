@@ -100,9 +100,9 @@ Consistent across the track: a **measurable rubric** plus a **video demo**.
   the running project and captures evidence, writing an intermediate scorecard
   (`eval/REPORT.md`). The eval skill runs that plus a live real-world test and folds it
   into a **`PRODUCT_EVAL.md`** — the polished Product Evaluation.
-- Submission = **a Vercel link to your deployed app** whose `/evals` sub page renders the
-  Product Evaluation (scored rubric, benchmark numbers, quality gates, video, repo). The eval
-  skill generates it; you never hand-write it. Course-wide rules: [`SUBMISSION.md`](../SUBMISSION.md).
+- Submission = **a Vercel link to your deployed app**, and nothing else. No repo, no code. Its
+  `/evals` sub page renders the Product Evaluation (scored rubric, benchmark numbers, quality
+  gates, design, both trajectories, video). The eval skill generates it; you never hand-write it. Course-wide rules: [`SUBMISSION.md`](../SUBMISSION.md).
   An `AGENTS.md` in each assignment states the non-negotiables so a coding agent (Claude Code)
   inherits them automatically.
 

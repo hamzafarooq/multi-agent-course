@@ -4,13 +4,14 @@ One rule for every project in this course: **you submit a URL, and the URL prove
 
 ## What you submit
 
-A single **Vercel link** to your deployed app. That's it. The app must have two things a grader
-can open without asking you anything:
+A single **Vercel link** to your deployed app. That's it. **No repo, no zip, no code.** Nobody reads
+your source to grade you; the running product and its own evidence page are the submission. The app
+must have two things a grader can open without asking you anything:
 
 | Route | What it is |
 |---|---|
 | `/` | The working product. The grader uses it exactly the way a user would. |
-| `/evals` | A sub page rendering your **Product Evaluation**: the scored rubric with evidence, the benchmark numbers against the declared SLA, the quality-gate results, the two trajectories you read, your 60 to 90 second demo video (embedded), and a link to the repo. |
+| `/evals` | A sub page rendering your **Product Evaluation**: the scored rubric with evidence, the benchmark numbers against the declared SLA, the quality-gate results, your design decisions, the two trajectories you read, and your 60 to 90 second demo video (embedded). |
 
 Behind the page, `GET /evals/report.json` returns the same thing machine-readable, so the grader's
 tooling can pull it. Its shape:
@@ -19,15 +20,15 @@ tooling can pull it. Its shape:
 {
   "assignment": "LUMINA",
   "student": "Priya Nair",
-  "repo": "https://github.com/<you>/<handle>-lumina",
   "video": "https://youtu.be/…",
+  "design": { /* the five questions: components, responsibilities, communication, state, trade-offs */ },
   "deployedAt": "2026-09-19T18:02:11Z",
   "rubric":  { /* eval/report.json: per-criterion points, status, evidence */ },
   "bench":   { /* benchmark output: percentiles, grounding, recall, cache, cost, pass: true */ },
   "quality": { /* reports/quality.json from quality/check.mjs: rule results, errors, warnings */ },
   "trajectories": {
-    "successful": { "requestId": "req_…", "notes": "what it taught me" },
-    "failing":    { "requestId": "req_…", "notes": "what it taught me" }
+    "successful": { "requestId": "req_…", "steps": [ /* every tool call, in order */ ], "notes": "what it taught me" },
+    "failing":    { "requestId": "req_…", "steps": [ /* … */ ], "notes": "what it taught me" }
   }
 }
 ```
@@ -59,9 +60,9 @@ Vercel URL is what you submit either way.
 - [ ] `/` works for a stranger with no setup: fresh browser, no local services.
 - [ ] `/evals` renders, `/evals/report.json` returns valid JSON, and every number on it came from a run against **this** deployment.
 - [ ] The video is embedded and shows the product doing the assignment's required flow in 60 to 90 seconds.
-- [ ] The repo link is public (or the grader has access), and the **first commit is your `DESIGN.md` or PRD, with no code**. We check `git log`.
-- [ ] No secrets in the repo. `.env`, connection strings, and provider keys never appear in `git log`.
-- [ ] You can name the one successful and one failing trajectory you read end to end. They're on the page.
+- [ ] The **design section** answers the five questions in your words: components, responsibilities, communication, state, trade-offs. Write it before you build; paste it into your eval config so it lands on the page.
+- [ ] Both **trajectories are readable on the page**, every step of one successful and one failing run, with what each taught you. This is the human gate; a page without them cannot score those points.
+- [ ] No secrets are reachable from the deployed app. Keys live in the host's environment, never in client-side JavaScript, never echoed by an endpoint.
 
 ## How you get feedback
 
@@ -75,7 +76,7 @@ fix first.
 
 - You may redeploy and re-run your eval as many times as you like before the deadline. The
   grader takes what the URL shows at grading time.
-- One resubmission is allowed after feedback, for the rows marked Fail or Partial, within one week.
+- One resubmission is allowed after feedback, for the rows marked Fail or Partial, within one week. Redeploy, re-run the eval, and repost the same URL.
 - Late without notice: the project is graded on the rubric's automated rows only. Talk to the
   instructor before the deadline if you need more time; life happens, silence doesn't.
 
@@ -85,5 +86,15 @@ Each assignment's README has a **Submit** section with the project-specific flow
 show and the eval skill to run: [LUMINA](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/README.md#submit) ·
 [ARGUS](FDE-01-assignments/Assignment_3_Moment_Search_Scaled/README.md) · [VOXA](FDE-01-assignments/Assignment_2_voice_agent/README.md) ·
 [EPYHIA](FDE-01-assignments/Assignment_4_Final_Epyhia/README.md). Where an older README says
-"submit `PRODUCT_EVAL.md` plus a video," read it as: that content now lives at `/evals` on your
-deployed app.
+"submit `PRODUCT_EVAL.md` plus a video" or asks you to push a repo, read it as: that content now
+lives at `/evals` on your deployed app, and the code stays yours.
+
+## Why no code
+
+Three reasons, and none of them is that the code doesn't matter.
+
+1. **A running product is a harder claim than a repo.** Source can look immaculate and not work. A URL a stranger can open, under an eval that ran against that deployment, cannot.
+2. **It's the forward-deployed reality.** Customers judge the thing that's up, not the branch.
+3. **It keeps the evidence honest.** Every number on `/evals` came from your live app rather than a local run nobody can reproduce. That is the [quality bar](README.md#the-quality-bar-how-work-is-judged-and-how-to-give-feedback)'s first law: a thing that ran is not a thing that worked.
+
+Keep your repo private if you like. Bring it to office hours when you want a pair of eyes on the code itself; that's a conversation, not a submission.

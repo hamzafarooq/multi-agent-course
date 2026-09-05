@@ -12,8 +12,9 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
 - **DO NOT EDIT:** `web/`, `packages/contract/`, `benchmark/`, `eval/`, `quality/`, `scripts/`.
   These are the provided UI, the contract, and the grader. If something seems to require editing
   them, you've misread the contract.
-- **First commit is `DESIGN.md`, no code.** It answers the five questions: components,
-  responsibilities, communication, state, trade-offs.
+- **Write `DESIGN.md` before any code.** It answers the five questions: components,
+  responsibilities, communication, state, trade-offs. It is graded as the design section of the
+  `/evals` page, so it must survive being read by a stranger.
 
 ## Hard requirements (all must hold)
 
@@ -91,12 +92,14 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
   with the logs.
 
 ### Hygiene
-- Secrets from `.env` only. `.env`, `node_modules/`, `web/dist/`, `runs/`, `reports/` are
-  git-ignored. The Atlas connection string is a secret.
+- Secrets from `.env` only, read server-side. No key, connection string, or token is ever bundled
+  into client JavaScript or returned by an endpoint. `.env`, `node_modules/`, `web/dist/`, `runs/`,
+  `reports/` are git-ignored even though the repo is not submitted.
 
 ### Evidence
-- The submission is the Vercel URL. `GET /evals/report.json` on the gateway serves the eval
-  skill's output and the provided UI renders it at `/evals`. Never hand-edit that file.
+- **The submission is the Vercel URL, not the code.** `GET /evals/report.json` on the gateway serves
+  the eval skill's output and the provided UI renders it at `/evals`. Never hand-edit that file, and
+  never write a number into it that a run did not produce.
 - Numbers on `/evals` come from a real `node benchmark/bench.mjs` run and a real
   `node quality/check.mjs .` run against the **deployed** gateway. Name the one successful and one
   failing trajectory you read end to end. If you cannot produce a failing one, kill the search key

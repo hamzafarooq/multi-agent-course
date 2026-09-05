@@ -14,7 +14,10 @@ test, and "it works on my machine" is not a grade. The full product thinking liv
 
 > **Read this yourself.** This is a *reading* assignment first. The PRD's five system-design
 > questions (components, responsibilities, communication, state, trade-offs) are the rubric every
-> later project is graded against. Answer them in your `DESIGN.md` before you open an editor.
+> later project is graded against. Answer them in your `DESIGN.md` before you open an editor; that
+> text becomes the design section on your `/evals` page, which is what gets graded.
+>
+> **You submit a URL, not code.** See [`SUBMISSION.md`](../../../SUBMISSION.md).
 
 ---
 
@@ -190,7 +193,7 @@ node benchmark/bench.mjs --json out.json # machine-readable
 - [ ] **Run logs**: `runs/<requestId>.json` per answer; `node quality/check.mjs .` exits ≤ 1.
 - [ ] **Performance**: `node benchmark/bench.mjs` exits 0.
 - [ ] **Deploy**: services on Fly.io (or Vercel) against Atlas; the UI on Vercel works against the public gateway.
-- [ ] **Product evaluation**: `/fde-lumina-eval` ran against the deployed app and wrote `report.json`; `/evals` renders it, naming the two trajectories you read.
+- [ ] **Product evaluation**: `/fde-lumina-eval` ran against the deployed app and wrote `report.json`; `/evals` renders it, including your design section and both full trajectories.
 
 ---
 
@@ -240,8 +243,8 @@ curl -sf https://<your-gateway>.fly.dev/health                                  
 | Image generation | 10 | `gpt-image-1` artifact with `costUsd`, `promptUsed`; cap → `429`; `DRY_RUN` works | R2, B3 |
 | Performance & SLA | 10 | `node benchmark/bench.mjs` exits 0 | B1–B3, A2, A3 |
 | Observability | 5 | One request id across both logs; `/stats` reconciles; trace explains citations | A1 |
-| Human gate & answer quality | 5 | You name one successful and one failing trajectory you read end to end; grader samples five answers | P1 |
-| Deploy & docs | 5 | UI on Vercel with `/evals` live; services on Fly.io or Vercel against Atlas; `npm run dev` works; `.env.example`; run notes | |
+| Human gate & answer quality | 5 | Both trajectories are readable on `/evals`, every step, with what each taught you; grader samples five answers | P1 |
+| Deploy & docs | 5 | UI on Vercel with `/evals` live; services on Fly.io or Vercel against Atlas; no key reachable from the browser; design section and run notes on the page | |
 
 **Red lines (auto-flagged):** secrets committed · provided `web/`, `packages/contract/`, `benchmark/`, `eval/` edited · any fabricated citation in the bench sample (E2) · a `2xx` answer on a provider exception (A1) · a capped run reported as `done` (A2) · an artifact tool called from the ask path (R2).
 
@@ -289,7 +292,7 @@ You submit **one Vercel URL**. Course-wide rules in [`SUBMISSION.md`](../../../S
 1. **Run the eval against the deployed app.** In Claude Code run **`/fde-lumina-eval --deploy-url https://<your-gateway>`**. It runs the six gates (`quality/check.mjs`, `benchmark/bench.mjs`, `eval/eval.mjs`), asks you for the video link and the two trajectories you read, and writes `report.json` where your gateway serves it at `GET /evals/report.json`. Redeploy.
 2. **Check `/evals` on your Vercel URL.** The provided UI renders the scored rubric, the SLA numbers, the gate results, your embedded video, and the repo link. Every number must come from that run.
 3. **The video (60 to 90 s)** shows: a fresh question streaming with citations; a memory carrying into a new thread; a document question citing a page; the deck downloading and opening; an image generating and `/stats` showing its cost.
-4. **Post the Vercel URL.** Your repo is public, its first commit is `DESIGN.md`, and it contains no `.env`, `node_modules/`, `runs/`, or `reports/`. Add a short **"How I ran it"** noting your LLM, search provider, and Atlas tier.
+4. **Post the Vercel URL.** That's the whole submission: **no repo, no zip, no code**. Your `DESIGN.md` (the five questions) and your "How I ran it" notes (LLM, search provider, Atlas tier) go into the eval config so they render on `/evals` too.
 
 ---
 

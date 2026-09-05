@@ -468,4 +468,4 @@ One **Vercel URL**, per [`SUBMISSION.md`](../../../SUBMISSION.md). The UI deploy
 
 1. The `/fde-lumina-eval` skill runs the six gates (`check.mjs`, `bench.mjs`, `eval.mjs`) against the **deployed** gateway, collects the video link and the two trajectories read for P1, and writes `report.json`, served at `GET /evals/report.json`. The provided UI renders it at `/evals`.
 2. The **60 to 90 s recording** embedded there shows: a fresh question streams with citations; a memory carries into a new thread; a document question cites a page; the deck downloads and opens; an image generates and `/stats` shows its cost.
-3. The repo is public, first commit `DESIGN.md`, no `.env`, `node_modules/`, `runs/`, or `reports/`; a short "How I ran it" notes the LLM, search provider, and Atlas tier.
+3. **No code is submitted.** `DESIGN.md` (the five questions, written before the build) and the "How I ran it" notes (LLM, search provider, Atlas tier) go into the eval config and render on `/evals` alongside both full trajectories.

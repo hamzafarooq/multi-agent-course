@@ -73,14 +73,14 @@
       "label": "Human gate & answer quality",
       "points": 5,
       "rules": ["P1"],
-      "check": "PRODUCT_EVAL.md names one successful and one failing trajectory the learner read end to end and what each taught them; grader reads five sampled answers for concision, relevance, and honesty when retrieval is thin"
+      "check": "/evals renders one successful and one failing trajectory in full, every step, with what each taught the learner; grader reads five sampled answers for concision, relevance, and honesty when retrieval is thin"
     },
     {
       "id": "deploy_docs",
       "label": "Deploy & docs",
       "points": 5,
       "rules": [],
-      "check": "UI deployed on Vercel (the submitted URL) with /evals rendering GET /evals/report.json from this run; services on Fly.io or Vercel against an Atlas cluster; agent service not publicly reachable; npm run dev brings everything up locally; .env.example complete; short run notes; DESIGN.md is the first commit"
+      "check": "UI deployed on Vercel (the submitted URL) with /evals rendering GET /evals/report.json from this run; services on Fly.io or Vercel against an Atlas cluster; agent service not publicly reachable; no key or connection string reachable from the browser; the design section (five questions) and run notes render on the page"
     }
   ],
   "stretch_bonus": [
@@ -96,12 +96,12 @@
     }
   ],
   "red_lines": [
-    "no secrets committed (.env, MONGODB_URI, provider keys)",
+    "no secret reachable from the deployed app (no key in client JS, no endpoint echoing MONGODB_URI or provider keys)",
     "provided web/, packages/contract/, benchmark/, eval/, quality/ unmodified",
     "no fabricated citation in the bench sample (E2)",
     "no 2xx answer served on a provider exception (A1)",
     "no run that hit a cap reported as terminated=done (A2)",
     "generate_image / make_presentation never called from the ask path (R2)",
-    "first commit is DESIGN.md with no code"
+    "the design section on /evals answers the five system-design questions in the learner's own words"
   ]
 }
