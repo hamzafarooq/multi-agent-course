@@ -116,7 +116,7 @@ node scripts/create-indexes.mjs   # vector + text + TTL indexes on your Atlas cl
 npm run dev                       # gateway :8787, agent :8000, UI with hot reload
 ```
 
-### Part 1: the agent service (the real work) — `backend/agent/`
+### Part 1: the agent service (the real work), `backend/agent/`
 1. `/health`, then the loop with `web_search` + `fetch_page` and the SSE stream. Disable compression, flush after every event.
 2. Search cache: in-process LRU over the `searchCache` collection (TTL index). `searchCached` in `done`.
 3. `threads` + `messages`; follow-ups see the thread.
@@ -133,7 +133,7 @@ curl -N -X POST localhost:8000/threads/$(jq -r .threadId /tmp/t.json)/ask -H 'x-
   -H 'content-type: application/json' -d '{"query":"What is Tavily?","mode":"web"}'   # watch trace → sources → token → done
 ```
 
-### Part 2: the gateway (software backend) — `backend/gateway/`
+### Part 2: the gateway (software backend), `backend/gateway/`
 CORS · `X-User-Id` check · `X-Request-Id` (reuse inbound or generate) · `pino` request log · zod validation from `packages/contract` · per-user rate limit · SSE pass-through · serve `web/dist`.
 
 ### Part 3: see it live

@@ -408,11 +408,13 @@ If you cannot produce a failing trajectory, you do not understand the failure su
 | Web UI (React 18 + Vite, imports the contract types): query, streaming answer with citation chips, sources rail, thread list, memory panel, Spaces upload, deck/image actions with polling | ✅ Provided, **to be built** | `web/` |
 | Empty Express skeletons for both services with `/health` returning `501` on everything else, so the UI's "not implemented yet" state is the learner's progress bar | ✅ Provided, **to be built** | `backend/gateway/`, `backend/agent/` |
 | Atlas setup guide + `scripts/create-indexes.mjs` that creates the vector, search, and TTL indexes from one JSON definition | ✅ Provided, **to be built** | `scripts/` |
-| `benchmark/bench.mjs` + `sla.json` (latency, grounding, recall, cache, cost) | ✅ Provided, **to be built** | `benchmark/` |
+| `benchmark/sla.json` (declared targets, cost model, workload) | ✅ Written | `benchmark/sla.json` |
+| `benchmark/bench.mjs` (latency, grounding, recall, cache, cost; reads `sla.json`) | ✅ Provided, **to be built** | `benchmark/` |
 | RAG gold set: a 30-question JSONL + a small corpus (3–5 PDFs, CC-licensed) | ✅ Provided, **to be built** | `eval/gold/` |
-| `eval/eval.mjs` + `rubric.json` + the `/fde-lumina-eval` skill, running the six gates in order | ✅ Provided, **to be built** | `eval/`, `.claude/skills/` |
+| `eval/rubric.json` (FDE schema: automated / manual / stretch_bonus / red_lines, mapped to rule ids) and `expectations.json` (§13) | ✅ Written | `eval/rubric.json`, `expectations.json` |
+| `eval/eval.mjs` + the `/fde-lumina-eval` skill, running the six gates in order | ✅ Provided, **to be built** | `eval/`, `.claude/skills/` |
 | Public copy of the quality kit (`check.mjs`, `rules.json` with only publishable precedents, `expectations.example.json`) | ✅ Provided, **to be promoted from the cohort folder** | `quality/` |
-| `AGENTS.md` (from §11) and `README.md` (from this PRD, with the track's standard reading-assignment tripwire) | ✅ Provided, **to be written** | assignment root |
+| `AGENTS.md` (non-negotiables) and `README.md` (the build guide in the FDE house structure) | ✅ Written; add the track's reading-assignment tripwire if you want it | assignment root |
 | Express gateway: CORS, auth header, request id, logging, validation, rate limit, SSE pass-through | 🔨 Learner | `backend/gateway/` |
 | Express agent service: loop, tools, memory, RAG, `jobs` worker, artifacts, run logs | 🔨 Learner | `backend/agent/` |
 
