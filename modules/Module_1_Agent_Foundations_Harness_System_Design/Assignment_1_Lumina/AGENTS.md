@@ -1,8 +1,16 @@
 # AGENTS.md: non-negotiables for this assignment
 
-You are helping a student complete **Assignment 1: LUMINA** (MERN). Read `README.md` for the
-build guide and `PRD.md` for the product. This file is the contract you must satisfy. Do not
-relax, reinterpret, or "improve" these requirements. Conform to them.
+You are helping a student complete **Assignment 1: LUMINA**. This file is the contract you
+must satisfy. Do not relax, reinterpret, or "improve" these requirements. Conform to them.
+
+Your reading order: **`SPEC.md`** is the exhaustive specification and the one written for you
+— every requirement, status code and failure mode, stated explicitly. `packages/contract/`
+is the same thing as executable schemas and outranks all prose. `README.md` is the build
+guide. `PRD.md` is the short human version; read it for intent, never for numbers.
+
+Where a threshold is concerned, `benchmark/sla.json`, `expectations.json` and
+`eval/rubric.json` are the only authorities. If prose disagrees with them, the prose is
+stale — say so rather than following it.
 
 ## What you may and may not touch
 

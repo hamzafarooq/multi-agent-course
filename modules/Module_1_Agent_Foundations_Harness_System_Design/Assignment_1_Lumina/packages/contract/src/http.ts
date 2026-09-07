@@ -127,16 +127,36 @@ export const ACCEPTED_UPLOAD_TYPES = [
 
 // ---------------------------------------------------------------- health & stats
 
+/**
+ * `/health` must NAME what is live, not be restricted to one stack. A grader reading a
+ * recall number has to know whether it came from an approximate vector index or an exact
+ * scan, and whether search came from Tavily or SerpApi — so these are free strings with
+ * documented conventional values rather than closed enums.
+ *
+ * MERN is the taught path (`atlas-vector-search`, or `mongo-cosine-scan` for the local-dev
+ * fallback). If you build on something else, say so here: `qdrant`, `pgvector`,
+ * `pinecone`. What is graded is the contract and the gates, and both speak HTTP.
+ */
 export const HealthResponse = z.object({
   status: z.enum(['ok', 'degraded']),
+  /** The LLM actually serving answers, e.g. "claude-sonnet-5". Never a key. */
   model: z.string().min(1),
-  searchProvider: z.enum(['tavily', 'serpapi']),
-  vectorStore: z.enum(['atlas-vector-search', 'mongo-cosine-scan']),
+  /** Conventionally "tavily" or "serpapi". Name whatever is live. */
+  searchProvider: z.string().min(1),
+  /**
+   * Conventionally "atlas-vector-search" or "mongo-cosine-scan" on the taught path.
+   * Name whatever is live; a recall number is not comparable without it.
+   */
+  vectorStore: z.string().min(1),
   db: z.enum(['ok', 'down']),
   /** The gateway nests the agent service's own /health here. */
   ai: z.object({ status: z.enum(['ok', 'down']) }).passthrough().optional(),
   version: z.string().optional()
 });
+
+/** The values the taught MERN path reports, for reference and for the local-dev fallback. */
+export const VECTOR_BACKENDS = ['atlas-vector-search', 'mongo-cosine-scan'] as const;
+export const SEARCH_PROVIDERS = ['tavily', 'serpapi'] as const;
 export type HealthResponse = z.infer<typeof HealthResponse>;
 
 export const StatsResponse = z.object({

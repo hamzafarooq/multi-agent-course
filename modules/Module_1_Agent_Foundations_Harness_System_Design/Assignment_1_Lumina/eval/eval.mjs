@@ -61,8 +61,21 @@ const tail = (s, n = 12) =>
 if (has('--skip-static')) {
   record(0, 'STATIC', 'skip', 'skipped by --skip-static');
 } else {
-  const lint = run('npm', ['run', '--silent', 'lint']);
-  const types = run('npm', ['run', '--silent', 'typecheck']);
+  // A missing script is not a failing script: the gates grade the contract, not the stack.
+  // If you built outside the Node workspace, run your own linter and type checker and say
+  // so in your run notes — but a project without these npm scripts still passes gate 0 on
+  // the thing that matters, which is that no secret is staged.
+  const scripts = (() => {
+    try {
+      return JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).scripts ?? {};
+    } catch {
+      return {};
+    }
+  })();
+  const lint = scripts.lint ? run('npm', ['run', '--silent', 'lint']) : { status: 0, skipped: true };
+  const types = scripts.typecheck
+    ? run('npm', ['run', '--silent', 'typecheck'])
+    : { status: 0, skipped: true };
   const git = run('git', ['status', '--porcelain']);
   const dirty = (git.stdout ?? '')
     .split('\n')
@@ -73,7 +86,16 @@ if (has('--skip-static')) {
   if (types.status !== 0) problems.push(`typecheck failed:\n${tail(types.stdout || types.stderr)}`);
   if (dirty.length) problems.push(`git has secrets or artifacts staged:\n${dirty.join('\n')}`);
 
-  record(0, 'STATIC', problems.length ? 'fail' : 'pass', problems.join('\n') || 'lint, typecheck and git clean');
+  const skipped = [lint.skipped && 'lint', types.skipped && 'typecheck'].filter(Boolean);
+  record(
+    0,
+    'STATIC',
+    problems.length ? 'fail' : 'pass',
+    problems.join('\n') ||
+      (skipped.length
+        ? `git clean; no npm ${skipped.join('/')} script — run your own and note it`
+        : 'lint, typecheck and git clean')
+  );
   if (problems.length) finish();
 }
 

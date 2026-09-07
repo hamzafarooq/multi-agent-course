@@ -2,6 +2,10 @@
 /**
  * Dump the `runs` collection into runs/<requestId>.json. PROVIDED.
  *
+ * MONGO-ONLY CONVENIENCE, not a gate. If your run logs live somewhere else, get them into
+ * runs/<requestId>.json in the RunLog shape by whatever means suits: that shape is what
+ * quality/check.mjs reads, and it is the only contractual part.
+ *
  *   node scripts/export-runs.mjs                     # from MONGODB_URI in .env
  *   node scripts/export-runs.mjs --limit 200
  *

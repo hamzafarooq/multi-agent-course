@@ -10,10 +10,32 @@ Express services the UI talks to. When your backend works, the UI lights up. Tha
 
 This is the first assignment of the **FDE Agent Engineering Bootcamp**. It's deliberately shaped
 like real forward-deployed work: you don't get to change the contract, the UI is the acceptance
-test, and "it works on my machine" is not a grade. The full product thinking lives in
-[`PRD.md`](PRD.md). This file is how you build and prove it.
+test, and "it works on my machine" is not a grade. The product lives in [`PRD.md`](PRD.md) — fifteen minutes, and the only document you need
+to start. [`SPEC.md`](SPEC.md) is the same thing unabridged, written for a coding agent to
+work from. This file is how you build and prove it.
 
-> **Read this yourself.** This is a *reading* assignment first. The PRD's five system-design
+### Read it in this order
+
+You can see the product before you read a word about it. Do that first.
+
+1. **Run it.** `npm install && cp .env.example .env && npm run dev`, then open
+   <http://localhost:5173>. Every panel says `501 not implemented yet` — click all of them.
+   That is the shape of what you are building, and the message is your progress bar.
+2. **Read [`PRD.md`](PRD.md).** Fifteen minutes. What the product is, the two gears, the four
+   rules that decide your grade.
+3. **Read the contract.** `packages/contract/src/` — start with `sse.ts`, then `http.ts`.
+   These are zod schemas, not prose: they are the literal answer to "what am I supposed to
+   return?", and the UI compiles against the same types, so drift fails `npm run typecheck`
+   before it fails you. Best half hour you can spend.
+4. **Write [`DESIGN.md`](DESIGN.template.md)** — the five questions, before any code.
+5. **Then the non-functional half:** `benchmark/sla.json` for the targets, `expectations.json`
+   for the budgets, `eval/rubric.json` for the points. Declared before you run, on purpose.
+6. **Build**, using the order in [Build it](#build-it-recommended-order) below. Keep
+   [`SPEC.md`](SPEC.md) and [`AGENTS.md`](AGENTS.md) open for your coding agent.
+
+---
+
+> **Read this yourself.** This is a *reading* assignment first. The five system-design
 > questions (components, responsibilities, communication, state, trade-offs) are the rubric every
 > later project is graded against. Answer them in your `DESIGN.md` before you open an editor; that
 > text becomes the design section on your `/evals` page, which is what gets graded.
@@ -109,7 +131,7 @@ fails `npm run typecheck` before it fails you.
 
 ## The API contract (do not change it)
 
-The full contract, with every SSE event and status code, is in [`PRD.md` §7](PRD.md#7--api-contract-fixed-the-ui-speaks-this) and enforced by `packages/contract/`. The rules that matter:
+The full contract, with every SSE event and status code, is in [`SPEC.md` §7](SPEC.md#7--api-contract-fixed-the-ui-speaks-this) and enforced by `packages/contract/`. The rules that matter:
 
 - `POST /threads/{id}/ask` streams `trace → sources → token → done`. **`sources` arrives before the first `token`.**
 - Every `[n]` in the answer has exactly one matching `n` in `sources`. Extra or missing is a grounding failure.
@@ -145,7 +167,7 @@ has no Vector Search — run with `VECTOR_BACKEND=mongo-cosine-scan` and make `/
 2. Search cache: in-process LRU over the `searchCache` collection (TTL index). `searchCached` in `done`.
 3. `threads` + `messages`; follow-ups see the thread.
 4. Memory: `save_memory` / `recall_memory` over the `memories` vector index; `GET /memory`, `DELETE /memory/{id}`.
-5. Run log: one `runs/<requestId>.json` per answer (shape in `PRD.md` §13). Ten lines. The gates read it.
+5. Run log: one `runs/<requestId>.json` per answer (shape in `SPEC.md` §13). Ten lines. The gates read it.
 6. Spaces + the `jobs` worker: upload → GridFS → parse (`pdfjs-dist`) → chunk → embed → upsert → **read-your-write probe** → `indexed`.
 7. Hybrid retrieval: `$vectorSearch` + `$search` fused with RRF. Page locators in citations.
 8. **Deep search**, in two sittings. First `plan_research` and the `plan` event: stream it before you retrieve anything, then read three plans out loud. If the sub-questions are not ones you would have asked, fix the prompt before building anything on top of it. Then the fan-out: research each sub-question, merge into one citation numbering (dedupe by URL or `docId`+locator, renumber from 1), tag every step and source with its `subQuestion`, synthesise a structured answer. Finally the gate: `DEEP_DAILY_CAP` → `429 {error, resetsAt}`, and make sure a quick search cannot reach `plan_research`.
@@ -164,6 +186,21 @@ CORS · `X-User-Id` check · `X-Request-Id` (reuse inbound or generate) · `pino
 `npm run dev`, open the UI, ask a question, click a citation. Save a preference, open a new thread, watch it apply. Upload a PDF to a Space, ask about it, see `filename, p. N`. Then ask the *same* question twice — once on Quick, once on Deep — and put the two answers side by side. If the deep one is only longer, you have not finished.
 
 ### Part 4: ship it, and submit a URL
+
+**Which piece goes where.** Three deployables, and only the first is fixed:
+
+| Piece | Host | Fixed? |
+|---|---|---|
+| The UI (`web/`) | **Vercel** — and this URL is your submission | Yes. It has to serve `/` and `/evals` to a stranger. |
+| The gateway | Fly.io, or Vercel functions, or anywhere reachable | **Your choice.** It must be public, because the browser talks to it. |
+| The agent service | Fly.io (private networking), or anywhere | **Your choice**, but it must NOT be publicly reachable — it holds the keys and enforces the deep-search cap. A cap you can bypass by calling the service directly is not a cap. |
+| MongoDB | Atlas, wherever your cluster already is | Stays put. |
+
+So "submit a Vercel URL" and "deploy to Fly.io" are not in conflict: the UI is on Vercel
+because that is the link you hand in, and the backends go wherever you like. If you would
+rather run everything on Vercel functions, do that — the grader only ever talks to your
+gateway over HTTP.
+
 ```bash
 cd backend/agent   && fly launch --no-deploy && fly secrets set MONGODB_URI=... ANTHROPIC_API_KEY=... TAVILY_API_KEY=... OPENAI_API_KEY=... && fly deploy
 cd ../gateway      && fly launch --no-deploy && fly secrets set AGENT_URL=https://<your-agent>.fly.dev && fly deploy

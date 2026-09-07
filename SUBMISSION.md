@@ -51,9 +51,20 @@ cohort channel). The URL is the submission; nothing else needs attaching.
 | EPYHIA (end-to-end AI agency) | Week 7 | demoed live on Demo Day, URL posted before the session |
 
 Your app must be **up when it is graded**. Graders run the eval against your URL during the
-grading window, so a sleeping or broken deploy scores what it shows. Vercel's free tier is enough
-for the UI; backends may live on Vercel functions or Fly.io as your assignment specifies. The
-Vercel URL is what you submit either way.
+grading window, so a sleeping or broken deploy scores what it shows.
+
+**Where each piece lives.** Only the first row is fixed:
+
+| Piece | Host | Fixed? |
+|---|---|---|
+| The UI | **Vercel** — this URL is the submission | Yes |
+| Your public API / gateway | Vercel functions, Fly.io, Render, anywhere reachable | Your choice |
+| Anything holding provider keys | Anywhere **not** publicly reachable | Your choice, but it must not be public |
+| Your database | Wherever your assignment specifies | Per assignment |
+
+Deployment choice does not affect your grade, with one exception: a service that holds keys
+or enforces a spend cap must not be reachable from the internet, because a cap that can be
+bypassed by calling the service directly is not a cap. That is a red line, not a preference.
 
 ## Before you post the link
 

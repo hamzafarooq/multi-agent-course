@@ -2,6 +2,10 @@
 /**
  * Create every index LUMINA needs, from scripts/indexes.json. PROVIDED — safe to re-run.
  *
+ * MONGO-ONLY CONVENIENCE, not a gate. It is a helper for the taught MERN path; nothing in
+ * the grader calls it. If you built on another store, create its indexes however that store
+ * expects and make /health name it.
+ *
  *   node scripts/create-indexes.mjs            # apply
  *   node scripts/create-indexes.mjs --status   # just show what exists
  *
