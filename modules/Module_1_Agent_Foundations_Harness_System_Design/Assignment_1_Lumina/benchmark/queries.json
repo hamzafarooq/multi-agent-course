@@ -1,0 +1,38 @@
+{
+  "_comment": "The bench workload. `web` holds distinct questions for the quick gear; bench.mjs builds sla.workload.web_queries from them, repeating sla.workload.repeat_fraction of the list so the search cache has something to hit. `smoke` is the five-query Gate 2 set. `deep` holds multi-part questions that a single search cannot answer \u2014 each is run quick first, then deep, so 'deeper' is measured rather than claimed. Edit these to suit your corpus and interests.",
+  "smoke": [
+    "What is retrieval-augmented generation?",
+    "Who maintains the Tavily search API?",
+    "What is MongoDB Atlas Vector Search used for?",
+    "What does reciprocal rank fusion do?",
+    "What is Server-Sent Events used for in web apps?"
+  ],
+  "web": [
+    "What are the GPAI obligations in the EU AI Act?",
+    "How does reciprocal rank fusion combine two ranked lists?",
+    "What is the difference between BM25 and dense vector retrieval?",
+    "What is MongoDB Atlas Vector Search and what are its index limits?",
+    "How do Server-Sent Events differ from WebSockets?",
+    "What is a read-your-write consistency problem in search indexes?",
+    "What does the Tavily extract endpoint return?",
+    "How does SerpApi price its search requests?",
+    "What is prompt caching and when does it save money?",
+    "What is the p95 latency a user tolerates before a page feels broken?",
+    "How large is a text-embedding-3-small vector?",
+    "What is GridFS and when should you use it instead of a bucket?",
+    "What is a TTL index in MongoDB?",
+    "How does pptxgenjs render a slide deck?",
+    "What does the OpenAI gpt-image-1 model cost per image?",
+    "What is the agentic loop in an LLM application?",
+    "Why do proxies buffer Server-Sent Events?",
+    "What is chunking and why does chunk size matter for retrieval?",
+    "What is a page locator in a document citation?",
+    "How do you measure citation grounding without an LLM judge?"
+  ],
+  "deep": [
+    "Compare BM25 and dense vector retrieval for a technical support corpus: where does each fail, and what does hybrid retrieval actually fix?",
+    "What would it cost to run a Perplexity-style search product at 100k answers a month, and which line item dominates?",
+    "How do Server-Sent Events, WebSockets and long polling compare for streaming an LLM answer, and what breaks in each behind a CDN?",
+    "What are the trade-offs between MongoDB Atlas Vector Search and a dedicated vector database for a RAG application with page-level citations?"
+  ]
+}

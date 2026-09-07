@@ -7,14 +7,18 @@
       "id": "ui_lights_up_contract",
       "label": "UI lights up & contract",
       "points": 10,
-      "rules": ["C1"],
+      "rules": [
+        "C1"
+      ],
       "check": "every route in packages/contract returns the declared shape and status code through the gateway (401 without X-User-Id, 404, 413, 429, 501, 502); POST /threads/{id}/ask streams trace -> sources -> token -> done with sources before the first token"
     },
     {
       "id": "search_cited_answers",
       "label": "Search & cited answers",
       "points": 20,
-      "rules": ["E2"],
+      "rules": [
+        "E2"
+      ],
       "check": "citationGrounding >= 0.95 over the bench sample (every [n] maps to a source whose snippet is found, normalized, in the fetched page); retrievalRate = 1.0; trace shows fetch_page not snippet-only; second identical query reports searchCached=true"
     },
     {
@@ -28,51 +32,64 @@
       "id": "rag_documents",
       "label": "RAG over documents",
       "points": 15,
-      "rules": ["E1", "E2"],
+      "rules": [
+        "E1",
+        "E2"
+      ],
       "check": "POST /spaces/{id}/documents returns 202 in < 300 ms; the document reaches indexed via the jobs worker; a question returns a citation with kind=doc and a page locator; mode=auto picks documents for a corpus question; recallAt5 >= 0.70 on eval/gold/rag_gold.jsonl (>= 30 items)"
     },
     {
-      "id": "presentation_auto",
-      "label": "Presentation (automated half)",
-      "points": 5,
-      "rules": [],
-      "check": "POST /artifacts kind=deck returns 202; GET /artifacts/{id} reaches ready with an outline; every citation number on every slide exists in the answer's sources; the .pptx downloads and parses"
-    },
-    {
-      "id": "image_generation",
-      "label": "Image generation with a cost gate",
-      "points": 10,
-      "rules": ["R2", "B3"],
-      "check": "POST /artifacts kind=image reaches ready with model=gpt-image-1, costUsd, promptUsed; the (IMAGE_DAILY_CAP+1)th request returns 429 with resetsAt; DRY_RUN=true yields ready with costUsd=0; no run log shows generate_image or make_presentation on the ask path"
+      "id": "deep_search",
+      "label": "Deep search (plan, fan-out, merged citations, spend gate)",
+      "points": 15,
+      "rules": [
+        "E2",
+        "B3",
+        "R2"
+      ],
+      "check": "depth=deep streams a plan event with >= min_deep_sub_questions sub-questions BEFORE any retrieval; every trace step and source carries the subQuestion it served; the merged citation numbering is contiguous and every [n] resolves; a deep answer retrieves at least min_deep_source_ratio times the distinct sources of the same query run quick; deep stays inside max_cost_per_deep_answer_usd and deep_answer_p95_s; the (DEEP_DAILY_CAP+1)th deep search returns 429 with resetsAt; and no quick run's trace contains plan_research"
     },
     {
       "id": "performance_sla",
       "label": "Performance & SLA gate",
       "points": 10,
-      "rules": ["B1", "B2", "B3", "A2", "A3"],
+      "rules": [
+        "B1",
+        "B2",
+        "B3",
+        "A2",
+        "A3"
+      ],
       "check": "node benchmark/bench.mjs exits 0 (every target in benchmark/sla.json met) and node quality/check.mjs . reports no error-severity failure over runs/"
     },
     {
       "id": "observability",
       "label": "Logging, tracing & stats",
       "points": 5,
-      "rules": ["A1"],
+      "rules": [
+        "A1"
+      ],
       "check": "one X-Request-Id correlates a request across gateway and agent pino logs; every failed tool call in runs/ carries a non-empty error; /stats.answers and /stats.costUsdToday reconcile with the agent log within 1 %; /health names model, search provider, vector backend"
     }
   ],
   "manual": [
     {
-      "id": "presentation_manual",
-      "label": "Presentation (human half)",
+      "id": "deep_search_quality",
+      "label": "Deep search quality (human half)",
       "points": 5,
-      "rules": ["E3"],
-      "check": "the deck opens in PowerPoint/Keynote/Google Slides without repair; slides read like a real deck, not bullet dumps; a Sources slide lists every cited URL/document. Judged by a person, never a model"
+      "rules": [
+        "E3",
+        "P1"
+      ],
+      "check": "a grader asks the same question at both depths and reads both answers. The deep one has to be BETTER, not merely longer: broader coverage, sources the quick answer missed, sub-questions a person would actually have asked, and no padding. Judged by a person, never a model"
     },
     {
       "id": "human_gate_answer_quality",
       "label": "Human gate & answer quality",
       "points": 5,
-      "rules": ["P1"],
+      "rules": [
+        "P1"
+      ],
       "check": "/evals renders one successful and one failing trajectory in full, every step, with what each taught the learner; grader reads five sampled answers for concision, relevance, and honesty when retrieval is thin"
     },
     {
@@ -90,9 +107,14 @@
       "check": "a new rule submitted to the cohort rules.json: one executable sentence, a real incident as precedent (date, what broke, what it cost), a self-check question"
     },
     {
-      "id": "subagent_split",
+      "id": "subagent_deep_search",
       "points": 5,
-      "check": "planner -> parallel researchers -> writer with isolated contexts; the trace shows the tree; grounding and SLA still pass"
+      "check": "deep search runs its sub-questions as isolated subagents in parallel rather than sequentially in one context: the trace shows the tree, wall clock drops, and grounding and the SLA still pass"
+    },
+    {
+      "id": "semantic_answer_cache",
+      "points": 5,
+      "check": "a semantic cache with a freshness guard serves a near-duplicate question without re-searching, reports answerCached: true, and never serves a stale answer to a time-sensitive query"
     }
   ],
   "red_lines": [
@@ -101,7 +123,7 @@
     "no fabricated citation in the bench sample (E2)",
     "no 2xx answer served on a provider exception (A1)",
     "no run that hit a cap reported as terminated=done (A2)",
-    "generate_image / make_presentation never called from the ask path (R2)",
+    "plan_research never called from a quick search: depth is opted into, never drifted into (R2)",
     "the design section on /evals answers the five system-design questions in the learner's own words"
   ]
 }

@@ -1,0 +1,38 @@
+{
+  "name": "lumina",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LUMINA \u2014 Perplexity-style AI search. FDE Agent Engineering Bootcamp, Assignment 1.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "workspaces": [
+    "packages/contract",
+    "backend/gateway",
+    "backend/agent",
+    "web"
+  ],
+  "scripts": {
+    "dev": "npm run build -w @lumina/contract && concurrently -k -n agent,gateway,web -c magenta,cyan,green \"npm:dev:agent\" \"npm:dev:gateway\" \"npm:dev:web\"",
+    "dev:agent": "npm run dev -w @lumina/agent",
+    "dev:gateway": "npm run dev -w @lumina/gateway",
+    "dev:web": "npm run dev -w @lumina/web",
+    "worker": "npm run worker -w @lumina/agent",
+    "build": "npm run build -w @lumina/contract && npm run build -w @lumina/agent && npm run build -w @lumina/gateway && npm run build -w @lumina/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "indexes": "node scripts/create-indexes.mjs",
+    "export:runs": "node scripts/export-runs.mjs",
+    "bench": "node benchmark/bench.mjs",
+    "quality": "node quality/check.mjs .",
+    "eval": "node eval/eval.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "concurrently": "^9.0.1",
+    "eslint": "^9.12.0",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.8.0"
+  }
+}

@@ -3,17 +3,19 @@
   "project": "LUMINA",
   "quality": { "rules": true, "budget": true },
 
+  "$budget_comment": "quality/check.mjs applies ONE budget to every run log, so these are the DEEP envelope: the widest a legitimate run may get. The tighter quick envelope (8 tool calls, 90s, $0.05) is enforced per run by benchmark/bench.mjs, which can read `depth` off the run and hold each gear to its own numbers. Two tools, two jobs; nothing is unenforced.",
   "budget": {
-    "maxTokensPerRun": 40000,
-    "maxToolCalls": 8,
-    "maxWallClockSec": 90,
-    "maxCostUsd": 0.05
+    "maxTokensPerRun": 180000,
+    "maxToolCalls": 24,
+    "maxWallClockSec": 240,
+    "maxCostUsd": 0.35
   },
 
+  "$trajectory_comment": "mustNotCallTools is empty because the one tool that is forbidden — plan_research — is forbidden only to QUICK runs, and this file cannot say 'only quick'. bench.mjs asserts it per run against the run's own depth. maxConsecutiveSameTool is 4 rather than 3 because a deep search legitimately fetches several pages in a row for one sub-question.",
   "trajectory": {
     "mustCallTools": [],
-    "mustNotCallTools": ["generate_image", "make_presentation"],
-    "maxConsecutiveSameTool": 3,
+    "mustNotCallTools": [],
+    "maxConsecutiveSameTool": 4,
     "mustTerminate": true
   },
 

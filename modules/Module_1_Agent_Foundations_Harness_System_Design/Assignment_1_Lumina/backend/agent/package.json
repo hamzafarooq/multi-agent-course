@@ -1,0 +1,37 @@
+{
+  "name": "@lumina/agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LUMINA AI backend: the agent loop, its tools, memory, RAG, the jobs worker, artifacts. YOU BUILD THIS. Provider keys live only here.",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "worker": "tsx watch src/worker.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@lumina/contract": "*",
+    "@mozilla/readability": "^0.5.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.22.2",
+    "jsdom": "^25.0.1",
+    "mongodb": "^6.9.0",
+    "multer": "^2.0.2",
+    "openai": "^4.67.1",
+    "pdfjs-dist": "^4.7.76",
+    "pino": "^9.4.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jsdom": "^21.1.7",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^20.16.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  },
+  "_note": "Your LLM SDK is your choice and is NOT pinned here: add @anthropic-ai/sdk, or use openai, or call the HTTP API directly. Whatever you pick, /health must name the model. openai is present because embeddings (text-embedding-3-small) are named by the assignment."
+}

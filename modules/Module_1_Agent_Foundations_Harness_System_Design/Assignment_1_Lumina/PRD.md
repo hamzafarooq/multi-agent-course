@@ -2,16 +2,18 @@
 
 | | |
 |---|---|
-| **Project** | 01 · LUMINA, a Perplexity clone that searches, remembers, reads your documents, makes the deck, and draws the picture |
+| **Project** | 01 · LUMINA, a Perplexity clone: it searches, searches *deeply* when a question has parts, remembers you, and reads your documents |
 | **Track** | FDE Agent Engineering Bootcamp, cohort 2026-03 |
 | **Kicks off** | Week 1 (Agent Foundations, Harness & System Design) · due end of Week 2 |
 | **Owner** | Hamza Farooq |
-| **Status** | Draft v0.2, 2026-09-05 (MERN revision) |
+| **Status** | Draft v0.3, 2026-09-07 (two-gear revision: deep search in, deck and image out) |
 | **Stack** | **MERN**: MongoDB Atlas (documents, memory, cache, jobs, and vectors via Atlas Vector Search) · Express (two Node services) · React (the provided UI) · Node end to end, including the bench, the eval, and the quality checker |
 | **Lives in** | `modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/`: the Week 1 project ships with the Week 1 module |
 | **Replaces** | FDE Assignment 1, Live Translate (see Open Questions) |
 
-> **One line:** ask a question, get a streamed, cited answer built from live web search and your own documents; the system remembers you across sessions; any answer can become a slide deck or an image on demand. Two Express services, one MongoDB, one fixed contract, one deploy, one benchmark that must pass.
+> **One line:** ask a question, get a streamed, cited answer built from live web search and your own documents; ask a harder one and it decomposes the question, researches each part, and merges the citations; it remembers you across sessions. Two Express services, one MongoDB, one fixed contract, one deploy, one benchmark that must pass.
+
+> **Two gears.** `depth: "quick"` is the default: one pass, a couple of searches, a cited answer in seconds. `depth: "deep"` is Perplexity's Pro Search: plan sub-questions, research each, merge everything into one citation numbering. Quick is what keeps the product economic; deep is what makes it worth using on a real question. Building both is the assignment, and *knowing which one a question deserves* is the lesson.
 
 ---
 
@@ -19,7 +21,7 @@
 
 Perplexity is the clearest example of what a production agent loop looks like from the outside: a query goes in, the system *decides* what to search, reads, and answers with citations you can click. Learners in Week 1 are taught that loop. LUMINA makes them ship it, as a product, not a notebook.
 
-It also front-loads five capabilities every later project depends on:
+It also front-loads four capabilities every later project depends on:
 
 | Capability | Where it comes back |
 |---|---|
@@ -27,7 +29,7 @@ It also front-loads five capabilities every later project depends on:
 | Web search as a tool the agent chooses | ARGUS (retrieval decisions), EPYHIA (research) |
 | Memory (thread + long-term) | Module 2 memory; VOXA conversation state |
 | RAG over user documents with page-level citations | ARGUS extends exactly this contract |
-| Artifacts (deck, image) as **async, cost-bearing actions** | A3 async queue, A4 action gate |
+| Query decomposition and merged citations (deep search) | Module 3 Pro-search & re-ranking; EPYHIA research |
 
 Same FDE shape as before: a fixed contract, a provided UI that is the acceptance test, two backend services you own, an SLA you prove with a benchmark, a real deploy. New this cohort: the whole thing is **one language**. React in front, Express behind, MongoDB underneath, and Node for the bench, the eval, and the quality checker, so a learner never context-switches between a JS frontend and a Python backend to debug one request.
 
@@ -36,8 +38,9 @@ Same FDE shape as before: a fixed contract, a provided UI that is the acceptance
 1. **Ship a working answer engine in two weeks.** Fresh clone → follow README → provided UI lights up against the learner's backend, locally and on Fly.io.
 2. **Every claim is grounded.** ≥ 95 % of inline citations resolve to a source the system actually retrieved in that request. Fabricated sources are an automatic fail.
 3. **Prove it by arithmetic.** `benchmark/bench.mjs` exits 0 against declared numbers in `sla.json`; no threshold is judged by a model.
-4. **Make cost visible.** Every answer and every artifact logs tokens, latency, and USD; `/stats` reports the day's spend.
-5. **Teach the async pattern early.** Deck and image generation are `202`-then-poll artifacts, so A3's queue is not the first time learners meet it.
+4. **Make cost visible and gated.** Every answer logs tokens, latency, and USD; `/stats` reports the day's spend; deep search — several times the price of quick — sits behind a per-user daily cap enforced server-side.
+5. **Teach the two gears.** Most questions do not need six sub-questions and twelve fetched pages. A product that answers every question as though it did is slow and uneconomic; one that never digs is useless on a real question. Learners ship both and have to defend the default.
+6. **Teach the async pattern early.** Document ingestion is a `202`-then-worker path, so ARGUS's queue is not the first time learners meet it.
 
 ## 3 · Non-goals
 
@@ -46,7 +49,8 @@ Same FDE shape as before: a fixed contract, a provided UI that is the acceptance
 - No voice (VOXA), no video ingestion (ARGUS), no autonomous side effects such as sending or publishing (EPYHIA).
 - No fine-tuning, no self-hosted models required. Provider-swappable via env is enough.
 - No answer caching. Search *results* are cached with a TTL; answers are always regenerated so freshness is never served stale.
-- No multi-agent split in the required build. Planner/researcher/writer subagents are a stretch goal, taught in Week 2.
+- **No artifact generation.** No slide decks, no image generation. They were 20 points of thin API-call-behind-a-cap in an earlier draft and they crowded out the loop; deep search took the room. EPYHIA can generate things.
+- No multi-agent split *required*. Deep search may run its sub-questions sequentially in one context; doing it as parallel isolated subagents is the Week 2 stretch goal.
 
 ## 4 · Users & scenarios
 
@@ -58,18 +62,20 @@ Same FDE shape as before: a fixed contract, a provided UI that is the acceptance
 
 *Scenario C, own documents.* Alex uploads three PDFs into a Space called "Q3 board pack" and asks "what did we commit to on churn?" The router chooses documents over web, and the answer cites `board-deck.pdf, p. 14`. Alex then asks "and what does the market say?", the router now blends web and docs, citations of both kinds appear.
 
-*Scenario D, artifacts.* Alex clicks **Make a deck** on that answer. LUMINA returns `202`, the UI polls, and forty seconds later a `.pptx` with eight slides is downloadable; each slide's claims trace back to the thread's citations. Alex then types "generate a hero image for the churn slide" and gets a `gpt-image-1` image, with its cost logged and the daily image cap decremented.
+*Scenario D, deep search.* Alex asks "should we move our RAG stack off Atlas Vector Search onto a dedicated vector DB?" — a question with at least four parts. Alex flips the toggle to **Deep**. Within two seconds the Plan panel lists five sub-questions (cost at our scale, page-level citation support, operational burden of a second store, migration cost, what changes at 10× the corpus), each with a one-line reason. Alex disagrees with the fifth, but the search is already running: trace steps stream in tagged `3`, `3`, `1`, `4`, sources accumulate with the sub-question that found them, and fifty seconds later a structured answer arrives citing `[1]`–`[14]`, every number resolving. `/stats` shows the run cost $0.21 and that Alex has four deep searches left today.
+
+*Scenario E, the cheap gear is the default.* Alex asks "what port does mongod listen on?" and leaves the toggle on Quick. One search, one fetch, one sentence, $0.004, under two seconds. Nobody decomposed anything. This scenario is in the PRD on purpose: a system that runs Scenario D's machinery on Scenario E's question has failed at the thing this assignment teaches.
 
 ## 5 · Requirements
 
-Grouped by the five capabilities plus the loop that ties them together. **Must** rows are graded; **Should** rows are expected of a strong submission; **Could** rows are stretch.
+Grouped by the four capabilities plus the loop that ties them together. **Must** rows are graded; **Should** rows are expected of a strong submission; **Could** rows are stretch.
 
 ### 5.1 The agent loop (the harness)
 
 | Pri | Requirement |
 |---|---|
-| Must | One loop: plan → choose tool → observe → repeat → answer. Tools: `web_search`, `fetch_page`, `search_documents`, `recall_memory`, `save_memory`. Artifact tools (`make_presentation`, `generate_image`) exist only behind `POST /artifacts`; the ask loop **never** calls them, so a question can never spend on an image by itself. |
-| Must | Bounded: max 8 tool calls and 90 s per request; hitting a cap returns an honest partial answer with `terminated: "cap"` in the `done` event, never a fabricated complete one. A provider exception ends the run with `terminated: "error"` and a `502`. |
+| Must | One loop: plan → choose tool → observe → repeat → answer. Tools: `web_search`, `fetch_page`, `search_documents`, `recall_memory`, `save_memory`, and — **deep only** — `plan_research`. A quick search that calls `plan_research` has escalated itself into a run costing several times more, which is the spend failure this separation exists to prevent. |
+| Must | Bounded, per gear: **quick** 8 tool calls / 90 s, **deep** 24 tool calls / 240 s. Hitting a cap returns an honest partial answer with `terminated: "cap"` in the `done` event, never a fabricated complete one. A provider exception ends the run with `terminated: "error"` and a `502`. |
 | Must | Every step is emitted as a `trace` SSE event *before* the answer streams, and logged with the request id. |
 | Must | Every ask writes a **run log** `runs/<requestId>.json` in the quality kit's shape (§13): `tokens`, `wallClockSec`, `costUsd`, `terminated`, ordered `toolCalls[{name, ok, error}]`. Ten lines of adapter; it is what the gates read. |
 | Must | Tool errors surface. A failed search or fetch is a visible `trace` step with `ok: false` and an error string. A provider outage returns `502`; the service never returns "I couldn't find anything" as a successful answer when the real cause was an exception. |
@@ -91,7 +97,7 @@ Grouped by the five capabilities plus the loop that ties them together. **Must**
 
 | Pri | Requirement |
 |---|---|
-| Must | **Thread memory:** every thread persists its messages, citations, and artifacts; a follow-up question sees the whole thread. |
+| Must | **Thread memory:** every thread persists its messages, citations, and (for a deep search) the plan it ran; a follow-up question sees the whole thread. |
 | Must | **Long-term memory:** durable facts and preferences per `X-User-Id`, stored in the `memories` collection, each document `{_id, userId, text, embedding, sourceThread, createdAt}`. |
 | Must | Writes are explicit and inspectable: the agent calls `save_memory` only for stable facts/preferences (not for trivia from a single answer), the trace shows the write, and `GET /memory` lists every row. `DELETE /memory/{id}` removes one. |
 | Must | Recall is demonstrable across threads: a preference saved in thread A changes the answer in thread B, and the trace shows `recall_memory` returning it. |
@@ -108,31 +114,36 @@ Grouped by the five capabilities plus the loop that ties them together. **Must**
 | Must | Hybrid retrieval: `$vectorSearch` (dense) plus an Atlas Search text index on `chunks.text` (BM25), fused with reciprocal rank fusion, with a re-rank step **or** a documented reason for skipping it; top-k and thresholds declared in config, not hard-coded. |
 | Must | A document reaches `indexed` only after a **read-your-write probe**: the worker queries the vector index for one of the chunks it just wrote and gets it back. Atlas Search indexes are eventually consistent; "upserted" is not "searchable". |
 | Must | Empty retrieval → the answer says so and cites nothing. Citing a chunk that is not in the index is an automatic fail. |
-| Must | Meets `recall_at_5_min` on the provided gold set (30 questions over the provided corpus, see §9). |
+| Must | Meets `min_recall_at_5` on the provided gold set (39 questions over the provided corpus, see §9). |
 | Should | Router blends web and documents in one answer when both are relevant, with mixed `kind` in `sources`. |
 | Could | Re-index on document replace; delete a document and prove its chunks are gone. |
 
-### 5.5 Presentation generation
+### 5.5 Deep search (Perplexity's Pro Search)
+
+The second gear, and where 15 of the 100 points now live. Everything in 5.1 to 5.4 still
+applies to a deep search; this section is only what deep adds.
 
 | Pri | Requirement |
 |---|---|
-| Must | `POST /artifacts {kind: "deck", threadId, answerId}` → `202 {artifactId, status: "pending"}`; the UI polls `GET /artifacts/{id}` until `ready` and downloads a `.pptx`. |
-| Must | Pipeline: answer + its sources → a structured outline (JSON: title, 6–10 slides, each with bullets and the citation numbers it rests on) → rendered with `pptxgenjs`. The outline JSON is stored on the artifact document and returned by the API so grading can check grounding by arithmetic: every citation number on every slide must exist in the answer's `sources`. |
-| Must | Opens in PowerPoint, Keynote, and Google Slides without repair prompts; a final "Sources" slide lists every cited URL/document. |
-| Must | p95 generation time ≤ 60 s; failure sets `status: "failed"` with an `error` string, never a half-written file marked ready. |
-| Should | A speaker-notes field per slide carrying the supporting snippet. |
-| Could | An HTML (reveal.js) preview rendered in the UI before download. |
+| Must | `POST /threads/{id}/ask {depth: "deep"}`. `depth` defaults to `"quick"`, and the server never upgrades a request on its own: deep is opted into, never drifted into. |
+| Must | `plan_research` decomposes the question into `DEEP_SUB_QUESTIONS_MIN`–`MAX` (default 3–6) sub-questions, each with a one-line reason. A plan of two sub-questions is a quick search with extra steps and is scored as one. |
+| Must | The `plan` SSE event is emitted **before any retrieval happens**. It is deep search's real first paint — `deep_plan_p95_ms` ≤ 4 000 — and a plan streamed after the fetches is a rationalisation, not a plan. |
+| Must | Each sub-question is researched with the same tools as a quick search. Every `trace` step carries the `subQuestion` index it is serving, so a reader can follow one thread of the research through the log. |
+| Must | Results are merged into **one citation numbering** across all sub-questions: duplicates deduped by URL (or `docId` + locator), numbering contiguous from 1, and every `[n]` in the answer resolving to exactly one entry. Each source carries the `subQuestion` that found it. |
+| Must | A deep answer retrieves at least `min_deep_source_ratio` (2×) the distinct sources of the *same question* answered quick. Deep that reads no more than quick is only slower, and the bench measures exactly this by running both. |
+| Must | **Spend gate:** `DEEP_DAILY_CAP` (default 5) per `X-User-Id`, enforced in the agent service; over cap → `429 {error, resetsAt}`. Deep is allowed to cost about 7× quick (`max_cost_per_deep_answer_usd` $0.35) and is not allowed to be unbounded. |
+| Must | `done` carries `depth` and `subQuestions`, and the run log carries `depth`, so a legitimately expensive deep run is distinguishable from a quick run that ran away with the budget. |
+| Should | The answer is *structured* — a short direct answer, then a section per sub-question, then what is still unknown. Deep search that returns one long paragraph has wasted the decomposition. |
+| Should | Sub-questions are researched in parallel, bounded by a concurrency limit, so wall clock is not the sum of the parts. |
+| Could | A follow-up that narrows to one sub-question reuses that sub-question's already-fetched pages instead of re-fetching. |
+| Could | Show the plan *before* running and let the user edit or drop a sub-question — Perplexity does not do this and it is obviously better. |
 
-### 5.6 Image generation (`gpt-image-1`)
-
-| Pri | Requirement |
-|---|---|
-| Must | `POST /artifacts {kind: "image", threadId, prompt?}` → `202`, generated with OpenAI Images (`gpt-image-1`); if `prompt` is omitted the agent writes one from the thread context and stores the prompt it used. |
-| Must | The stored artifact record carries `{model, size, costUsd, promptUsed}`; the file lives in GridFS (default, zero extra infra) or an S3-compatible bucket; never committed. |
-| Must | **Cost gate:** a per-user daily cap (`IMAGE_DAILY_CAP`, default 10) enforced in the agent service; over cap → `429 {error, resetsAt}`. `DRY_RUN=true` returns a placeholder image with `costUsd: 0` so the whole flow is testable without spend. |
-| Must | Provider errors (content policy, quota) surface as `failed` with the provider's message, not as a silent retry loop. |
-| Should | One-click "Illustrate this slide" from a deck slide's context. |
-| Could | Image edit / variation of a previous artifact. |
+**Why this replaced the deck and the image.** Those were two API calls behind a cap: they
+taught the async pattern (which document ingestion already teaches) and the spend gate (which
+deep search now carries), and cost 20 points that were not buying loop skill. Deep search is the
+same 20 points spent on query decomposition, fan-out, result merging, and citation bookkeeping —
+the things that actually distinguish an answer engine from a search box, and the things Module 3
+builds on.
 
 ## 6 · Architecture
 
@@ -141,9 +152,9 @@ Same split as every FDE project: the browser only ever talks to the gateway; pro
 ```
   ┌──────────────────────────────┐
   │  Web UI  (web/)              │  ← PROVIDED · React 18 + Vite · the acceptance test
-  │  query · stream · citations  │     types imported from packages/contract
+  │  query · quick/deep toggle   │     types imported from packages/contract
+  │  stream · citations · plan   │
   │  memory panel · spaces       │
-  │  deck / image actions        │
   └──────────────┬───────────────┘
                  │  HTTP + SSE  (X-User-Id, X-Request-Id)
                  ▼
@@ -155,15 +166,15 @@ Same split as every FDE project: the browser only ever talks to the gateway; pro
                  ▼
   ┌──────────────────────────────┐
   │  Express agent service :8000 │  ← YOU · the loop and its tools · the worker
-  │  loop · router · tools       │
-  │  memory · RAG · artifacts    │
-  │  jobs worker (in-process)    │
+  │  loop · router · depth gear  │
+  │  planner · fan-out · merge   │
+  │  memory · RAG · jobs worker  │
   └───┬──────┬──────────┬────────┘
       ▼      ▼          ▼
    Search   LLM +    MongoDB Atlas ─────────────────────────────────────────────
   (Tavily/  embed    threads · messages · memories(vector idx) · spaces · documents
   SerpApi) (env-     chunks(vector idx + text idx) · searchCache(TTL idx) · jobs
-            swap)    artifacts · requests · runs · GridFS (uploads, decks, images)
+            swap)    requests · runs · GridFS (uploads)
 ```
 
 **Why MERN here.** Three reasons, and none is "it's popular":
@@ -171,9 +182,9 @@ Same split as every FDE project: the browser only ever talks to the gateway; pro
 2. **One database, including vectors.** Atlas Vector Search puts embeddings in the same collection as the chunk text and its locator, so a citation is one document, not a join across a vector store and a relational table. The `spaceId` filter is a plain query predicate.
 3. **The quality kit is already Node.** `check.mjs` reads `runs/*.json`; the agent service writes them natively. The bench and eval are `.mjs` too, so the six gates run with `node` and nothing else installed.
 
-**Why the gateway still matters.** SSE pass-through, per-user rate limiting, contract validation, and the image cost gate are the concerns you want on the edge, away from the keys. It is also where you learn that Express buffers SSE by default unless you flush and disable compression.
+**Why the gateway still matters.** SSE pass-through, per-user rate limiting, and contract validation are the concerns you want on the edge, away from the keys. (The deep-search cap is deliberately *not* here: it is a spend gate on a provider call, so it belongs next to the spending, in the agent service. A cap on the edge is a cap you can bypass by reaching the agent service directly.) It is also where you learn that Express buffers SSE by default unless you flush and disable compression.
 
-**Async inside one service, backed by MongoDB.** Document indexing and artifact generation are rows in a `jobs` collection. The API inserts `{kind, status: "pending", payload}` and returns `202`. A worker loop in the agent service claims work with an atomic `findOneAndUpdate({status: "pending"}, {$set: {status: "running", claimedAt, workerId}})`, does the job, and only then flips the target document's status. Crash mid-job and the row stays `running` with a stale `claimedAt`; a sweeper returns it to `pending`. No Redis, no broker. ARGUS swaps Prefect in against the same contract.
+**Async inside one service, backed by MongoDB.** Document indexing is a row in a `jobs` collection. (Deep search is *not*: it streams over the same SSE channel as a quick answer, because someone waiting on a minute of research wants to watch it work, not poll a job id.) The API inserts `{kind, status: "pending", payload}` and returns `202`. A worker loop in the agent service claims work with an atomic `findOneAndUpdate({status: "pending"}, {$set: {status: "running", claimedAt, workerId}})`, does the job, and only then flips the target document's status. Crash mid-job and the row stays `running` with a stale `claimedAt`; a sweeper returns it to `pending`. No Redis, no broker. ARGUS swaps Prefect in against the same contract.
 
 ## 7 · API contract (fixed: the UI speaks this)
 
@@ -181,17 +192,24 @@ All routes on the gateway; the gateway forwards the same shapes to the AI servic
 
 ```jsonc
 POST /threads                       → 201 { "threadId": "thr_…" }
-GET  /threads/{id}                  → 200 { "messages": [ { "role", "content", "sources": [...], "artifacts": [...] } ] }
+GET  /threads/{id}                  → 200 { "messages": [ { "role", "content", "sources": [...], "answerId"?, "subQuestions"? } ] }
 
-POST /threads/{id}/ask              // body: { "query": "…", "mode": "auto" | "web" | "docs", "spaceId": "spc_…"? }
+POST /threads/{id}/ask              // body: { "query": "…", "mode": "auto" | "web" | "docs",
+                                    //          "depth": "quick" | "deep",   // default "quick"
+                                    //          "spaceId": "spc_…"? }
   → 200 text/event-stream
-  event: trace    data: { "step": 1, "tool": "web_search", "input": {...}, "ok": true, "ms": 812, "reason": "…" }
-  event: sources  data: [ { "n": 1, "kind": "web", "title": "…", "url": "…", "snippet": "…" },
+  // `plan` is DEEP ONLY, arrives first, and must precede any retrieval:
+  event: plan     data: { "subQuestions": [ { "i": 1, "question": "…", "reason": "…" }, … ],
+                          "reason": "…" }
+  event: trace    data: { "step": 1, "tool": "web_search", "input": {...}, "ok": true, "ms": 812,
+                          "reason": "…", "subQuestion": 1 }        // subQuestion on deep runs
+  event: sources  data: [ { "n": 1, "kind": "web", "title": "…", "url": "…", "snippet": "…", "subQuestion": 1 },
                           { "n": 2, "kind": "doc", "docId": "doc_…", "title": "board-deck.pdf", "locator": { "page": 14 }, "snippet": "…" } ]
   event: token    data: { "text": "…" }
   event: done     data: { "answerId": "ans_…", "latencyMs": 6410, "ttftMs": 1830, "model": "…",
                           "tokens": { "in": 9120, "out": 410 }, "costUsd": 0.021,
-                          "searchCached": false, "terminated": "done" | "cap" }
+                          "searchCached": false, "terminated": "done" | "cap" | "error",
+                          "depth": "quick" | "deep", "subQuestions": 0 }
   event: error    data: { "status": 502, "error": "search provider 503" }
 
 GET    /memory                      → 200 { "memories": [ { "id", "text", "sourceThread", "createdAt" } ] }
@@ -201,23 +219,19 @@ POST /spaces                        → 201 { "spaceId": "spc_…", "name": "…
 POST /spaces/{id}/documents         // multipart file   → 202 { "docId": "doc_…", "status": "pending" }
 GET  /spaces/{id}/documents         → 200 { "documents": [ { "docId", "title", "status", "pct", "pages"? , "error"? } ] }
 
-POST /artifacts                     // { "kind": "deck" | "image", "threadId", "answerId"?, "prompt"? }
-                                    → 202 { "artifactId": "art_…", "kind": "deck", "status": "pending" }
-GET  /artifacts/{id}                → 200 { "status": "pending" | "ready" | "failed", "url"?: "/artifacts/{id}/file",
-                                            "outline"?: {...}, "promptUsed"?: "…", "model"?: "…", "costUsd"?: 0.04, "error"?: "…" }
-GET  /artifacts/{id}/file           → 200 (application/vnd.openxmlformats-officedocument.presentationml.presentation | image/png)
-
 GET  /health                        → 200 { "status": "ok", "model": "…", "searchProvider": "tavily", "vectorStore": "atlas-vector-search", "db": "ok", "ai": { "status": "ok" } }
 GET  /evals/report.json             → 200 { "assignment", "student", "repo", "video", "deployedAt", "rubric", "bench", "quality", "trajectories" }  // written by the eval skill, rendered by the UI at /evals
 GET  /stats                         → 200 { "requests": 412, "answers": 130, "searchCacheHitRatePct": 58.1, "ttftP95Ms": 1910,
-                                            "costUsdToday": 3.12, "imagesToday": 4, "imageDailyCap": 10 }
+                                            "costUsdToday": 3.12, "deepToday": 2, "deepDailyCap": 5 }
 ```
 
-**Status codes:** `400` invalid input · `401` missing `X-User-Id` · `404` unknown thread/space/artifact · `413` file too large · `429` rate limit or image cap · `501` not implemented · `502` upstream (LLM, search, image) failure.
+**Status codes:** `400` invalid input · `401` missing `X-User-Id` · `404` unknown thread/space/document · `413` file too large · `429` rate limit or deep-search cap · `501` not implemented · `502` upstream (LLM, search) failure.
 
 **Contract rules that matter**
 - Every `[n]` in streamed text has a matching `n` in `sources` for that answer. Extra or missing → grounding failure.
 - `sources` is sent **before** the first `token`, so the UI can render chips as text arrives.
+- On a deep search, `plan` is sent **before any retrieval**, and every `trace` step and `source` carries the `subQuestion` it served.
+- `depth` defaults to `"quick"`. The server reports in `done` which gear it actually ran, and it never upgrades a request by itself.
 - `202` endpoints return in < 300 ms; the work happens after.
 - `latencyMs`, `ttftMs`, `costUsd` are measured server-side.
 
@@ -228,17 +242,16 @@ One database, `lumina`. Every document carries `userId` (from `X-User-Id`) and `
 | Collection | Key fields | Indexes |
 |---|---|---|
 | `threads` | `_id, userId, title, createdAt` | `{userId: 1, createdAt: -1}` |
-| `messages` | `_id, threadId, role, content, sources[], done{}, artifactIds[], createdAt` | `{threadId: 1, createdAt: 1}` |
+| `messages` | `_id, threadId, role, content, sources[], done{}, subQuestions[]?, createdAt` | `{threadId: 1, createdAt: 1}` |
 | `memories` | `_id, userId, text, embedding[1536], sourceThread, createdAt` | **vector** on `embedding` (cosine) with `userId` as a filter field |
 | `spaces` | `_id, userId, name, createdAt` | `{userId: 1}` |
 | `documents` | `_id, spaceId, userId, title, status, pct, pages, error, fileId (GridFS), createdAt` | `{spaceId: 1}` |
 | `chunks` | `_id, docId, spaceId, text, locator{page \| heading \| line}, embedding[1536]` | **vector** on `embedding` with `spaceId` filter; **search** (BM25) on `text` |
 | `searchCache` | `_id (sha256 of query+provider), provider, results[], expiresAt` | `{expiresAt: 1}` **TTL** `expireAfterSeconds: 0` |
-| `jobs` | `_id, kind (index_document \| make_deck \| make_image), status, payload, claimedAt, workerId, attempts, error` | `{status: 1, createdAt: 1}` |
-| `artifacts` | `_id, userId, threadId, answerId, kind, status, fileId (GridFS), outline, promptUsed, model, costUsd, error, createdAt` | `{userId: 1, createdAt: -1}` |
-| `requests` | `requestId, userId, route, status, ms, tokensIn, tokensOut, costUsd, toolCalls, terminated, createdAt` | `{createdAt: -1}`, `{requestId: 1}` |
+| `jobs` | `_id, kind (index_document), status, payload, claimedAt, workerId, attempts, error` | `{status: 1, createdAt: 1}`, `{status: 1, claimedAt: 1}` |
+| `requests` | `requestId, userId, route, status, ms, tokensIn, tokensOut, costUsd, toolCalls, terminated, depth, createdAt` | `{createdAt: -1}`, `{requestId: 1}` |
 | `runs` | the exact `runs/<requestId>.json` shape from §13, plus `requestId` | `{createdAt: -1}` |
-| GridFS `uploads`, `files` | raw PDFs/MD/TXT; rendered `.pptx` and `.png` | default |
+| GridFS `uploads` | raw uploaded PDFs / MD / TXT | default |
 
 **Schema lives in code.** `packages/contract/` exports zod schemas for every request, response, SSE event, and collection document. The gateway validates inbound bodies with them, the agent service validates outbound events with them, and the provided React UI imports the types. Mongoose is allowed but not required; the zod schema is the contract, the ODM is an implementation detail.
 
@@ -256,12 +269,15 @@ Declared before the first run. `bench.mjs` exits non-zero on any miss; the grade
 | Citation grounding | ≥ 95 % | share of `[n]` whose `snippet` is found verbatim (normalized) in the fetched page or indexed chunk, arithmetic, no judge |
 | RAG recall@5 on gold set | ≥ 0.70 | 30 Q/A pairs over the provided corpus |
 | Search cache hit rate (bench workload) | ≥ 50 % | repeated/near-duplicate queries in the workload |
-| Deck generation, p95 | ≤ 60 s | |
-| Image generation, p95 | ≤ 45 s | |
+| Deep search: time to plan, p95 | ≤ 4 000 ms | deep's real first paint; a minute of silence reads as broken |
+| Deep search: full answer, p95 | ≤ 90 s | Perplexity-class research takes a minute, not five |
+| Deep search: sub-questions (min) | ≥ 3 | two is a quick search with extra steps |
+| Deep / quick distinct-source ratio (min) | ≥ 2.0× | the same question, both gears. Deep that reads no more is only slower |
 | Error rate | ≤ 1 % | |
-| Cost per answer (mean) | ≤ $0.05 | placeholder price table in `sla.json`; learners set provider rates |
+| Cost per answer, quick (mean) | ≤ $0.05 | placeholder price table in `sla.json`; learners set provider rates |
+| Cost per answer, deep (mean) | ≤ $0.35 | ~7× quick, and capped per user per day on top |
 
-`bench.mjs` reports latency percentiles, grounding rate, recall, hit rate, cost per answer and per artifact, and projected monthly cost at the volume declared in `sla.json`, with and without the search cache.
+`bench.mjs` reports latency percentiles **per gear**, grounding rate, recall, cache hit rate, cost per quick and per deep answer, and projected monthly cost at the volume and deep fraction declared in `sla.json`. Averaging the two gears together is exactly how a slow quick search hides behind a fast deep one, so it does not.
 
 ## 10 · Observability
 
@@ -277,8 +293,8 @@ Declared before the first run. `bench.mjs` exits non-zero on any miss; the grade
 3. **Errors surface, never swallowed.** Provider failure → `502` + log. No `try/catch` that returns a plausible answer.
 4. **The loop is bounded and honest.** Caps exist; hitting one is reported as `terminated: "cap"`.
 5. **Memory is visible and deletable.** Nothing is remembered that `/memory` does not show.
-6. **Indexing and artifacts are async.** `202` in < 300 ms; the work runs from the `jobs` collection; status transitions are committed only after the work succeeds, and `indexed` only after the read-your-write probe.
-7. **Image spend is gated.** Daily cap enforced server-side; `DRY_RUN` exists; cost logged per image.
+6. **Indexing is async.** `202` in < 300 ms; the work runs from the `jobs` collection; status transitions are committed only after the work succeeds, and `indexed` only after the read-your-write probe.
+7. **Deep spend is gated and opted into.** `DEEP_DAILY_CAP` enforced server-side in the agent service → `429 {error, resetsAt}`; cost logged per run; a quick search never calls `plan_research`. The server does not upgrade a request's depth on its own.
 8. **Secrets from env, never committed.** `.env`, `node_modules/`, `web/dist/`, `runs/`, `reports/` are git-ignored. The Atlas connection string is a secret.
 9. **Evidence over vibes.** Numbers in `PRODUCT_EVAL.md` come from a real `bench.mjs` run against the deployed app.
 
@@ -290,14 +306,14 @@ Declared before the first run. `bench.mjs` exits non-zero on any miss; the grade
 | Search & cited answers | 20 | auto | Grounding ≥ 95 %; `sources` precedes tokens; pages fetched not just snippets; `searchCached` true on repeat | E2 (`citationGrounding`, `retrievalRate`) |
 | Memory | 10 | auto | Preference saved in thread A observably changes thread B; `/memory` lists it; `DELETE` removes it and the effect disappears |, |
 | RAG over documents | 15 | auto | Upload → `202` → `indexed`; doc citation with `page` locator; router picks docs when relevant; recall@5 ≥ 0.70 | E1, E2 (`recallAt5`) |
-| Presentation | 10 | 5 auto / 5 manual | `.pptx` downloadable; every slide citation exists in the answer's sources (auto); opens cleanly and reads like a real deck (manual) | E3 (human, not model, judges the deck) |
-| Image generation | 10 | auto | `gpt-image-1` artifact ready with `costUsd` and `promptUsed`; cap → `429`; `DRY_RUN` path works | R2, B3 |
+| Deep search | 15 | auto | `plan` before any retrieval with ≥ 3 sub-questions; every step and source tagged with its `subQuestion`; merged numbering contiguous and fully resolving; ≥ 2× the distinct sources of the same query run quick; inside the deep budget; cap + 1 → `429` with `resetsAt`; no quick run calls `plan_research` | E2, B3, R2 |
+| Deep search quality | 5 | manual | A grader asks one question at both depths and reads both answers. Deep must be *better*, not merely longer: coverage, sources quick missed, sub-questions a person would have asked, no padding | E3 (human, not model, judges it) |
 | Performance & SLA | 10 | auto | `bench.mjs` exits 0 | B1, B2, B3, A2, A3 |
 | Observability | 5 | auto | Request id correlates both logs; `/stats` reconciles with the log; trace explains citations | A1 |
 | Human gate & answer quality | 5 | manual | Learner names one successful and one failing trajectory they read end to end (P1) and what each taught them; grader reads five sampled answers: concise, on-question, honest when retrieval is thin | P1 |
 | Deploy & docs | 5 | manual | Both services on Fly.io against an Atlas cluster; UI works against the public gateway; `npm run dev` brings everything up locally; `.env.example`; run notes |, |
 
-**Red lines (auto-flagged):** secrets committed · provided `web/` or `benchmark/` edited · any fabricated citation in the bench sample (E2) · a `2xx` answer served on a provider exception (A1) · a run that hit a cap reported as `done` (A2) · `generate_image` called from the ask path (R2).
+**Red lines (auto-flagged):** secrets committed · provided `web/` or `benchmark/` edited · any fabricated citation in the bench sample (E2) · a `2xx` answer served on a provider exception (A1) · a run that hit a cap reported as `done` (A2) · `plan_research` called from a quick search (R2).
 
 **Bonus (+5):** the learner hits a failure the rules do not yet cover and submits it as a new rule, one executable sentence, the real incident as precedent, a self-check question, to the cohort's `rules.json`. This is the highest-value exercise in the assignment because it is the actual job.
 
@@ -320,18 +336,21 @@ This assignment is graded under the cohort's quality bar (`QUALITY_BAR.md`). Fou
   "project": "LUMINA",
   "quality": { "rules": true, "budget": true },
 
+  // check.mjs applies ONE budget to every run log, so these are the DEEP envelope: the
+  // widest a legitimate run may get. The tighter quick envelope is enforced per run by
+  // bench.mjs, which can read `depth` off the run. Two tools, two jobs, nothing unenforced.
   "budget": {
-    "maxTokensPerRun": 40000,      // B1, one answer: plan + ≤4 fetched pages + synthesis
-    "maxToolCalls": 8,             // the loop's hard cap (§5.1)
-    "maxWallClockSec": 90,         // B2, the loop's hard cap; the p95 SLA of 12 s lives in sla.json
-    "maxCostUsd": 0.05             // B3, per answer, at the provider rates in sla.json
+    "maxTokensPerRun": 180000,     // B1, a deep run: plan + ~12 fetched pages + synthesis
+    "maxToolCalls": 24,            // deep's hard cap (§5.1); quick's 8 is checked by bench.mjs
+    "maxWallClockSec": 240,        // B2, deep's hard cap; the p95 SLAs live in sla.json
+    "maxCostUsd": 0.35             // B3, per deep answer, at the provider rates in sla.json
   },
 
   "trajectory": {
-    "mustCallTools": [],                                    // retrieval is asserted by retrievalRate below (web OR docs)
-    "mustNotCallTools": ["generate_image", "make_presentation"],  // R2, the ask path never spends on artifacts
-    "maxConsecutiveSameTool": 3,                            // A3, thrash guard
-    "mustTerminate": true                                   // A2, terminated must be "done"
+    "mustCallTools": [],           // retrieval is asserted by retrievalRate below (web OR docs)
+    "mustNotCallTools": [],        // see below: the one forbidden tool is forbidden per-depth
+    "maxConsecutiveSameTool": 4,   // A3, thrash guard; deep legitimately fetches a few in a row
+    "mustTerminate": true          // A2, terminated must be "done"
   },
 
   "eval": {
@@ -347,12 +366,14 @@ This assignment is graded under the cohort's quality bar (`QUALITY_BAR.md`). Fou
 `bench.mjs` writes `reports/eval.json` with exactly those metric names (`citationGrounding`, `recallAt5`, `retrievalRate`, `errorRate`), and the agent service writes one `runs/<requestId>.json` per answer (`npm run export:runs` also dumps the `runs` collection into that folder for a deployed instance):
 
 ```json
-{ "tokens": 18240, "wallClockSec": 6.4, "costUsd": 0.021, "terminated": "done",
+{ "tokens": 18240, "wallClockSec": 6.4, "costUsd": 0.021, "terminated": "done", "depth": "quick",
   "toolCalls": [ { "name": "web_search", "ok": true }, { "name": "fetch_page", "ok": true },
                  { "name": "fetch_page", "ok": false, "error": "403 from publisher" }, { "name": "fetch_page", "ok": true } ] }
 ```
 
-A failed call **must** carry a non-empty `error` (A1). `terminated` is `"done"`, `"cap"`, or `"error"`: set explicitly at the call site, because no SDK gives it to you.
+A failed call **must** carry a non-empty `error` (A1). `terminated` is `"done"`, `"cap"`, or `"error"`: set explicitly at the call site, because no SDK gives it to you. `depth` is what lets a reader — and `bench.mjs` — tell a legitimately expensive deep run from a quick run that ran away.
+
+**Why `mustNotCallTools` is empty.** The one forbidden tool, `plan_research`, is forbidden only to *quick* runs, and this file has no way to say "only quick". So R2's job is done by `bench.mjs`, which checks every quick run's trace for a `plan_research` step and fails the deep-search row and the red line if it finds one. Declaring `plan_research` globally forbidden would fail every legitimate deep search; declaring nothing and checking nothing would be worse. This is the honest third option, and it is the kind of gap you should expect to find and close in your own gates.
 
 ### The gates
 
@@ -391,33 +412,33 @@ If you cannot produce a failing trajectory, you do not understand the failure su
 5. Long-term memory: `save_memory` / `recall_memory` over the `memories` vector index; `/memory` list + delete.
 6. **Checkpoint demo:** cited streamed answer in the UI; a preference carries across threads; one `runs/*.json` exists and `node quality/check.mjs .` reads it.
 
-**Week 2, documents, artifacts, proof, deploy**
+**Week 2, documents, deep search, proof, deploy**
 7. Spaces + the `jobs` worker: upload → GridFS → `pending` → parse (`pdfjs-dist`) → chunk → embed → `chunks` upsert → read-your-write probe → `indexed`. Router `auto`.
 8. Hybrid retrieval: `$vectorSearch` + `$search` fused with RRF; page locators in citations.
-9. Deck artifact: outline JSON → `pptxgenjs`; grounding check on slide citations.
-10. Image artifact with `gpt-image-1`, daily cap, `DRY_RUN`.
+9. Deep search, part one: `plan_research` and the `plan` event. Stream it before you retrieve anything and read three plans out loud — if the sub-questions are not ones you would have asked, fix the prompt before you build the fan-out on top of it.
+10. Deep search, part two: research each sub-question, merge into one citation numbering (dedupe by URL / `docId`+locator, renumber contiguously), tag every step and source with its `subQuestion`, synthesise a structured answer. Then the spend gate: `DEEP_DAILY_CAP` → `429`, and make sure a quick search cannot reach `plan_research`.
 11. Write `expectations.json` **before** running the bench. Then `node benchmark/bench.mjs` green against `sla.json` and `check.mjs` exit ≤ 1; fix what they catch. A first run that passes everything usually means the thresholds were set after seeing the scores.
 12. Deploy both services to Fly.io (`fly launch` per service, secrets via `fly secrets set`); Atlas stays where it is; point the UI at the public gateway.
-13. Run the eval skill → `PRODUCT_EVAL.md`; record the 60–90 s demo.
+13. Run `/fde-lumina-eval` against the deployed gateway → `report.json` at `/evals/report.json`; record the 60–90 s demo.
 
 ## 15 · Provided vs. built (what the course must ship before Week 1)
 
 | Component | Status | Path |
 |---|---|---|
-| Workspace scaffold: root `package.json` with npm workspaces, `npm run dev`, `docker-compose.yml` (local `mongod`), `.env.example`, lint + typecheck config | ✅ Provided, **to be built by course staff** | repo root |
-| `packages/contract/`: zod schemas + TypeScript types for every route, SSE event, and collection document in §7 and §8 | ✅ Provided, **to be built** | `packages/contract/` |
-| Web UI (React 18 + Vite, imports the contract types): query, streaming answer with citation chips, sources rail, thread list, memory panel, Spaces upload, deck/image actions with polling | ✅ Provided, **to be built** | `web/` |
-| Empty Express skeletons for both services with `/health` returning `501` on everything else, so the UI's "not implemented yet" state is the learner's progress bar | ✅ Provided, **to be built** | `backend/gateway/`, `backend/agent/` |
-| Atlas setup guide + `scripts/create-indexes.mjs` that creates the vector, search, and TTL indexes from one JSON definition | ✅ Provided, **to be built** | `scripts/` |
+| Workspace scaffold: root `package.json` with npm workspaces, `npm run dev`, `docker-compose.yml` (local `mongod`), `.env.example`, lint + typecheck config | ✅ **Built** | repo root |
+| `packages/contract/`: zod schemas + TypeScript types for every route, SSE event, and collection document in §7 and §8 | ✅ **Built** | `packages/contract/` |
+| Web UI (React 18 + Vite, imports the contract types): query, quick/deep toggle, streaming answer with citation chips, sources rail with sub-question attribution, plan panel, trace panel, thread list, memory panel, Spaces upload, `/evals` | ✅ **Built** | `web/` |
+| Empty Express skeletons for both services with `/health` returning `501` on everything else, so the UI's "not implemented yet" state is the learner's progress bar | ✅ **Built** | `backend/gateway/`, `backend/agent/` |
+| `scripts/create-indexes.mjs` (2 vector + 1 text + TTL from one JSON, `--status` to watch them build) and `scripts/export-runs.mjs` | ✅ **Built** | `scripts/` |
 | `benchmark/sla.json` (declared targets, cost model, workload) | ✅ Written | `benchmark/sla.json` |
-| `benchmark/bench.mjs` (latency, grounding, recall, cache, cost; reads `sla.json`) | ✅ Provided, **to be built** | `benchmark/` |
-| RAG gold set: a 30-question JSONL + a small corpus (3–5 PDFs, CC-licensed) | ✅ Provided, **to be built** | `eval/gold/` |
+| `benchmark/bench.mjs` (per-gear latency, grounding, recall, cache, deep-vs-quick source ratio, decoupling, cost; reads `sla.json`) | ✅ **Built** | `benchmark/` |
+| RAG gold set: 39 questions + a 4-document CC BY corpus (2 rendered to PDF with stable page numbers), a builder and a validator | ✅ **Built** | `eval/gold/` |
 | `eval/rubric.json` (FDE schema: automated / manual / stretch_bonus / red_lines, mapped to rule ids) and `expectations.json` (§13) | ✅ Written | `eval/rubric.json`, `expectations.json` |
-| `eval/eval.mjs` + the `/fde-lumina-eval` skill, running the six gates in order | ✅ Provided, **to be built** | `eval/`, `.claude/skills/` |
-| Public copy of the quality kit (`check.mjs`, `rules.json` with only publishable precedents, `expectations.example.json`) | ✅ Provided, **to be promoted from the cohort folder** | `quality/` |
+| `eval/eval.mjs` (six gates in order), `eval/build-report.mjs` (assembles `report.json` from run artifacts), and the `/fde-lumina-eval` skill | ✅ **Built** | `eval/`, `.claude/skills/` |
+| Public copy of the quality kit (`check.mjs`, `rules.json` with A1's precedent filled from the Live Translate incident, `expectations.example.json`) | ✅ **Built** | `quality/` |
 | `AGENTS.md` (non-negotiables) and `README.md` (the build guide in the FDE house structure) | ✅ Written; add the track's reading-assignment tripwire if you want it | assignment root |
 | Express gateway: CORS, auth header, request id, logging, validation, rate limit, SSE pass-through | 🔨 Learner | `backend/gateway/` |
-| Express agent service: loop, tools, memory, RAG, `jobs` worker, artifacts, run logs | 🔨 Learner | `backend/agent/` |
+| Express agent service: the quick loop, deep search (planner, fan-out, merge), tools, memory, RAG, `jobs` worker, run logs | 🔨 Learner | `backend/agent/` |
 
 **Reference app note.** Alex, the Perplexity-style reference app in this module, is FastAPI + vanilla JS. It is the reference for *behavior* (the four levels, the trace panel, grounded citations), not for stack. Read it to learn what LUMINA should feel like; build LUMINA in MERN.
 
@@ -426,10 +447,12 @@ If you cannot produce a failing trajectory, you do not understand the failure su
 | Risk | Mitigation |
 |---|---|
 | Fetching full pages hits paywalls, robots, JS-rendered sites | Tavily `extract` as the default reader; fall back to snippet-only with the trace marking it, scored lower not failed |
-| `gpt-image-1` requires organization verification on OpenAI; some learners blocked | `DRY_RUN` path is graded as pass for the flow; real generation earns the cost-logging points; allow an alternative image API if named in `/health` |
+| Deep search is where a learner's bill runs away: six sub-questions × four fetches × a large context, on every request | Three defences, all required: the wider-but-finite cap (24 calls / 240 s), the per-user daily cap (`DEEP_DAILY_CAP` → `429`), and quick as the default with no server-side upgrade. The bench measures cost per gear separately so a deep-search blowout cannot hide in a blended average |
+| A "deep" search that is only slower: same two searches, longer prose | `min_deep_source_ratio` — the bench runs the *same question* at both depths and requires deep to surface ≥ 2× the distinct sources. It is the one number that cannot be talked around |
+| The planner writes sub-questions that are restatements of the question | `min_deep_sub_questions` (≥ 3) is necessary but not sufficient, so the human row (5 pts) is a grader reading one plan and asking whether a person would have asked those questions. Build order §14 step 9 makes the learner read three plans before building the fan-out |
 | Search API cost across 40 learners × bench runs | Cache is mandatory and the bench workload is 50 % repeats by design; Tavily free tier covers a learner's two weeks |
 | Grounding check by verbatim snippet match is brittle to whitespace/quotes | Normalize (case, whitespace, punctuation) before matching; require ≥ 12 consecutive matching tokens rather than exact snippet equality |
-| Two weeks is tight for five capabilities | Deck and image are thin by design (one outline → one renderer; one API call behind a gate); RAG is the biggest lift and gets Week 2's first three days |
+| Two weeks is tight for four capabilities | Deck and image generation were cut for exactly this reason: 20 points that bought two API calls. RAG is the biggest lift and gets Week 2's first three days; deep search reuses the quick loop's tools, so it is a fan-out and a merge rather than a new subsystem |
 | Learners hard-code one provider | `/health` must name provider and store; the eval flips `SEARCH_PROVIDER` for one call |
 | Atlas Search indexes are eventually consistent; a document marked `indexed` is not yet searchable | The read-your-write probe in §5.4 is a Must; the bench queries a freshly indexed document and fails the run if it is invisible |
 | Free-tier Atlas (M0) allows 3 search indexes and 512 MB | LUMINA needs exactly 3 (memories vector, chunks vector, chunks text); the gold corpus is small; document the limit and how to upgrade |
@@ -437,35 +460,34 @@ If you cannot produce a failing trajectory, you do not understand the failure su
 | Node's single thread stalls the SSE stream while the worker parses a large PDF | The worker runs in a `worker_threads` pool or a second process (`npm run worker`); the bench's decoupling check (search p95 during ingest) catches a blocking implementation |
 | Mongoose schemas drift from the zod contract | zod is the source of truth; the UI compiles against the same types, so drift fails `npm run typecheck` before it fails a learner |
 
-**Assumptions:** learners have an LLM key, a Tavily or SerpApi key, and an OpenAI key for embeddings and images; a free Atlas M0 cluster per learner is enough for two weeks; Fly.io free tier suffices for two small Node services; the provided UI, contract package, and scaffold can be built by staff in one week from this PRD.
+**Assumptions:** learners have an LLM key, a Tavily or SerpApi key, and an OpenAI key for embeddings; a free Atlas M0 cluster per learner is enough for two weeks; Fly.io free tier suffices for two small Node services. The provided UI, contract package, scaffold, gold set and grader **are built** (§15) and were exercised end to end against a stub backend before Week 1.
 
 ## 17 · Open questions
 
 1. **Live Translate's slot.** LUMINA replaces it as Assignment 1. Move `Assignment_1_Live_Translate` to a bonus, or retire it? *(Owner: Hamza)*
 2. **Provide the UI or have learners build it?** This PRD provides it, matching A1's "the widget is the acceptance test." The FDE pitch says "you build the frontend." Building it is a natural stretch goal; decide before the UI work starts. *(Owner: Hamza)*
 3. **Atlas Vector Search vs. a separate vector store.** This PRD picks Atlas so MERN stays literally MERN and a citation is one document. ARGUS uses Qdrant, so learners meet a dedicated vector DB in Week 3 anyway. Confirm, or allow Qdrant as a named alternative in `/health`.
-4. **Image alternative** if `gpt-image-1` access is a blocker for many: allow Gemini image generation as a named alternative?
-5. **Deck format:** `.pptx` only, or also an HTML deck the UI can preview? PRD says `.pptx` required, HTML stretch.
+4. **Deep-search concurrency.** Parallel sub-question research is a *Should*, not a *Must*, so a sequential implementation can still pass `deep_answer_p95_s` ≤ 90 s with four sub-questions. Tighten the p95 to force parallelism, or leave it as the natural pull toward the subagent stretch goal? *(Owner: Hamza)*
+5. **Should the user be able to edit the plan before it runs?** Listed as a *Could*. It is obviously better product design and it is a second round-trip and a UI state the provided UI does not have. Cohort 2 material?
 6. **Quality kit distribution.** Learners need `check.mjs` and `rules.json` in the assignment, but the cohort copy lives in a local-only folder and its precedents may name clients and costs. Promote a scrubbed copy into `quality/` before Week 1. *(Owner: Hamza)*
 7. **TypeScript or JavaScript?** The scaffold is TypeScript because the contract types are the point. Learners who insist on plain JS can, but they lose the typecheck gate. Recommendation: TypeScript required for `packages/contract`, optional elsewhere.
 8. **Gold corpus content.** Which 3–5 public PDFs? Suggest arXiv RAG papers so the Space demo overlaps Module 3.
 
 ## 18 · Stretch goals
 
-- **Subagent split** (Week 2 material): planner → researcher(s) in parallel → writer, with isolated contexts; show the trace tree.
-- **Pro search:** query decomposition + per-sub-question retrieval + merged citations.
+- **Subagent split** (Week 2 material): run deep search's sub-questions as parallel isolated subagents rather than sequentially in one context; show the trace tree and the wall-clock drop.
 - **Semantic answer cache with freshness guard** (Module 3's semantic cache): cached answers for non-time-sensitive repeats, with `answerCached: true`.
 - **Learner-built UI** replacing `web/`, still passing the contract.
 - **Own search:** SearXNG behind the same `web_search` tool.
 - **Share links** for a thread; export a thread to Markdown.
 - **Dockerize** both services with `docker compose up`; GitHub Action running `node benchmark/bench.mjs` and `fly deploy` on green.
 - **Learner-built UI in Next.js** on Vercel, still passing the contract, with the gateway as its API route target.
-- **Change streams** on `artifacts` to push status to the UI over the existing SSE channel instead of polling.
+- **Change streams** on `documents` to push indexing status to the UI over the existing SSE channel instead of polling.
 
 ## 19 · Submission
 
 One **Vercel URL**, per [`SUBMISSION.md`](../../../SUBMISSION.md). The UI deploys to Vercel; the services run on Fly.io or Vercel against Atlas.
 
 1. The `/fde-lumina-eval` skill runs the six gates (`check.mjs`, `bench.mjs`, `eval.mjs`) against the **deployed** gateway, collects the video link and the two trajectories read for P1, and writes `report.json`, served at `GET /evals/report.json`. The provided UI renders it at `/evals`.
-2. The **60 to 90 s recording** embedded there shows: a fresh question streams with citations; a memory carries into a new thread; a document question cites a page; the deck downloads and opens; an image generates and `/stats` shows its cost.
+2. The **60 to 90 s recording** embedded there shows: a quick question streams with citations; the same question run **deep**, with the plan appearing first and the merged citations at the end; a memory carrying into a new thread; a document question citing a page; and `/stats` showing the deep run's cost and the remaining daily allowance.
 3. **No code is submitted.** `DESIGN.md` (the five questions, written before the build) and the "How I ran it" notes (LLM, search provider, Atlas tier) go into the eval config and render on `/evals` alongside both full trajectories.

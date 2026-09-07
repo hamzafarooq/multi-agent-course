@@ -8,10 +8,14 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
 
 - **BUILD:** `backend/gateway/` (Express: CORS, `X-User-Id`, request id, `pino` log, zod validation,
   rate limit, SSE pass-through, serve `web/dist`) and `backend/agent/` (Express: the loop, tools,
-  memory, RAG, `jobs` worker, artifacts, run logs).
+  memory, RAG, deep search, the `jobs` worker, run logs).
 - **DO NOT EDIT:** `web/`, `packages/contract/`, `benchmark/`, `eval/`, `quality/`, `scripts/`.
   These are the provided UI, the contract, and the grader. If something seems to require editing
-  them, you've misread the contract.
+  them, you've misread the contract. Editing them is a red line and it is checked.
+- **Keep a deliberately failed run in `runs/failing/`, not `runs/`.** Rule A2 grades every run in
+  `runs/` and fails one that did not terminate as `done`; rule P1 requires you to keep a failing
+  trajectory. The subfolder is how both hold at once — the trajectory rules read `runs/*.json`
+  only, and `eval/build-report.mjs` reads both.
 - **Write `DESIGN.md` before any code.** It answers the five questions: components,
   responsibilities, communication, state, trade-offs. It is graded as the design section of the
   `/evals` page, so it must survive being read by a stranger.
@@ -20,21 +24,25 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
 
 ### Contract: match exactly
 - Every route, body, SSE event, and status code matches `packages/contract/`. `401` without
-  `X-User-Id`; `404` unknown ids; `413` file too large; `429` rate limit or image cap; `501` not
-  implemented; `502` any upstream failure.
-- `POST /threads/{id}/ask` streams `trace → sources → token → done`. `sources` is emitted
-  **before** the first `token`. Every `[n]` in the text has exactly one matching `n` in `sources`.
+  `X-User-Id`; `404` unknown ids; `413` file too large; `429` rate limit or deep-search cap;
+  `501` not implemented; `502` any upstream failure.
+- `POST /threads/{id}/ask` streams `trace → sources → token → done`, and on a deep search
+  `plan` first. `sources` is emitted **before** the first `token`; `plan` is emitted **before any
+  retrieval**. Every `[n]` in the text has exactly one matching `n` in `sources`.
 - `done` carries `answerId, latencyMs, ttftMs, model, tokens{in,out}, costUsd, searchCached,
-  terminated`, all measured server-side.
+  terminated, depth, subQuestions`, all measured server-side.
+- `depth` defaults to `"quick"`. The server NEVER upgrades a request to deep on its own.
 - The browser talks ONLY to the gateway (`:8787`). The gateway talks to the agent service (`:8000`).
   Provider keys exist only in the agent service.
 
 ### The loop
-- Tools available to the ask loop: `web_search`, `fetch_page`, `search_documents`,
-  `recall_memory`, `save_memory`. **Never** `make_presentation` or `generate_image` from the ask
-  path. Those run only via `POST /artifacts`.
-- Hard caps: 8 tool calls, 90 s. Hitting one ends the run with `terminated: "cap"` and an honest
-  partial answer. A provider exception ends it with `terminated: "error"` and a `502`.
+- Tools: `web_search`, `fetch_page`, `search_documents`, `recall_memory`, `save_memory`, and
+  — **deep searches only** — `plan_research`. A quick run whose trace contains `plan_research`
+  has escalated itself into a run costing several times more: that is a red line, and
+  `bench.mjs` checks every quick run for it.
+- Hard caps, per gear: **quick** 8 tool calls / 90 s, **deep** 24 tool calls / 240 s. Hitting one
+  ends the run with `terminated: "cap"` and an honest partial answer. A provider exception ends it
+  with `terminated: "error"` and a `502`.
 - **Fail loud.** NEVER wrap a provider call in a `try/catch` that returns a plausible answer, an
   empty-but-successful answer, or "I couldn't find anything" when the real cause was an exception.
   (Precedent: Live Translate, where a dependency mismatch made every call throw, the `except`
@@ -42,7 +50,8 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
 - Every step is a `trace` event and is logged. A failed tool call has `ok: false` and a non-empty
   `error` string.
 - Every answer writes `runs/<requestId>.json`: `tokens`, `wallClockSec`, `costUsd`, `terminated`,
-  ordered `toolCalls[{name, ok, error}]`. `node quality/check.mjs .` must be able to read it.
+  `depth`, ordered `toolCalls[{name, ok, error}]`. `node quality/check.mjs .` must be able to read
+  it. Without `depth`, nobody can tell an expensive deep run from a quick run that ran away.
 
 ### Grounding (this is the point of the assignment)
 - A citation that does not resolve to something retrieved **in that request** is an automatic fail.
@@ -73,14 +82,22 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
 - Crash-safe: a worker killed mid-job leaves the row `running` with a stale `claimedAt`; a sweeper
   returns it to `pending`; finished stages are not re-run.
 
-### Artifacts
-- `POST /artifacts` → `202` → `GET /artifacts/{id}` polls `pending | ready | failed`. `failed`
-  carries the provider's error; a half-written file is never marked `ready`.
-- Deck: outline JSON (title, 6–10 slides, bullets, citation numbers) stored on the artifact and
-  rendered with `pptxgenjs`. Every citation number on every slide exists in the answer's `sources`.
-- Image: `gpt-image-1`. Store `model`, `size`, `costUsd`, `promptUsed`. `IMAGE_DAILY_CAP` (default
-  10) enforced per `X-User-Id` in the agent service → `429 {error, resetsAt}`. `DRY_RUN=true`
-  returns a placeholder with `costUsd: 0`.
+### Deep search (this is where 15 of the 100 points are)
+- `depth: "deep"` runs `plan_research` first and streams a `plan` event with 3–6 sub-questions,
+  each with a one-line reason, **before any retrieval happens**. A plan emitted after the fetches
+  is a rationalisation and scores as one.
+- Every `trace` step and every `source` on a deep run carries the `subQuestion` index it served.
+  A merged source list nobody can trace back to a sub-question is a pile, not research.
+- Merge into ONE citation numbering: dedupe by `url` (or `docId` + locator), number contiguously
+  from 1, and every `[n]` in the answer resolves to exactly one entry.
+- Deep must actually be deeper. The bench runs the **same question** at both depths and requires
+  deep to surface at least `min_deep_source_ratio` (2×) the distinct sources. Longer prose over
+  the same two pages fails.
+- **Spend gate:** `DEEP_DAILY_CAP` (default 5) per `X-User-Id`, enforced in the agent service
+  → `429 {error, resetsAt}`. Not in the gateway: a cap on the edge is a cap you bypass by
+  reaching the agent service directly.
+- Structure the answer (a direct answer, a section per sub-question, then what is still unknown).
+  One long paragraph wastes the decomposition.
 
 ### Observability
 - `pino` JSON lines: one per request at the gateway (`method, route, status, ms, requestId, userId`),
@@ -89,7 +106,7 @@ relax, reinterpret, or "improve" these requirements. Conform to them.
 - `X-Request-Id`: reuse inbound, else generate at the gateway; forward; log in both. One request is
   greppable end to end.
 - `/health` names LLM model, search provider, vector backend, and Mongo status. `/stats` reconciles
-  with the logs.
+  with the logs and reports `deepToday` / `deepDailyCap`.
 
 ### Hygiene
 - Secrets from `.env` only, read server-side. No key, connection string, or token is ever bundled

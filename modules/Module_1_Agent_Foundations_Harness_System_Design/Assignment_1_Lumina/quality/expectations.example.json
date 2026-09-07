@@ -1,0 +1,29 @@
+{
+  "$comment": "Copy to <project>/expectations.json and edit. Every number here is asserted by arithmetic, never by a judge model. Declare the numbers BEFORE the first run — a threshold set after seeing the score is not a threshold.",
+  "project": "ARGUS",
+
+  "quality": {
+    "rules": true,
+    "budget": true
+  },
+
+  "budget": {
+    "maxTokensPerRun": 120000,
+    "maxToolCalls": 25,
+    "maxWallClockSec": 90,
+    "maxCostUsd": 0.4
+  },
+
+  "trajectory": {
+    "mustCallTools": ["retrieve", "cite"],
+    "mustNotCallTools": ["web_search"],
+    "maxConsecutiveSameTool": 3,
+    "mustTerminate": true
+  },
+
+  "eval": {
+    "goldSetPath": "evals/gold.jsonl",
+    "minCitationGrounding": 0.95,
+    "minExactMatch": 0.7
+  }
+}

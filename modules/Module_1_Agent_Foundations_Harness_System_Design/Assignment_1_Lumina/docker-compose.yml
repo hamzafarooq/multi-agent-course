@@ -1,0 +1,12 @@
+# Local mongod for offline development. NOTE: a plain mongod has no Atlas Vector Search
+# or Atlas Search, so `search_documents` must run with VECTOR_BACKEND=mongo-cosine-scan
+# and /health has to say so. Grading happens against Atlas.
+services:
+  mongo:
+    image: mongo:7
+    container_name: lumina-mongo
+    ports: ['27017:27017']
+    volumes: ['lumina-mongo:/data/db']
+    command: ['--quiet']
+volumes:
+  lumina-mongo:

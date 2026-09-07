@@ -1,0 +1,203 @@
+{
+  "_comment": "Every index LUMINA needs, in one place. `node scripts/create-indexes.mjs` applies it and is safe to re-run. A free Atlas M0 cluster allows exactly 3 search indexes, and LUMINA needs exactly 3.",
+  "embeddingDims": 1536,
+  "collections": {
+    "threads": {
+      "indexes": [
+        {
+          "keys": {
+            "userId": 1,
+            "createdAt": -1
+          }
+        }
+      ]
+    },
+    "messages": {
+      "indexes": [
+        {
+          "keys": {
+            "threadId": 1,
+            "createdAt": 1
+          }
+        }
+      ]
+    },
+    "memories": {
+      "indexes": [
+        {
+          "keys": {
+            "userId": 1,
+            "createdAt": -1
+          }
+        }
+      ]
+    },
+    "spaces": {
+      "indexes": [
+        {
+          "keys": {
+            "userId": 1
+          }
+        }
+      ]
+    },
+    "documents": {
+      "indexes": [
+        {
+          "keys": {
+            "spaceId": 1
+          }
+        },
+        {
+          "keys": {
+            "userId": 1,
+            "createdAt": -1
+          }
+        }
+      ]
+    },
+    "chunks": {
+      "indexes": [
+        {
+          "keys": {
+            "docId": 1,
+            "ord": 1
+          }
+        },
+        {
+          "keys": {
+            "spaceId": 1
+          }
+        }
+      ]
+    },
+    "searchCache": {
+      "indexes": [
+        {
+          "keys": {
+            "expiresAt": 1
+          },
+          "options": {
+            "name": "searchCache_ttl",
+            "expireAfterSeconds": 0
+          },
+          "_note": "expireAfterSeconds 0 means 'expire at the date in expiresAt'. Mongo sweeps roughly once a minute, so a hit just past its TTL is possible; check expiresAt in code too."
+        }
+      ]
+    },
+    "jobs": {
+      "indexes": [
+        {
+          "keys": {
+            "status": 1,
+            "createdAt": 1
+          }
+        },
+        {
+          "keys": {
+            "status": 1,
+            "claimedAt": 1
+          }
+        }
+      ]
+    },
+    "requests": {
+      "indexes": [
+        {
+          "keys": {
+            "createdAt": -1
+          }
+        },
+        {
+          "keys": {
+            "requestId": 1
+          }
+        }
+      ]
+    },
+    "runs": {
+      "indexes": [
+        {
+          "keys": {
+            "createdAt": -1
+          }
+        },
+        {
+          "keys": {
+            "requestId": 1
+          },
+          "options": {
+            "unique": true
+          }
+        }
+      ]
+    }
+  },
+  "searchIndexes": [
+    {
+      "collection": "memories",
+      "name": "memories_vector",
+      "type": "vectorSearch",
+      "definition": {
+        "fields": [
+          {
+            "type": "vector",
+            "path": "embedding",
+            "numDimensions": 1536,
+            "similarity": "cosine"
+          },
+          {
+            "type": "filter",
+            "path": "userId"
+          }
+        ]
+      }
+    },
+    {
+      "collection": "chunks",
+      "name": "chunks_vector",
+      "type": "vectorSearch",
+      "definition": {
+        "fields": [
+          {
+            "type": "vector",
+            "path": "embedding",
+            "numDimensions": 1536,
+            "similarity": "cosine"
+          },
+          {
+            "type": "filter",
+            "path": "spaceId"
+          },
+          {
+            "type": "filter",
+            "path": "userId"
+          }
+        ]
+      },
+      "_note": "spaceId is declared as a filter field so the filter can live INSIDE $vectorSearch. Filtering in a later $match returns another Space's chunks first and then hides them, which quietly breaks recall."
+    },
+    {
+      "collection": "chunks",
+      "name": "chunks_text",
+      "type": "search",
+      "definition": {
+        "mappings": {
+          "dynamic": false,
+          "fields": {
+            "text": {
+              "type": "string"
+            },
+            "spaceId": {
+              "type": "token"
+            },
+            "userId": {
+              "type": "token"
+            }
+          }
+        }
+      },
+      "_note": "The BM25 half of hybrid retrieval, fused with the vector half by RRF."
+    }
+  ]
+}

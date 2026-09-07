@@ -1,0 +1,178 @@
+{
+  "$comment": "Case law for the 2026-03 cohort, public copy shipped with LUMINA. Append only. Never renumber. Every rule must cite a real precedent; placeholders are marked TODO and reported by P2, which warns until the cohort fills them. That nag is intentional: a rule without an incident behind it is a preference, not case law. When a review catches something new, add the precedent.",
+  "version": "0.1",
+  "rules": [
+    {
+      "id": "C1",
+      "title": "Declared expectations are internally coherent",
+      "type": "contract",
+      "severity": "error",
+      "rule": "Every budget is a positive number, every ratio threshold is within 0 to 1, and every declared file path exists.",
+      "precedent": [
+        "TODO \u2014 record the first time a stale or impossible threshold wasted a run."
+      ],
+      "selfCheck": "Could this expectations file pass under any possible run? If a threshold is above 1.0 or a path is missing, no.",
+      "params": {}
+    },
+    {
+      "id": "A1",
+      "title": "Tool errors surface as errors",
+      "type": "trajectory",
+      "severity": "error",
+      "rule": "Every tool call recorded with ok=false must carry a non-empty error string, so a failure is distinguishable from an empty result in the trajectory.",
+      "precedent": [
+        "FDE Assignment 1, Live Translate (cohort 2026-01): a dependency mismatch made every LLM call throw. The handler wrapped the call in a try/except that returned the input text untouched, so the \"translator\" served English to every user and every response looked like a success: 200, a body, no error in the log. It shipped that way for weeks and was found by a human reading output, not by a test. The rule is the fix: a failed call must be distinguishable from an empty result, which means ok=false AND a non-empty error string, and a provider exception must reach the caller as a 502."
+      ],
+      "selfCheck": "Force a tool to fail. Read the transcript. Can you tell it failed rather than returned nothing?",
+      "params": {}
+    },
+    {
+      "id": "A2",
+      "title": "The loop terminates because it finished",
+      "type": "trajectory",
+      "severity": "error",
+      "rule": "Every run ends with terminated='done'. A run ending at an iteration or token cap is a failure even when the final answer is right.",
+      "precedent": [
+        "TODO \u2014 record the first run that hit a cap and still looked successful."
+      ],
+      "selfCheck": "Why did this loop stop? If the answer is 'it ran out', the agent did not work.",
+      "params": {}
+    },
+    {
+      "id": "A3",
+      "title": "No tool thrash",
+      "type": "trajectory",
+      "severity": "warn",
+      "rule": "No tool is called more than maxConsecutiveSameTool times in a row without an intervening different call.",
+      "precedent": [
+        "TODO \u2014 record the first retry loop that burned budget without progress."
+      ],
+      "selfCheck": "Scan the call sequence. Is the same tool repeating because it is making progress, or because it is stuck?",
+      "params": {
+        "maxConsecutiveSameTool": 3
+      }
+    },
+    {
+      "id": "R1",
+      "title": "Required tools were actually called",
+      "type": "trajectory",
+      "severity": "error",
+      "rule": "Every tool named in trajectory.mustCallTools appears at least once in the run.",
+      "precedent": [
+        "TODO \u2014 record the first agent that answered from parametric memory instead of retrieving."
+      ],
+      "selfCheck": "Did retrieval actually happen, or did the model already know the answer and skip it?",
+      "params": {}
+    },
+    {
+      "id": "R2",
+      "title": "Forbidden tools were not called",
+      "type": "trajectory",
+      "severity": "error",
+      "rule": "No tool named in trajectory.mustNotCallTools appears in the run.",
+      "precedent": [
+        "TODO \u2014 record the first offline eval that quietly reached the internet."
+      ],
+      "selfCheck": "Could this run have reached anything outside the declared corpus?",
+      "params": {}
+    },
+    {
+      "id": "E1",
+      "title": "A gold set exists and is non-trivial",
+      "type": "eval",
+      "severity": "error",
+      "rule": "The declared goldSetPath exists and holds at least minGoldItems examples.",
+      "precedent": [
+        "TODO \u2014 record the first eval that passed against four hand-picked questions."
+      ],
+      "selfCheck": "How many items is this score computed over? Under 30, it is an anecdote.",
+      "params": {
+        "minGoldItems": 30
+      }
+    },
+    {
+      "id": "E2",
+      "title": "Declared eval thresholds are met",
+      "type": "eval",
+      "severity": "error",
+      "rule": "Every threshold declared under eval is met or exceeded by the matching metric in the eval report.",
+      "precedent": [
+        "TODO \u2014 record the first time a threshold was lowered to make a build pass."
+      ],
+      "selfCheck": "Was this threshold set before or after seeing the score?",
+      "params": {}
+    },
+    {
+      "id": "E3",
+      "title": "A judge model may report, never block",
+      "type": "manual",
+      "severity": "warn",
+      "rule": "No rule with severity=error may derive its verdict from a model's opinion. Subjective metrics are recorded at warn and never gate a merge.",
+      "precedent": [
+        "Ported precedent, hyperframes-student-kit rule Q1 (2026-09-03): the requirement was that a presenter's camera tile never be cropped. Three colour-threshold detectors were built to find the face in the rendered frame. All three returned confident wrong answers by locking onto slide art and wallpaper, and cropped output shipped twice. The fix was to stop detecting and assert arithmetic against numbers declared in advance. LLM-as-judge is the same failed detector wearing a friendlier hat."
+      ],
+      "selfCheck": "For each error-severity rule: what produces the verdict? If a model does, demote it to warn or replace it with arithmetic.",
+      "params": {}
+    },
+    {
+      "id": "B1",
+      "title": "Token budget respected",
+      "type": "budget",
+      "severity": "error",
+      "rule": "Total tokens for a run do not exceed budget.maxTokensPerRun.",
+      "precedent": [
+        "TODO \u2014 record the first context-growth bug found in a bill rather than a test."
+      ],
+      "selfCheck": "Does token use grow with conversation length in a way nobody declared?",
+      "params": {}
+    },
+    {
+      "id": "B2",
+      "title": "Latency budget respected",
+      "type": "budget",
+      "severity": "warn",
+      "rule": "Wall-clock seconds for a run do not exceed budget.maxWallClockSec.",
+      "precedent": [
+        "TODO \u2014 record the first demo that was correct and unusably slow."
+      ],
+      "selfCheck": "Would a user wait this long without assuming it broke?",
+      "params": {}
+    },
+    {
+      "id": "B3",
+      "title": "Cost budget respected",
+      "type": "budget",
+      "severity": "warn",
+      "rule": "Cost in USD for a run does not exceed budget.maxCostUsd.",
+      "precedent": [
+        "TODO \u2014 record the first per-run cost that made the product uneconomic at scale."
+      ],
+      "selfCheck": "Multiply this by expected daily volume. Is the business still viable?",
+      "params": {}
+    },
+    {
+      "id": "P1",
+      "title": "A human read a full trajectory",
+      "type": "manual",
+      "severity": "info",
+      "rule": "Someone read one complete successful trajectory and one complete failing trajectory, every step, before sign-off.",
+      "precedent": [
+        "Ported precedent, hyperframes-student-kit rule P3: lint passing never once caught a cropped face, a caption landing on the wrong word, or text overflowing a box. Only loading the frames and looking at them did."
+      ],
+      "selfCheck": "Name the two runs you read. If you cannot produce a failing one, you do not understand the failure surface yet.",
+      "params": {}
+    },
+    {
+      "id": "P2",
+      "title": "Every rule cites a real precedent",
+      "type": "meta",
+      "severity": "warn",
+      "rule": "No rule in this file carries a precedent beginning with TODO. A rule without a real incident is a preference, not case law.",
+      "precedent": [
+        "Ported precedent, hyperframes-student-kit addons/README.md: 'When a review catches something new, add the precedent \u2014 an empty lessons file is the failure mode this exists to prevent.'"
+      ],
+      "selfCheck": "Can you name the incident, the date, and what it cost? If not, delete the rule or go find the story.",
+      "params": {}
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Length 3062 >>
+stream
+BT /F2 17 Tf 58 744.0 Td (Vector Search on MongoDB Atlas) Tj ET
+BT /F1 11 Tf 58 712.6 Td (LUMINA gold corpus, document 2 of 4. FDE Agent Engineering Bootcamp. CC BY 4.0.) Tj ET
+BT /F2 13 Tf 58 685.1 Td (One database, vectors included) Tj ET
+BT /F1 11 Tf 58 657.7 Td (MongoDB Atlas Vector Search stores an embedding as an ordinary array field on an ordinary) Tj ET
+BT /F1 11 Tf 58 642.5 Td (document. A chunk's text, its locator, its owning document and space, and its vector all) Tj ET
+BT /F1 11 Tf 58 627.3 Td (live in the same record, which means a citation is one document read rather than a join) Tj ET
+BT /F1 11 Tf 58 612.1 Td (across a vector store and a database that must agree about ids.) Tj ET
+BT /F1 11 Tf 58 588.6 Td (The practical consequence is that a filter like "only this Space" is a query predicate) Tj ET
+BT /F1 11 Tf 58 573.4 Td (rather than a distributed-systems problem, and there is no second store to keep in sync,) Tj ET
+BT /F1 11 Tf 58 558.2 Td (back up, or explain when the two disagree.) Tj ET
+BT /F2 13 Tf 58 530.6 Td (Index definitions) Tj ET
+BT /F1 11 Tf 58 503.2 Td (A vector index is declared as a list of fields. The vector field names its path, its) Tj ET
+BT /F1 11 Tf 58 488.0 Td (dimensionality, and its similarity function; filter fields name paths that queries may) Tj ET
+BT /F1 11 Tf 58 472.8 Td (constrain.) Tj ET
+BT /F3 11 Tf 58 449.3 Td (    {) Tj ET
+BT /F3 11 Tf 58 434.1 Td (      "fields": [) Tj ET
+BT /F3 11 Tf 58 418.9 Td (        { "type": "vector", "path": "embedding", "numDimensions": 1536, "similarity": "cosine" },) Tj ET
+BT /F3 11 Tf 58 403.7 Td (        { "type": "filter", "path": "spaceId" }) Tj ET
+BT /F3 11 Tf 58 388.5 Td (      ]) Tj ET
+BT /F3 11 Tf 58 373.3 Td (    }) Tj ET
+BT /F1 11 Tf 58 349.7 Td (numDimensions must match the embedding model exactly. Supported similarity functions are) Tj ET
+BT /F1 11 Tf 58 334.5 Td (cosine, euclidean, and dotProduct; cosine is the default choice for text embeddings) Tj ET
+BT /F1 11 Tf 58 319.3 Td (because it ignores vector magnitude, which carries no meaning for a normalized text) Tj ET
+BT /F1 11 Tf 58 304.1 Td (embedding.) Tj ET
+BT /F1 11 Tf 58 280.6 Td (A field must be declared as a filter field at index time to be usable as a filter at) Tj ET
+BT /F1 11 Tf 58 265.4 Td (query time. This is the single most common misconfiguration in a first RAG build, and its) Tj ET
+BT /F1 11 Tf 58 250.2 Td (symptom is subtle: the query succeeds and returns the wrong documents.) Tj ET
+BT /F2 13 Tf 58 222.6 Td (Filtering inside the search, not after it) Tj ET
+BT /F1 11 Tf 58 195.2 Td ($vectorSearch returns approximate nearest neighbours. It examines a bounded candidate set) Tj ET
+BT /F1 11 Tf 58 180.0 Td (and returns the best limit of them. Where the filter is applied changes the result:) Tj ET
+BT /F1 11 Tf 58 156.5 Td (  " Filter inside $vectorSearch. The candidate search itself is constrained, so all) Tj ET
+BT /F1 11 Tf 58 141.3 Td (limit results come from the right Space.) Tj ET
+BT /F1 8 Tf 58 42 Td (Vector Search on MongoDB Atlas  page 1 of 3) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Length 3728 >>
+stream
+BT /F1 11 Tf 58 748.0 Td (  " Filter in a later $match. The search returns the globally nearest neighbours, and) Tj ET
+BT /F1 11 Tf 58 732.8 Td (the $match then deletes the ones from other Spaces. If the query's neighbours mostly) Tj ET
+BT /F1 11 Tf 58 717.6 Td (belong to another Space, you get two results where you asked for ten  or none.) Tj ET
+BT /F1 11 Tf 58 694.0 Td (The second shape does not error. It quietly under-retrieves, recall drops, and the pipeline) Tj ET
+BT /F1 11 Tf 58 678.8 Td (looks correct in code review. The rule is: the filter belongs inside the search stage.) Tj ET
+BT /F1 11 Tf 58 655.3 Td (A related parameter is numCandidates, the size of the candidate pool the approximate) Tj ET
+BT /F1 11 Tf 58 640.1 Td (search considers before returning limit results. Setting it close to limit makes the) Tj ET
+BT /F1 11 Tf 58 624.9 Td (search fast and imprecise; the usual guidance is to set numCandidates well above limit) Tj ET
+BT /F1 11 Tf 58 609.7 Td ( on the order of 10 to 20 times  and tune down only if latency demands it.) Tj ET
+BT /F2 13 Tf 58 582.1 Td (Text search and hybrid queries) Tj ET
+BT /F1 11 Tf 58 554.8 Td (Atlas Search is the BM25 half of a hybrid retriever, defined as a separate index with) Tj ET
+BT /F1 11 Tf 58 539.6 Td (mappings. A static mapping \("dynamic": false\) names each field and its type: string) Tj ET
+BT /F1 11 Tf 58 524.4 Td (for text to be analyzed and scored, token for values to be matched exactly, such as an) Tj ET
+BT /F1 11 Tf 58 509.2 Td (id used as a filter.) Tj ET
+BT /F1 11 Tf 58 485.6 Td (Running a $search stage and a $vectorSearch stage and fusing the two result lists with) Tj ET
+BT /F1 11 Tf 58 470.4 Td (reciprocal rank fusion gives one ranking from both retrievers. The two stages cannot be) Tj ET
+BT /F1 11 Tf 58 455.2 Td (combined in a single aggregation stage; they are separate pipelines whose results are) Tj ET
+BT /F1 11 Tf 58 440.0 Td (merged, which is why RRF over ranks is the natural fusion here.) Tj ET
+BT /F2 13 Tf 58 412.4 Td (Eventual consistency: upserted is not searchable) Tj ET
+BT /F1 11 Tf 58 385.1 Td (Atlas Search indexes, vector and text alike, are eventually consistent. A write to a) Tj ET
+BT /F1 11 Tf 58 369.9 Td (collection returns as soon as the write is durable. The index that makes the document) Tj ET
+BT /F1 11 Tf 58 354.7 Td (searchable is updated asynchronously, typically within seconds, and there is no guarantee) Tj ET
+BT /F1 11 Tf 58 339.5 Td (attached to that interval.) Tj ET
+BT /F1 11 Tf 58 315.9 Td (This produces the most confusing bug in a document-ingestion pipeline: the pipeline reports) Tj ET
+BT /F1 11 Tf 58 300.7 Td (success, the chunks are visibly in the collection, and a query for them returns nothing.) Tj ET
+BT /F1 11 Tf 58 285.5 Td (Nothing is broken. The index has not caught up.) Tj ET
+BT /F1 11 Tf 58 262.0 Td (The fix is a read-your-write probe. After writing chunks, query the vector index for one) Tj ET
+BT /F1 11 Tf 58 246.8 Td (of the chunks just written and wait until it comes back. Only then mark the document) Tj ET
+BT /F1 11 Tf 58 231.6 Td (searchable  indexed, or whatever the status field is called. A status that means) Tj ET
+BT /F1 11 Tf 58 216.4 Td ("upserted" while claiming to mean "searchable" is a lie the rest of the system will believe.) Tj ET
+BT /F1 11 Tf 58 192.8 Td (listSearchIndexes reports an index's status and a queryable flag. An index that is) Tj ET
+BT /F1 11 Tf 58 177.6 Td (still building will answer a query, and answer it from an incomplete picture of the data,) Tj ET
+BT /F1 11 Tf 58 162.4 Td (so a recall number measured during a build is not a measurement of anything.) Tj ET
+BT /F1 8 Tf 58 42 Td (Vector Search on MongoDB Atlas  page 2 of 3) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Length 2648 >>
+stream
+BT /F2 13 Tf 58 744.0 Td (What the free tier allows) Tj ET
+BT /F1 11 Tf 58 716.6 Td (The course's declared constraint for this assignment: a free-tier M0 Atlas cluster) Tj ET
+BT /F1 11 Tf 58 701.4 Td (allows three search indexes and 512 MB of storage. LUMINA needs exactly three: a) Tj ET
+BT /F1 11 Tf 58 686.2 Td (vector index on memories, a vector index on chunks, and a text index on chunks. A fourth) Tj ET
+BT /F1 11 Tf 58 671.0 Td (requires a paid tier, so the budget is spent and the architecture must fit it.) Tj ET
+BT /F1 11 Tf 58 647.5 Td (512 MB is generous for text and tight for vectors. A 1536-dimension vector stored as) Tj ET
+BT /F1 11 Tf 58 632.3 Td (64-bit floats occupies about 12 KB before overhead, so roughly 40,000 chunks fills the) Tj ET
+BT /F1 11 Tf 58 617.1 Td (tier. A small document corpus is fine; a corpus of a thousand PDFs is not.) Tj ET
+BT /F2 13 Tf 58 589.5 Td (GridFS for the raw files) Tj ET
+BT /F1 11 Tf 58 562.2 Td (Embeddings answer queries; the original file still has to live somewhere. GridFS stores a) Tj ET
+BT /F1 11 Tf 58 547.0 Td (file as a document in a files collection plus binary chunks in a chunks collection,) Tj ET
+BT /F1 11 Tf 58 531.8 Td (which is enough infrastructure for uploads and generated artifacts without provisioning an) Tj ET
+BT /F1 11 Tf 58 516.6 Td (object store. It is not a CDN and should not be asked to be one, but for a course project) Tj ET
+BT /F1 11 Tf 58 501.4 Td (it removes a dependency.) Tj ET
+BT /F2 13 Tf 58 473.8 Td (Local development without Atlas) Tj ET
+BT /F1 11 Tf 58 446.4 Td (A plain mongod  from Docker or a local install  has neither Atlas Search nor Atlas) Tj ET
+BT /F1 11 Tf 58 431.2 Td (Vector Search. $vectorSearch is not a MongoDB aggregation stage; it is an Atlas feature.) Tj ET
+BT /F1 11 Tf 58 407.7 Td (The documented fallback is a brute-force cosine scan: load a Space's chunks, compute cosine) Tj ET
+BT /F1 11 Tf 58 392.5 Td (similarity in application code, sort, and take the top k. It is correct, it is exact) Tj ET
+BT /F1 11 Tf 58 377.3 Td (rather than approximate, and it is linear in the number of chunks. Up to a few thousand) Tj ET
+BT /F1 11 Tf 58 362.1 Td (chunks it is fast enough to develop against; past that it is unusable.) Tj ET
+BT /F1 11 Tf 58 338.5 Td (Whichever backend is live must be named by the service's health endpoint. A grader looking) Tj ET
+BT /F1 11 Tf 58 323.3 Td (at a recall number needs to know whether it came from an approximate index or an exact) Tj ET
+BT /F1 11 Tf 58 308.1 Td (scan, because the two are not the same measurement.) Tj ET
+BT /F1 8 Tf 58 42 Td (Vector Search on MongoDB Atlas  page 3 of 3) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 10 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R >> >> /Contents 4 0 R >>
+endobj
+8 0 obj
+<< /Type /Page /Parent 10 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R >> >> /Contents 5 0 R >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 10 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R >> >> /Contents 6 0 R >>
+endobj
+10 0 obj
+<< /Type /Pages /Kids [7 0 R 8 0 R 9 0 R] /Count 3 >>
+endobj
+11 0 obj
+<< /Title (Vector Search on MongoDB Atlas) /Producer (lumina build-corpus) >>
+endobj
+12 0 obj
+<< /Type /Catalog /Pages 10 0 R >>
+endobj
+xref
+0 13
+0000000000 65535 f 
+0000000009 00000 n 
+0000000079 00000 n 
+0000000154 00000 n 
+0000000222 00000 n 
+0000003335 00000 n 
+0000007114 00000 n 
+0000009813 00000 n 
+0000009960 00000 n 
+0000010107 00000 n 
+0000010254 00000 n 
+0000010324 00000 n 
+0000010418 00000 n 
+trailer
+<< /Size 13 /Root 12 0 R /Info 11 0 R >>
+startxref
+10469
+%%EOF

@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "_comment": "SPA rewrite so /evals is served by index.html instead of 404ing on a hard refresh. The grader opens /evals directly, so this matters.",
+  "rewrites": [{ "source": "/((?!assets/).*)", "destination": "/index.html" }]
+}
