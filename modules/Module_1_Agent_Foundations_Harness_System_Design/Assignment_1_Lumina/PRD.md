@@ -145,7 +145,7 @@ reachable from the browser.
 evaluation your run produced. No repo, no zip, no code — the running product and its own
 evidence page are the submission. Course-wide rules are in
 [`SUBMISSION.md`](../../../SUBMISSION.md); the exact flow and the deploy table are in
-[`README.md`](README.md#submit).
+[`TECHNICAL.md`](TECHNICAL.md#submit).
 
 ## Where to go next
 
@@ -153,6 +153,7 @@ evidence page are the submission. Course-wide rules are in
 |---|---|
 | To see it working before you read anything | [`README.md`](README.md) — start here, `npm run dev` |
 | The exact wire format | `packages/contract/src/` — the schemas are the contract |
+| Commands, architecture, checklists, troubleshooting | [`TECHNICAL.md`](TECHNICAL.md) |
 | Every requirement, unabridged | [`SPEC.md`](SPEC.md) |
 | The rules your coding agent must not break | [`AGENTS.md`](AGENTS.md) |
 | What the numbers are | `benchmark/sla.json`, `expectations.json`, `eval/rubric.json` |
