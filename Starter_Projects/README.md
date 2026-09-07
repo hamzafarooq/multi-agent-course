@@ -17,7 +17,7 @@ and run it. None of them ship secrets.
 | [research-agent](research-agent/) | Claude Code agent for deep competitive-landscape research with MCP | Module 2 |
 | [meetingmemo](meetingmemo/) | Turns raw meeting notes into a structured standup update (Next.js + Anthropic API) | Module 1 |
 | [meeting-notes-summarizer](meeting-notes-summarizer/) | Summarizes meeting notes into action items (Node.js + Express) | Module 1 |
-| [prd-generator](prd-generator/) | Single-page PRD generator | Module 2 |
+| [prd-generator](prd-generator/) | The `prd-generator` skill as a running app — streams a full PRD from the Claude API, zero dependencies, key stays in your browser | Module 2 |
 | [royal-pop-website](royal-pop-website/) | Scroll-driven product landing page built from a 15-second video, GSAP, Lenis, canvas frame playback. The source videos are not in this repo (54 MB); see its README. | Module 2 / EPYHIA |
 
 **Hosted elsewhere** (same author, same spirit):

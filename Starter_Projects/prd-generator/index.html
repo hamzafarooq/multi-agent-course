@@ -175,6 +175,31 @@
     .generate-btn:active:not(:disabled) { transform: scale(0.99); }
     .generate-btn:disabled { background: #b5b0f0; cursor: not-allowed; }
 
+    .demo-btn {
+      width: 100%;
+      padding: 11px;
+      margin-top: 8px;
+      background: #fff;
+      color: #6c63ff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid #d8d6f5;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .demo-btn:hover:not(:disabled) { background: #f5f4ff; border-color: #6c63ff; }
+    .demo-btn:disabled { color: #b5b0f0; cursor: not-allowed; }
+
+    .demo-btn small {
+      display: block;
+      font-weight: 500;
+      font-size: 0.72rem;
+      color: #999;
+      margin-top: 2px;
+    }
+
     .spinner {
       width: 16px;
       height: 16px;
@@ -646,6 +671,11 @@
       <div class="spinner" id="spinner"></div>
       <span id="btnText">Generate PRD</span>
     </button>
+
+    <button class="demo-btn" id="demoBtn" onclick="loadDemo()">
+      Try the demo
+      <small>Sample product, pre-written PRD — no API key, no API call</small>
+    </button>
   </div>
 
   <!-- RIGHT: Output -->
@@ -662,6 +692,7 @@
         <div class="icon">📄</div>
         <p>Fill in your product idea on the left and click <strong>Generate PRD</strong>.</p>
         <p style="font-size:0.78rem; color:#ccc;">Claude will write a complete, structured PRD — ready to share or edit.</p>
+        <p style="font-size:0.78rem; color:#999;">No API key yet? Hit <strong>Try the demo</strong> to see the finished output first.</p>
       </div>
       <div id="prd-output"></div>
 
@@ -710,6 +741,8 @@
   // ── State ──────────────────────────────────────────────────────
   let rawMarkdown = '';
   let isGenerating = false;
+  let demoRequested = false;   // set by loadDemo(), consumed by generatePRD()
+  let renderMode = 'live';     // 'demo' renders a sample-data byline instead of a generated one
 
   // ── API key persistence ────────────────────────────────────────
   const apiKeyInput = document.getElementById('apiKey');
@@ -737,6 +770,28 @@
     keyStatus.className   = 'key-status ' + (set ? 'set' : 'unset');
   }
 
+  // ── Demo: fill the form with the sample product and render its PRD ──
+  // No key, no network call. The PRD text lives in DEMO_PRD at the bottom
+  // of this file — it is a real Claude output, saved so the app is usable
+  // (and demoable) before anyone has a key.
+  function loadDemo() {
+    if (isGenerating) return;
+    const demo = {
+      productName: 'DataPulse',
+      problem:  'Product managers rely on data to prioritize, but writing SQL is out of reach for most of them. Routing every question through an analyst adds 1-3 days, so PMs fall back on gut feel or stale dashboards.',
+      users:    'Non-technical product managers and business stakeholders at mid-size SaaS companies',
+      features: 'Ask questions in plain English\nGet charts, tables, and a plain-language explanation\nConnect to Postgres, Snowflake, BigQuery, and Sheets\nShare a saved answer with the team\nSchedule a weekly refresh to Slack',
+      metrics:  'PMs get answers in under 2 minutes vs. 2-day analyst turnaround\n70% of ad-hoc data requests handled without an analyst\nNPS >= 45 among active PM users at 90 days',
+      nongoals: 'We are not replacing full BI tools like Looker or Tableau\nNo predictive modeling or ML features in v1\nNo write-back to data sources - read-only\nNot designed for data engineers or analysts as primary users',
+    };
+    for (const [id, value] of Object.entries(demo)) {
+      document.getElementById(id).value = value;
+    }
+    document.getElementById('tone').value = 'professional';
+    demoRequested = true;
+    generatePRD();
+  }
+
   // ── Generate ───────────────────────────────────────────────────
   async function generatePRD() {
     if (isGenerating) return;
@@ -757,7 +812,9 @@
     if (!features)    return showError('Please list the key features.');
 
     // ── Demo fast-path: render pre-written PRD instantly ──────────
-    const isDemo = productName === 'DataPulse';
+    const isDemo = demoRequested || productName === 'DataPulse';
+    demoRequested = false;
+    renderMode = isDemo ? 'demo' : 'live';
     if (isDemo) {
       setGenerating(true);
       document.getElementById('emptyState').style.display = 'none';
@@ -841,9 +898,10 @@ Rules:
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model:      'claude-opus-4-6',
-          max_tokens: 4096,
-          stream:     true,
+          model:         'claude-opus-5',
+          max_tokens:    16000,
+          stream:        true,
+          output_config: { effort: 'low' },
           messages:   [{ role: 'user', content: prompt }],
         }),
       });
@@ -968,7 +1026,10 @@ Rules:
 
     // Add metadata line after first h1
     const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-    h = h.replace(/(<\/h1>)/, `$1<p class="meta">Generated ${today} · Claude Opus 4.6</p>`);
+    const byline = renderMode === 'demo'
+      ? 'Sample PRD — pre-written, no API call made'
+      : `Generated ${today} · Claude Opus 5`;
+    h = h.replace(/(<\/h1>)/, `$1<p class="meta">${byline}</p>`);
 
     return h;
   }
@@ -1020,6 +1081,7 @@ Rules:
     const spinner = document.getElementById('spinner');
     const text    = document.getElementById('btnText');
     btn.disabled         = val;
+    document.getElementById('demoBtn').disabled = val;
     spinner.style.display = val ? 'block' : 'none';
     text.textContent      = val ? 'Generating…' : 'Generate PRD';
   }
