@@ -17,9 +17,9 @@ export function FailureCard({ state, message, recovery }: FailureCardProps) {
       transition={{ duration: 0.25 }}
       className="h-full flex items-center"
     >
-      <Card className="w-full p-8 border-[rgba(196,43,43,0.2)] bg-gradient-to-br from-[rgba(196,43,43,0.04)] to-surface-2">
+      <Card className="w-full p-8 border-danger/30">
         <div className="flex items-start gap-4">
-          <div className="h-10 w-10 rounded-lg bg-danger/15 border border-danger/40 flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-md bg-danger/10 border border-danger/30 flex items-center justify-center shrink-0">
             <AlertTriangle className="w-5 h-5 text-danger" strokeWidth={1.75} />
           </div>
           <div className="min-w-0">
@@ -31,7 +31,7 @@ export function FailureCard({ state, message, recovery }: FailureCardProps) {
             </h3>
             <p className="mt-2 text-[14px] leading-relaxed text-fg-muted">{message}</p>
 
-            <div className="mt-6 rounded-lg border border-border bg-surface-2 p-4">
+            <div className="mt-6 rounded-md border border-border bg-surface-2 p-4">
               <div className="text-[11px] font-mono text-fg-subtle uppercase tracking-widest mb-2">
                 Recovery
               </div>

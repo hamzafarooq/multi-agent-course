@@ -29,7 +29,7 @@ If any step fails unrecoverably, print the named state and a recovery instructio
 
 ```
 STATE: SCOPE_NEEDED       — re-run /sprint-zero <url> with a reachable URL, or run /sprint-zero-scope <url> directly then re-run /sprint-zero <url>
-STATE: DISCOVERY_NEEDED   — fix connectivity or Brave MCP access, then re-run /sprint-zero <url> to resume
+STATE: DISCOVERY_NEEDED   — fix connectivity or web-research tool access (Brave Search MCP, WebSearch/WebFetch, or a browser MCP), then re-run /sprint-zero <url> to resume
 STATE: SPEC_INCOMPLETE    — run the failing command directly (/prd-generator, /decisions-writer, etc.), then re-run /sprint-zero <url> to resume from the build step
 STATE: BUILD_BRIEF_NEEDED — fix the flagged doc issue reported by tech-lead, then re-invoke the tech-lead sub-agent manually
 STATE: BUILD_NEEDED       — re-spawn the failing engineer sub-agent directly, then spawn qa-engineer once both engineers complete
@@ -174,7 +174,7 @@ If it does not exist:
 1. Write a presenter status update with `phase: "waiting-for-scope"`, `step: "scope"`, `stepNumber: 1`, `message: "Waiting for scope via the presenter UI."`. The UI will land on its scoping form.
 2. Print to the terminal: `Waiting for scope via <presenter-url>. The form will write docs/scope.md when submitted.`
 3. Poll for `docs/scope.md` to exist, checking once every 2 seconds, for up to 15 minutes. Use `bash`: `for i in $(seq 1 450); do [ -f docs/scope.md ] && break; sleep 2; done`.
-4. When the file appears, print `Scope received via presenter UI.` and continue. (The UI's `/api/scope` endpoint already wrote the file in the same format `/sprint-zero-scope` produces.)
+4. When the file appears, print `Scope received via presenter UI.` and continue. (The UI's `/api/scope` endpoint already wrote the file in the same format `/sprint-zero-scope` produces, including the Build configuration block. Then run Step 1b's data-layer preflight if the scope says `supabase`.)
 5. If the loop times out without the file appearing, print `STATE: SCOPE_NEEDED — submit the scoping form in the presenter, or run /sprint-zero again without --present.` and stop.
 
 **Otherwise (no `--present`)** — Read `.claude/commands/sprint-zero-scope.md` and follow its instructions exactly. Do not summarise or simulate — read the actual file and do what it says. Pass the URLs from `$ARGUMENTS` as the arguments that command expects.
@@ -415,7 +415,7 @@ For step 9 (QA), populate the `qa` block as the engineer's report comes back: `c
 **On step 11f (launch summary)**, write a final status with:
 
 - `phase: "done"`
-- `appUrl: "http://localhost:5173"`
+- `appUrl: "http://localhost:<open-port>"` (the resolved UI port from 11f, not a hardcoded 5173)
 - `credentials: { "email": "<from seed stdout>", "password": "<from seed stdout>" }`
 - `projectName: "<the project name from .sprint-zero/meta.json or step 1>"`
 - `message: "Sprint Zero finished. Open the app."`

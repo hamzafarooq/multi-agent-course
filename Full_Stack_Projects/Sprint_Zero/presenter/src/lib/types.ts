@@ -21,6 +21,18 @@ export interface Credentials {
   password: string;
 }
 
+export type ProjectType = "web-app" | "api-service" | "cli-tool";
+export type StackProfile = "node-react" | "nextjs" | "python-react";
+export type DataLayer = "local" | "supabase";
+
+/** Parsed from docs/scope.md by the presenter server. Null until scope.md exists. */
+export interface BuildConfig {
+  projectType: ProjectType | null;
+  stack: StackProfile | null;
+  dataLayer: DataLayer | null;
+  level: ScopeLevel | null;
+}
+
 export interface Status {
   phase: PhaseKey;
   step?: string;
@@ -39,6 +51,9 @@ export interface Status {
   appUrl?: string | null;
   credentials?: Credentials | null;
   projectName?: string | null;
+  /** True when this is the committed sample run, not a live one. */
+  demo?: boolean;
+  config?: BuildConfig | null;
   failure?: {
     state: string;
     message: string;
@@ -53,6 +68,9 @@ export interface ScopeSubmission {
   companyUrl: string;
   repoUrl: string;
   level: ScopeLevel;
+  projectType: ProjectType;
+  stack: StackProfile;
+  dataLayer: DataLayer;
   coreLoop: string;
   excludes: string;
 }

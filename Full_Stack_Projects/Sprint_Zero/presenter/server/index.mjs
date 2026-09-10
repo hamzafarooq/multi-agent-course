@@ -16,6 +16,15 @@ const STATUS_FILE = path.join(STATUS_DIR, "status.json");
 const SERVER_DIR = path.join(ROOT, "server");
 const CLIENT_DIR = path.join(ROOT, "client");
 
+const SAMPLE_DIR = path.join(PRESENTER_DIR, "sample");
+const SAMPLE_DOCS_DIR = path.join(SAMPLE_DIR, "docs");
+const SAMPLE_STATUS_FILE = path.join(SAMPLE_DIR, "status.json");
+
+// Demo mode: with no real run on disk, serve the committed sample run so all
+// three tabs work — for a class demo, or a deploy where there is no filesystem
+// to watch. A real run always wins. SPRINT_ZERO_DEMO=0 turns it off entirely.
+const DEMO_ENABLED = process.env.SPRINT_ZERO_DEMO !== "0";
+
 const DOC_FILES = [
   "scope.md",
   "reference-brief.md",
@@ -41,19 +50,61 @@ async function readStatus() {
   try {
     const raw = await fs.readFile(STATUS_FILE, "utf8");
     const parsed = JSON.parse(raw);
-    const docs = await listDocs();
-    return { ...EMPTY_STATUS, ...parsed, docs };
+    const docs = await listDocs(DOCS_DIR);
+    const config = await readConfig(DOCS_DIR);
+    return { ...EMPTY_STATUS, ...parsed, docs, config };
   } catch {
-    const docs = await listDocs();
-    // If we have scope.md but no status file, we're past scoping
-    const phase = docs.includes("scope.md") ? "research" : "idle";
-    return { ...EMPTY_STATUS, phase, docs };
+    const docs = await listDocs(DOCS_DIR);
+    if (docs.length) {
+      // scope.md exists but no status file yet: we're past scoping
+      const config = await readConfig(DOCS_DIR);
+      return { ...EMPTY_STATUS, phase: "research", docs, config };
+    }
+    return (await readSampleStatus()) ?? { ...EMPTY_STATUS, phase: "idle", docs };
   }
 }
 
-async function listDocs() {
+// The build configuration lives in docs/scope.md. Surface it so the UI can name
+// the real stack instead of assuming node-react + supabase.
+async function readConfig(dir) {
   try {
-    const entries = await fs.readdir(DOCS_DIR);
+    const md = await fs.readFile(path.join(dir, "scope.md"), "utf8");
+    const pick = (label) => md.match(new RegExp(`\\*\\*${label}:\\*\\*\\s*\`?([\\w-]+)`))?.[1] ?? null;
+    const level = md.match(/## Build level\s+\*\*(\w+)\*\*/)?.[1] ?? null;
+    const projectType = pick("Project type");
+    const stack = pick("Stack profile");
+    const dataLayer = pick("Data layer");
+    if (!projectType && !stack && !dataLayer && !level) return null;
+    return { projectType, stack, dataLayer, level };
+  } catch {
+    return null;
+  }
+}
+
+// The committed sample run. Returned only when the real run is absent, and
+// flagged `demo: true` so the UI can label it as a recording, not a live run.
+async function readSampleStatus() {
+  if (!DEMO_ENABLED) return null;
+  try {
+    const parsed = JSON.parse(await fs.readFile(SAMPLE_STATUS_FILE, "utf8"));
+    const docs = await listDocs(SAMPLE_DOCS_DIR);
+    if (!docs.length) return null;
+    const config = await readConfig(SAMPLE_DOCS_DIR);
+    return { ...EMPTY_STATUS, ...parsed, docs, config, demo: true };
+  } catch {
+    return null;
+  }
+}
+
+async function usingSample() {
+  if (!DEMO_ENABLED) return false;
+  if (existsSync(STATUS_FILE)) return false;
+  return (await listDocs(DOCS_DIR)).length === 0;
+}
+
+async function listDocs(dir) {
+  try {
+    const entries = await fs.readdir(dir);
     return DOC_FILES.filter((name) => entries.includes(name));
   } catch {
     return [];
@@ -154,13 +205,46 @@ app.get("/api/doc/:name", async (req, res) => {
     res.status(404).type("text/plain").send("Unknown doc");
     return;
   }
+  const dir = (await usingSample()) ? SAMPLE_DOCS_DIR : DOCS_DIR;
   try {
-    const raw = await fs.readFile(path.join(DOCS_DIR, name), "utf8");
+    const raw = await fs.readFile(path.join(dir, name), "utf8");
     res.type("text/plain").send(raw);
   } catch {
     res.status(404).type("text/plain").send("Not written yet");
   }
 });
+
+const PROJECT_TYPES = ["web-app", "api-service", "cli-tool"];
+const STACKS = ["node-react", "nextjs", "python-react"];
+const DATA_LAYERS = ["local", "supabase"];
+
+const STACK_LABELS = {
+  "node-react": { backend: "an Express API", frontend: "a React + Vite UI", cli: "a Node CLI" },
+  nextjs: { backend: "Next.js route handlers", frontend: "Next.js pages", cli: "a Node CLI" },
+  "python-react": { backend: "a FastAPI backend", frontend: "a React + Vite UI", cli: "a Python CLI" },
+};
+
+function describeConfig(projectType, stack, dataLayer) {
+  const l = STACK_LABELS[stack];
+  const data =
+    dataLayer === "local"
+      ? "data and auth stored locally in SQLite (no external account needed)"
+      : "data and auth in a hosted Supabase project (needs a .env)";
+  if (projectType === "cli-tool") return `${cap(l.cli)} with ${data}. No server, no browser.`;
+  if (projectType === "api-service") return `${cap(l.backend)} with ${data}. No frontend.`;
+  if (stack === "nextjs") return `One Next.js app serving both UI and API on one port, with ${data}.`;
+  return `${cap(l.frontend)} talking to ${l.backend}, with ${data}.`;
+}
+
+function cap(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+const LEVEL_DESCRIPTIONS = {
+  clickable: "A walkthrough with fake data and no real auth, for pitching and flow reviews.",
+  MVP: "Real auth and real data on one core loop, end to end.",
+  Prod: "MVP plus error handling, validation, and loading states, ready for 5 to 10 real users.",
+};
 
 app.post("/api/scope", async (req, res) => {
   const body = req.body ?? {};
@@ -168,22 +252,24 @@ app.post("/api/scope", async (req, res) => {
   const companyUrl = (body.companyUrl || "").trim();
   const repoUrl = (body.repoUrl || "").trim();
   const level = body.level;
+  const projectType = body.projectType || "web-app";
+  const stack = body.stack || "node-react";
+  const dataLayer = body.dataLayer || "local";
   const coreLoop = (body.coreLoop || "").trim();
   const excludes = (body.excludes || "").trim();
 
   if (!companyUrl) return res.status(400).send("companyUrl is required");
   if (!["clickable", "MVP", "Prod"].includes(level))
     return res.status(400).send("level must be clickable, MVP, or Prod");
+  if (!PROJECT_TYPES.includes(projectType))
+    return res.status(400).send(`projectType must be one of ${PROJECT_TYPES.join(", ")}`);
+  if (!STACKS.includes(stack)) return res.status(400).send(`stack must be one of ${STACKS.join(", ")}`);
+  if (!DATA_LAYERS.includes(dataLayer))
+    return res.status(400).send(`dataLayer must be one of ${DATA_LAYERS.join(", ")}`);
   if (!coreLoop) return res.status(400).send("coreLoop is required");
 
   const companyUrlNormalized = ensureScheme(companyUrl);
   const repoUrlNormalized = repoUrl ? ensureScheme(repoUrl) : "";
-
-  const levelDescriptions = {
-    clickable: "Walkthrough with fake data, no backend. For pitching and flow reviews.",
-    MVP: "Real Supabase, real auth, one core loop working end-to-end.",
-    Prod: "MVP plus error states, validation, loading states; ready for 5–10 real users.",
-  };
 
   const excludeLines = excludes
     ? excludes
@@ -194,6 +280,15 @@ app.post("/api/scope", async (req, res) => {
         .join("\n")
     : "None specified.";
 
+  // Same structure /sprint-zero-scope writes, so every downstream command reads it identically.
+  const assumptions = [];
+  if (projectType !== "web-app")
+    assumptions.push(`- [ASSUMED] \`${projectType}\` has no frontend, so the stack profile's frontend half is ignored and there is no browser auth dance.`);
+  if (projectType === "cli-tool" && dataLayer === "supabase")
+    assumptions.push("- [ASSUMED] A CLI with the `supabase` data layer is unusual; the CLI will read the Supabase keys from `.env`.");
+  if (stack === "nextjs" && projectType === "web-app")
+    assumptions.push("- [ASSUMED] With `nextjs`, UI and API live in one app on one port; there is no separate `server/` and `client/` split.");
+
   const scopeMd = `# Sprint Zero — Scope
 
 ## Reference
@@ -201,11 +296,19 @@ app.post("/api/scope", async (req, res) => {
 - **Company URL:** ${companyUrlNormalized}
 - **Repo URL:** ${repoUrlNormalized || "not provided"}
 
+## Build configuration
+
+- **Project type:** ${projectType}
+- **Stack profile:** ${stack}
+- **Data layer:** ${dataLayer}
+
+${describeConfig(projectType, stack, dataLayer)}
+
 ## Build level
 
 **${level}**
 
-${levelDescriptions[level]}
+${LEVEL_DESCRIPTIONS[level]}
 
 ## Core loop
 
@@ -214,7 +317,7 @@ ${coreLoop}
 ## Excludes
 
 ${excludeLines}
-`;
+${assumptions.length ? `\n## Assumptions made during scoping\n\n${assumptions.join("\n")}\n` : ""}`;
 
   await fs.mkdir(DOCS_DIR, { recursive: true });
   await fs.writeFile(path.join(DOCS_DIR, "scope.md"), scopeMd, "utf8");
@@ -223,7 +326,11 @@ ${excludeLines}
   await fs.mkdir(STATUS_DIR, { recursive: true });
   await fs.writeFile(
     path.join(STATUS_DIR, "meta.json"),
-    JSON.stringify({ projectName, companyUrl: companyUrlNormalized, repoUrl: repoUrlNormalized }, null, 2),
+    JSON.stringify(
+      { projectName, companyUrl: companyUrlNormalized, repoUrl: repoUrlNormalized, projectType, stack, dataLayer, level },
+      null,
+      2
+    ),
     "utf8"
   );
 
@@ -234,7 +341,7 @@ ${excludeLines}
     ...existing,
     phase: "research",
     step: "reference-brief",
-    stepNumber: 3,
+    stepNumber: 2,
     message: "Scope written. Waiting for the orchestrator to pick it up.",
     projectName,
     timestamp: new Date().toISOString(),

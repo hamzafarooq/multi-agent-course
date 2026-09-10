@@ -3,70 +3,62 @@
 @import "@fontsource-variable/geist-mono/index.css";
 
 @theme {
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* ── Surfaces ─────────────────────────────────────────────────── */
-  --color-bg:        #f8f8fc;
+  /* Surfaces: white page, near-white panels, hairline borders */
+  --color-bg:        #ffffff;
   --color-surface:   #ffffff;
-  --color-surface-2: #f2f2f7;
-  --color-surface-3: #e9e9f0;
-  --color-border:    #e2e2ea;
-  --color-border-strong: #ccccd8;
+  --color-surface-2: #fafafa;
+  --color-surface-3: #f2f2f2;
+  --color-border:    #eaeaea;
+  --color-border-strong: #c9c9c9;
 
-  /* ── Text ─────────────────────────────────────────────────────── */
-  --color-fg:        #111118;
-  --color-fg-muted:  #52525f;
-  --color-fg-subtle: #9898a8;
+  /* Text */
+  --color-fg:        #171717;
+  --color-fg-hover:  #383838;
+  --color-fg-muted:  #666666;
+  --color-fg-subtle: #8f8f8f;
 
-  /* ── Accent — Linear-purple, tuned for light backgrounds ──────── */
-  --color-accent:       #5b5bd6;
-  --color-accent-hover: #4747b2;
+  /* Accent: blue, used for links and focus only. Primary actions are black. */
+  --color-accent:       #0070f3;
+  --color-accent-hover: #0761d1;
   --color-accent-fg:    #ffffff;
-  --color-accent-muted: rgba(91, 91, 214, 0.09);
+  --color-accent-muted: rgba(0, 112, 243, 0.08);
 
-  /* ── Status ───────────────────────────────────────────────────── */
-  --color-success: #16803c;
-  --color-warn:    #b45309;
-  --color-danger:  #c42b2b;
+  /* Status */
+  --color-success: #0f7b3a;
+  --color-warn:    #a35200;
+  --color-danger:  #d93036;
 
-  /* ── Radius ───────────────────────────────────────────────────── */
+  /* Radius */
   --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 
-  /* ── Elevation (shadows) ──────────────────────────────────────── */
-  --shadow-elev-1: 0 1px 2px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.04);
-  --shadow-elev-2: 0 4px 16px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.04);
-  --shadow-glow:   0 0 0 3px rgba(91,91,214,0.18), 0 4px 16px rgba(91,91,214,0.14);
+  /* Elevation */
+  --shadow-elev-1: 0 0 0 1px rgba(0,0,0,0.08);
+  --shadow-elev-2: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-/* ── Base ─────────────────────────────────────────────────────────── */
+/* Base */
 html, body {
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-sans);
-  font-feature-settings: "cv11", "ss01", "ss03";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-body {
-  min-height: 100vh;
-  /* Gentle radial tints — barely visible, just enough to lift the page */
-  background-image:
-    radial-gradient(ellipse 1400px 700px at 60% -8%,  rgba(91,91,214,0.055), transparent 55%),
-    radial-gradient(ellipse 900px  500px at -5% 30%, rgba(139,92,246,0.035), transparent 55%);
-  background-attachment: fixed;
-}
+body { min-height: 100vh; }
 
 ::selection {
-  background: rgba(91, 91, 214, 0.18);
-  color: var(--color-fg);
+  background: #171717;
+  color: #ffffff;
 }
 
-/* ── Scrollbar ────────────────────────────────────────────────────── */
+/* Scrollbar */
 ::-webkit-scrollbar       { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -76,12 +68,12 @@ body {
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #aaaab8;
+  background: var(--color-fg-subtle);
   background-clip: padding-box;
   border: 2px solid transparent;
 }
 
-/* ── Reduce motion ────────────────────────────────────────────────── */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -90,7 +82,7 @@ body {
   }
 }
 
-/* ── Markdown (doc preview pane) ──────────────────────────────────── */
+/* Markdown (doc preview pane) */
 .markdown {
   color: var(--color-fg);
   font-size: 14px;
@@ -103,7 +95,7 @@ body {
   margin-bottom: 0.55em;
   color: var(--color-fg);
 }
-.markdown h1 { font-size: 22px; margin-top: 0; }
+.markdown h1 { font-size: 22px; margin-top: 0; letter-spacing: -0.02em; }
 .markdown h2 { font-size: 17px; }
 .markdown h3 {
   font-size: 11.5px;
@@ -119,7 +111,7 @@ body {
   color: var(--color-accent);
   text-decoration: underline;
   text-underline-offset: 2px;
-  text-decoration-color: rgba(91,91,214,0.3);
+  text-decoration-color: rgba(0,112,243,0.3);
 }
 .markdown a:hover { text-decoration-color: var(--color-accent); }
 .markdown ul, .markdown ol {
@@ -133,7 +125,7 @@ body {
   font-family: var(--font-mono);
   font-size: 0.84em;
   padding: 2px 5px;
-  background: var(--color-surface-2);
+  background: var(--color-surface-3);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   color: var(--color-fg);
@@ -143,7 +135,7 @@ body {
   padding: 14px 18px;
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow-x: auto;
   font-size: 13px;
   line-height: 1.65;
@@ -157,10 +149,8 @@ body {
 .markdown blockquote {
   margin: 1.2em 0;
   padding: 0.1em 1em;
-  border-left: 2px solid var(--color-accent);
+  border-left: 2px solid var(--color-fg);
   color: var(--color-fg-muted);
-  background: var(--color-accent-muted);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 .markdown table {
   border-collapse: collapse;
@@ -177,7 +167,7 @@ body {
 .markdown td  { color: var(--color-fg-muted); }
 .markdown hr  { border: 0; border-top: 1px solid var(--color-border); margin: 2em 0; }
 
-/* ── highlight.js — github-light palette ─────────────────────────── */
+/* highlight.js, github-light palette */
 .markdown .hljs            { color: #24292e; background: transparent; }
 .markdown .hljs-keyword,
 .markdown .hljs-built_in   { color: #d73a49; }
@@ -190,15 +180,15 @@ body {
 .markdown .hljs-name       { color: #6f42c1; }
 .markdown .hljs-params     { color: #24292e; }
 
-/* ── Pulse ring (active timeline row) ────────────────────────────── */
+/* Pulse ring (active timeline row) */
 @keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0   rgba(91,91,214,0.45); }
-  70%  { box-shadow: 0 0 0 8px rgba(91,91,214,0);    }
-  100% { box-shadow: 0 0 0 0   rgba(91,91,214,0);    }
+  0%   { box-shadow: 0 0 0 0   rgba(0,0,0,0.25); }
+  70%  { box-shadow: 0 0 0 8px rgba(0,0,0,0);    }
+  100% { box-shadow: 0 0 0 0   rgba(0,0,0,0);    }
 }
 .animate-pulse-ring { animation: pulse-ring 2s cubic-bezier(.4,0,.6,1) infinite; }
 
-/* ── Shimmer skeleton ─────────────────────────────────────────────── */
+/* Shimmer skeleton */
 @keyframes shimmer {
   from { background-position: -400px 0; }
   to   { background-position:  400px 0; }
@@ -206,9 +196,9 @@ body {
 .shimmer {
   background: linear-gradient(
     90deg,
-    var(--color-surface-2) 0%,
+    var(--color-surface-3) 0%,
     var(--color-border)    50%,
-    var(--color-surface-2) 100%
+    var(--color-surface-3) 100%
   );
   background-size: 800px 100%;
   animation: shimmer 1.8s infinite linear;

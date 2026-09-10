@@ -53,13 +53,13 @@ export function DocPreview({ docFile, title, subtitle, cacheKey }: DocPreviewPro
       <Card className="h-full flex flex-col" elevated>
         <CardHeader className="flex items-start justify-between">
           <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-lg bg-surface-3 border border-border flex items-center justify-center shrink-0">
-              <FileText className="w-4 h-4 text-accent" strokeWidth={1.75} />
+            <div className="h-9 w-9 rounded-md bg-surface-2 border border-border flex items-center justify-center shrink-0">
+              <FileText className="w-4 h-4 text-fg" strokeWidth={1.75} />
             </div>
             <div>
               <CardTitle>{title}</CardTitle>
               <CardDescription>
-                <code className="font-mono text-[12px]">docs/{docFile}</code> — {subtitle}
+                <code className="font-mono text-[12px]">docs/{docFile}</code> · {subtitle}
               </CardDescription>
             </div>
           </div>
@@ -77,7 +77,7 @@ export function DocPreview({ docFile, title, subtitle, cacheKey }: DocPreviewPro
             <div className="py-10 flex items-start gap-3 text-fg-muted">
               <Loader2 className="w-4 h-4 animate-spin mt-0.5" />
               <div>
-                <div className="text-[14px] text-fg">Writing {docFile}…</div>
+                <div className="text-[14px] text-fg">Writing {docFile}</div>
                 <div className="text-[12.5px] text-fg-subtle mt-1">{error}</div>
               </div>
             </div>

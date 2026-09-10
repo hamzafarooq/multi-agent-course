@@ -38,8 +38,8 @@ export function PhaseTimeline({
                 "group w-full flex items-start gap-4 pl-0 pr-3 py-2.5 rounded-md",
                 "transition-colors duration-150 text-left",
                 selected
-                  ? "bg-surface-2 border border-border"
-                  : "border border-transparent hover:bg-surface-2/60",
+                  ? "bg-surface-3 border border-border"
+                  : "border border-transparent hover:bg-surface-2",
                 !selectable && "cursor-default hover:bg-transparent"
               )}
             >
@@ -100,8 +100,8 @@ function PhaseDot({
           "border transition-colors duration-200",
           state === "done" &&
             !failed &&
-            "bg-accent border-accent text-accent-fg",
-          state === "running" && !failed && "bg-surface border-accent text-accent animate-pulse-ring",
+            "bg-fg border-fg text-bg",
+          state === "running" && !failed && "bg-surface border-fg text-fg animate-pulse-ring",
           state === "idle" && "bg-surface border-border text-fg-subtle",
           failed && "bg-surface border-danger text-danger"
         )}
@@ -123,10 +123,10 @@ function RunningPill() {
     <motion.span
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-accent/10 border border-accent/30"
+      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-fg border border-fg"
     >
-      <span className="w-1 h-1 rounded-full bg-accent animate-pulse" />
-      <span className="text-[10.5px] font-medium text-accent tracking-wide uppercase">
+      <span className="w-1 h-1 rounded-full bg-bg animate-pulse" />
+      <span className="text-[10.5px] font-medium text-bg tracking-wide uppercase">
         running
       </span>
     </motion.span>

@@ -14,7 +14,7 @@ If `docs/scope.md` does not exist, stop and tell the user to run `/sprint-zero-s
 
 ## Step 2 — Research
 
-Use Brave Search MCP to investigate the reference. Start with the company URL, then the repo if provided.
+Investigate the reference with whatever web research tools you have: Brave Search MCP if it is registered, otherwise the built-in `WebSearch` and `WebFetch` tools, and a browser MCP (`playwright` or `brave-devtools`) for pages that only render client-side. Start with the company URL, then the repo if provided.
 
 Run these searches in sequence. Adapt if the reference isn't on GitHub.
 

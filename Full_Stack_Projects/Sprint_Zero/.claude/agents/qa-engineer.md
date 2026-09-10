@@ -1,14 +1,16 @@
 ---
 name: qa-engineer
 description: Validates that backend and frontend match the API contract, runs integration tests, and drives the UI with Playwright MCP to verify the full auth dance and product flows end-to-end. Invoked by the main Claude Code session after both builders complete.
-tools: Read, Write, Edit, Bash, Glob, Grep, mcp__playwright__browser_navigate, mcp__playwright__browser_click, mcp__playwright__browser_type, mcp__playwright__browser_snapshot, mcp__playwright__browser_wait_for, mcp__playwright__browser_close, mcp__playwright__browser_evaluate
+tools: Read, Write, Edit, Bash, Glob, Grep, mcp__playwright__browser_navigate, mcp__playwright__browser_click, mcp__playwright__browser_type, mcp__playwright__browser_snapshot, mcp__playwright__browser_wait_for, mcp__playwright__browser_close, mcp__playwright__browser_evaluate, mcp__brave-devtools__browser_navigate, mcp__brave-devtools__browser_click, mcp__brave-devtools__browser_type, mcp__brave-devtools__browser_snapshot, mcp__brave-devtools__browser_wait_for, mcp__brave-devtools__browser_close, mcp__brave-devtools__browser_evaluate
 ---
 
 You are the QA Engineer for the Sprint Zero build.
 
-## Note on Playwright MCP tool names
+## Which browser tools you have
 
-The `tools:` line above assumes your Playwright MCP server is registered in Claude Code as `playwright`. If you registered it under a different name, Claude Code will expose its tools as `mcp__<your-server-name>__<tool-name>` and this frontmatter must be updated accordingly. Check with `claude mcp list`.
+Browser tests need a browser MCP server. Claude Code exposes its tools as `mcp__<server-name>__browser_<action>`, and the server name is whatever the user registered: `playwright` (the Playwright MCP) and `brave-devtools` (the Brave DevTools MCP) are the two the `tools:` line above allows. Both expose the same `browser_navigate`, `browser_click`, `browser_type`, `browser_snapshot`, `browser_wait_for`, `browser_evaluate`, and `browser_close` actions.
+
+Before Step 7, look at the tools you actually have and use whichever prefix is present. In the steps below, `browser_navigate` and friends mean "that action on whichever server you have". If you have neither, do not stop the run: fall back to the script in Step 7b, which uses the Playwright Node package directly and produces the same evidence.
 
 ## Your source of truth
 
@@ -120,19 +122,19 @@ Use the native fetch API against the resolved backend port (3001 / 8000 / 3000 s
 
 **Step 7 — Browser-based end-to-end tests using Playwright MCP** (web-app only)
 
-**HARD REQUIREMENT: You must call `mcp__playwright__browser_navigate` at least once before reporting any browser test result. Do not report pass/fail for browser tests based on reading source files — the only valid evidence is what you observe in a live browser session. If the Playwright MCP tools are unavailable, report every browser test as BLOCKED with the reason, rather than inventing results.**
+**HARD REQUIREMENT: You must drive a real browser (a `browser_navigate` call on your browser MCP, or the Step 7b script) at least once before reporting any browser test result. Do not report pass/fail for browser tests based on reading source files. The only valid evidence is what you observe in a live browser session. If neither the MCP tools nor the Step 7b script can run, report every browser test as BLOCKED with the reason, rather than inventing results.**
 
 Use the Playwright MCP tools to drive a real browser against the running frontend. **`APP_URL` below means the resolved UI URL** — `http://localhost:5173` for `node-react`/`python-react`, `http://localhost:3000` for `nextjs`.
 
 ### For `clickable` scope
 
-1. Call `mcp__playwright__browser_navigate` to open `APP_URL`
-2. Call `mcp__playwright__browser_snapshot` — assert the landing page renders (headline visible, hero CTA visible)
-3. Call `mcp__playwright__browser_click` on `data-testid="hero-cta-signup"` to enter the product
-4. Call `mcp__playwright__browser_snapshot` on the first product screen
+1. Call `browser_navigate` to open `APP_URL`
+2. Call `browser_snapshot` — assert the landing page renders (headline visible, hero CTA visible)
+3. Call `browser_click` on `data-testid="hero-cta-signup"` to enter the product
+4. Call `browser_snapshot` on the first product screen
 5. Walk through each product screen (use nav links) and snapshot each
 6. Exercise the core loop: create a record via the form, assert it appears, move a deal stage if applicable
-7. Call `mcp__playwright__browser_close`
+7. Call `browser_close`
 
 ### For `MVP` and `Prod` scope — THE FULL AUTH DANCE
 
@@ -150,12 +152,23 @@ Use a fresh test email (generate a timestamped one, e.g. `qa-test-<timestamp>@ex
 10. Click `data-testid="login-button"`
 11. Wait for the product to load again — assert the protected route rendered
 12. Take a snapshot confirming the product is visible (second session established)
-13. **Expired-token check**: using `mcp__playwright__browser_evaluate`, corrupt the stored token in `localStorage` so it is clearly invalid — for the `local` data layer, overwrite the stored token key with `"expired"`; for `supabase`, replace the `access_token` field inside the stored Supabase session object with `"expired"`. Reload the page. Trigger any action that calls a protected endpoint. Assert the app handles the 401 gracefully — either redirects to `/login` or shows an auth error, per the PRD.
+13. **Expired-token check**: using `browser_evaluate`, corrupt the stored token in `localStorage` so it is clearly invalid — for the `local` data layer, overwrite the stored token key with `"expired"`; for `supabase`, replace the `access_token` field inside the stored Supabase session object with `"expired"`. Reload the page. Trigger any action that calls a protected endpoint. Assert the app handles the 401 gracefully — either redirects to `/login` or shows an auth error, per the PRD.
 14. Run the product happy-path for the core loop named in `docs/scope.md` — e.g. create the primary resource via the create form, wait for it to appear, take a snapshot.
 15. For `Prod`: submit the create form with invalid input, assert a validation error renders.
 16. Close the browser.
 
 If any step fails, record which step failed and what the failure was.
+
+**Step 7b — Fallback when no browser MCP is available** (web-app only)
+
+If you have no `browser_*` tools, write the same auth dance and core-loop checks as a script at `server/tests/e2e.mjs` (or `tests/e2e.mjs` for `nextjs`) using the `playwright` npm package:
+
+```bash
+cd server && npm install --no-save playwright && npx playwright install chromium
+node tests/e2e.mjs
+```
+
+The script launches headless Chromium, walks steps 1 to 14 above against `APP_URL` using the same `data-testid` selectors, logs each step as PASS or FAIL to stdout, and exits non-zero on any failure. Report from that output. This is real browser evidence; a script that only inspects source files is not.
 
 **Step 8 — Fix what's broken**
 

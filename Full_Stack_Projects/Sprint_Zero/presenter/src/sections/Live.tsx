@@ -65,7 +65,7 @@ export function Live({ status }: LiveProps) {
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
         {/* ---------- left: timeline ---------- */}
         <Card className="p-4 h-fit lg:sticky lg:top-20">
-          <div className="px-2 pt-1 pb-3 border-b border-border/60 flex items-center justify-between">
+          <div className="px-2 pt-1 pb-3 border-b border-border flex items-center justify-between">
             <div className="text-[11px] font-mono text-fg-subtle uppercase tracking-widest">
               Pipeline
             </div>
@@ -108,6 +108,7 @@ export function Live({ status }: LiveProps) {
                 key="build"
                 backend={status.build?.backend}
                 frontend={status.build?.frontend}
+                config={status.config}
               />
             ) : activePhase?.key === "qa" ? (
               <QaPanel key="qa" qa={status.qa} />
@@ -148,7 +149,7 @@ function Header({ status }: { status: Status }) {
           <Activity className="w-3 h-3" />
           {failed ? "Run halted" : done ? "Run complete" : "Run in progress"}
         </Badge>
-        <h1 className="text-[34px] font-semibold tracking-[-0.02em] text-fg">
+        <h1 className="text-[34px] font-semibold tracking-[-0.03em] text-fg">
           {failed
             ? "Sprint Zero stopped."
             : done
@@ -161,7 +162,7 @@ function Header({ status }: { status: Status }) {
       </div>
       {!failed && !done && (
         <div className="flex items-center gap-2 text-[12px] text-fg-muted">
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-accent" />
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-fg" />
           watching docs/, server/, client/
         </div>
       )}
@@ -173,7 +174,7 @@ function WaitingPlaceholder({ message }: { message?: string }) {
   return (
     <Card className="h-full p-8 flex flex-col justify-center min-h-[400px]">
       <div className="flex items-start gap-4">
-        <Loader2 className="w-5 h-5 text-accent animate-spin mt-0.5" />
+        <Loader2 className="w-5 h-5 text-fg animate-spin mt-0.5" />
         <div>
           <h3 className="text-[16px] font-semibold tracking-tight text-fg">
             Waiting for the next phase

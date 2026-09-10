@@ -410,7 +410,7 @@ For walking PMs or non-developers through Sprint Zero, run it with `--present`:
 A polished local UI boots at `http://localhost:4000` and opens in the browser. Use it for three phases of the demo:
 
 1. **About** — explains scope levels, the agent topology, and the spec pipeline. Stay here while you talk through the concept.
-2. **Start a run** — a form replaces the terminal scoping conversation. Submitting it writes `docs/scope.md`.
+2. **Start a run** — a form replaces the terminal scoping conversation: level, project type, stack, data layer, core loop, excludes. Submitting it writes `docs/scope.md` in the same format `/sprint-zero-scope` produces.
 3. **Live** — a vertical pipeline timeline updates in real time as each spec doc lands. Click any completed step to view its rendered markdown. The build phase shows backend and frontend as side-by-side cards. When the run finishes, the screen reveals the running app's URL with a copyable demo login.
 
 The presenter is a permanent committed part of the kit, not a one-off. The terminal narration is unchanged, so you can also screen-share the Claude Code window alongside the UI.
@@ -431,7 +431,7 @@ cd presenter && npm install && npm run build && npm start
 
 **Every API call returns 401 (supabase only).** New Supabase projects issue ES256 tokens, not RS256. `middleware/auth.js` must accept both, and the JWKS URI must be `{SUPABASE_URL}/auth/v1/.well-known/jwks.json` (not `/auth/v1/jwks`). On `local`, a 401 usually means the stored JWT is missing or the dev secret changed — log in again.
 
-**QA didn't run the browser tests.** Either the Playwright MCP server isn't registered under the name `playwright` (run `claude mcp list`, register it, re-spawn `qa-engineer`), or the project type is `api-service`/`cli-tool`, which have no browser tests by design.
+**QA didn't run the browser tests.** Either no browser MCP is registered (`claude mcp list` should show `playwright` or `brave-devtools`; register one and re-spawn `qa-engineer`, or let QA fall back to its Playwright script), or the project type is `api-service`/`cli-tool`, which have no browser tests by design.
 
 **Seed says "relation/table does not exist".** On `local`, just re-run the seed — it creates the SQLite schema. On `supabase`, `DATABASE_URL` is wrong: get it from Settings → Database → Connection string → URI, Session mode, port 5432 (`postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres`).
 

@@ -3,14 +3,51 @@ import { Check, Loader2, Server, Monitor } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
-import type { BuildState } from "@/lib/types";
+import type { BuildConfig, BuildState } from "@/lib/types";
 
 interface BuildCardsProps {
   backend?: BuildState;
   frontend?: BuildState;
+  config?: BuildConfig | null;
 }
 
-export function BuildCards({ backend = "idle", frontend = "idle" }: BuildCardsProps) {
+const BACKEND: Record<string, { title: string; steps: string[] }> = {
+  "node-react": {
+    title: "Express API",
+    steps: ["data client + JWT middleware", "schema and idempotent seed", "routes per contract entity"],
+  },
+  nextjs: {
+    title: "Next.js route handlers",
+    steps: ["app scaffold + data client", "schema and idempotent seed", "app/api routes per contract entity"],
+  },
+  "python-react": {
+    title: "FastAPI backend",
+    steps: ["data client + JWT dependency", "schema and idempotent seed", "routers per contract entity"],
+  },
+};
+
+const FRONTEND: Record<string, { title: string; steps: string[] }> = {
+  "node-react": {
+    title: "React + Vite client",
+    steps: ["session context + protected routes", "login, signup, landing page", "product screens + api client"],
+  },
+  nextjs: {
+    title: "Next.js pages",
+    steps: ["session context + protected routes", "login, signup, landing page", "product screens, same-origin api"],
+  },
+  "python-react": {
+    title: "React + Vite client",
+    steps: ["session context + protected routes", "login, signup, landing page", "product screens + api client"],
+  },
+};
+
+export function BuildCards({ backend = "idle", frontend = "idle", config }: BuildCardsProps) {
+  const stack = config?.stack ?? "node-react";
+  const hasFrontend = (config?.projectType ?? "web-app") === "web-app";
+  const be = BACKEND[stack] ?? BACKEND["node-react"];
+  const fe = FRONTEND[stack] ?? FRONTEND["node-react"];
+  const authNote =
+    config?.dataLayer === "supabase" ? " Auth via Supabase." : " Auth via the backend's own JWT.";
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -23,40 +60,25 @@ export function BuildCards({ backend = "idle", frontend = "idle" }: BuildCardsPr
           <div>
             <Badge tone="accent">Parallel build</Badge>
             <h3 className="mt-3 text-[22px] font-semibold tracking-tight text-fg">
-              Both engineers are building to the contract.
+              {hasFrontend ? "Both engineers are building to the contract." : "The backend engineer is building to the contract."}
             </h3>
             <p className="mt-2 text-[14px] leading-relaxed text-fg-muted max-w-[620px]">
-              Backend and frontend never speak to each other. They both read{" "}
-              <code className="font-mono text-[12.5px] text-fg">docs/api-contract.md</code> and
-              build in isolation. When they return, QA validates both against the same contract.
+              {hasFrontend ? "Backend and frontend never speak to each other. They both read " : "The engineer reads "}
+              <code className="font-mono text-[12.5px] text-fg">docs/api-contract.md</code>
+              {hasFrontend
+                ? " and build in isolation. When they return, QA validates both against the same contract."
+                : " and builds to it. When it returns, QA validates against the same contract."}
+              {authNote}
             </p>
           </div>
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
-        <BuildPanel
-          icon={Server}
-          label="backend-engineer"
-          title="Express + Supabase"
-          state={backend}
-          steps={[
-            "supabase client + JWT middleware",
-            "migrations and idempotent seed",
-            "routes per contract entity",
-          ]}
-        />
-        <BuildPanel
-          icon={Monitor}
-          label="frontend-engineer"
-          title="React + Vite + Supabase Auth"
-          state={frontend}
-          steps={[
-            "session context + protected routes",
-            "login, signup, marketing page",
-            "product screens + api client",
-          ]}
-        />
+      <div className={cn("grid grid-cols-1 gap-4 flex-1", hasFrontend && "md:grid-cols-2")}>
+        <BuildPanel icon={Server} label="backend-engineer" title={be.title} state={backend} steps={be.steps} />
+        {hasFrontend && (
+          <BuildPanel icon={Monitor} label="frontend-engineer" title={fe.title} state={frontend} steps={fe.steps} />
+        )}
       </div>
     </motion.div>
   );
@@ -82,8 +104,8 @@ function BuildPanel({
     <Card
       className={cn(
         "h-full transition-colors duration-300",
-        isRunning && "border-[rgba(91,91,214,0.3)] bg-gradient-to-b from-[rgba(91,91,214,0.04)] to-transparent",
-        isDone && "border-success/30"
+        isRunning && "border-fg",
+        isDone && "border-success/40"
       )}
     >
       <CardHeader>
@@ -91,16 +113,16 @@ function BuildPanel({
           <div className="flex items-start gap-3">
             <div
               className={cn(
-                "h-10 w-10 rounded-lg border flex items-center justify-center shrink-0 transition-colors",
-                isRunning && "border-accent/40 bg-accent/[0.08]",
+                "h-10 w-10 rounded-md border flex items-center justify-center shrink-0 transition-colors",
+                isRunning && "border-fg bg-fg",
                 isDone && "border-success/30 bg-success/10",
-                state === "idle" && "border-border bg-surface-3"
+                state === "idle" && "border-border bg-surface-2"
               )}
             >
               <Icon
                 className={cn(
                   "w-4.5 h-4.5 transition-colors",
-                  isRunning && "text-accent",
+                  isRunning && "text-bg",
                   isDone && "text-success",
                   state === "idle" && "text-fg-subtle"
                 )}
@@ -131,7 +153,7 @@ function BuildPanel({
               <div
                 className={cn(
                   "w-1.5 h-1.5 rounded-full shrink-0",
-                  isDone ? "bg-success" : isRunning ? "bg-accent animate-pulse" : "bg-fg-subtle/40"
+                  isDone ? "bg-success" : isRunning ? "bg-fg animate-pulse" : "bg-fg-subtle/40"
                 )}
               />
               <span className={isRunning || isDone ? "text-fg-muted" : "text-fg-subtle"}>{s}</span>
@@ -146,8 +168,8 @@ function BuildPanel({
 function StateIcon({ state }: { state: BuildState }) {
   if (state === "running")
     return (
-      <div className="h-7 w-7 rounded-full bg-accent/10 border border-accent/40 flex items-center justify-center">
-        <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" strokeWidth={2} />
+      <div className="h-7 w-7 rounded-full bg-surface border border-fg flex items-center justify-center">
+        <Loader2 className="w-3.5 h-3.5 text-fg animate-spin" strokeWidth={2} />
       </div>
     );
   if (state === "done")

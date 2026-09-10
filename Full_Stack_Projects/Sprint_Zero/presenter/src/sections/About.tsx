@@ -29,21 +29,17 @@ export function About({ onStart }: { onStart: () => void }) {
     <motion.div variants={stagger} initial="initial" animate="animate" className="pt-16 pb-8">
       {/* ------------------------------- hero ------------------------------- */}
       <motion.div variants={item} className="max-w-[840px]">
-        <Badge tone="accent" className="mb-6">
+        <Badge className="mb-6">
           <Sparkles className="w-3 h-3" />
           Sprint Zero
         </Badge>
-        <h1 className="text-[56px] leading-[1.05] font-semibold tracking-[-0.03em] text-fg">
-          From a reference URL to a{" "}
-          <span className="bg-gradient-to-r from-[#4747b2] to-[#7c3aed] bg-clip-text text-transparent">
-            working product
-          </span>
-          {" "}— in one command.
+        <h1 className="text-[64px] leading-[1.02] font-semibold tracking-[-0.04em] text-fg">
+          From a reference URL to a working product. One command.
         </h1>
         <p className="mt-6 text-[18px] leading-relaxed text-fg-muted max-w-[640px]">
           Sprint Zero is a Claude Code kit that gives a PM a full sub-agent product team on
-          their laptop. Point it at a reference. Answer three questions. Get back a full spec
-          set and a running app.
+          their laptop. Point it at a reference. Answer the scoping questions. Get back a full
+          spec set and a running app.
         </p>
         <div className="mt-10 flex items-center gap-3">
           <Button size="lg" onClick={onStart}>
@@ -76,8 +72,8 @@ export function About({ onStart }: { onStart: () => void }) {
             },
             {
               n: "02",
-              title: "Three scoping answers",
-              body: "Build level, the one core loop that matters, and what to leave out. All in a single paragraph.",
+              title: "A few scoping answers",
+              body: "Build level, stack, where data lives, the one core loop that matters, and what to leave out.",
               icon: MousePointerClick,
             },
             {
@@ -89,14 +85,14 @@ export function About({ onStart }: { onStart: () => void }) {
             {
               n: "04",
               title: "A running app",
-              body: "Playwright validates the auth dance and core loop. Servers boot. The URL lands in your terminal.",
+              body: "QA drives a real browser through the auth dance and core loop. Servers boot. The URL lands in your terminal.",
               icon: Rocket,
             },
           ].map((c) => (
             <motion.div key={c.n} variants={item}>
               <Card className="p-5 h-full">
                 <div className="flex items-start justify-between">
-                  <c.icon className="w-5 h-5 text-accent" strokeWidth={1.5} />
+                  <c.icon className="w-5 h-5 text-fg" strokeWidth={1.5} />
                   <span className="text-[11px] font-mono text-fg-subtle tracking-wider">{c.n}</span>
                 </div>
                 <h3 className="mt-5 text-[15px] font-semibold tracking-tight text-fg">{c.title}</h3>
@@ -127,7 +123,7 @@ export function About({ onStart }: { onStart: () => void }) {
               key: "MVP",
               title: "MVP",
               tagline: "The idea actually works",
-              body: "Real Supabase, real auth, one core loop end-to-end. The main v1 target and the demo path Sprint Zero is tuned for.",
+              body: "Real auth, real data, one core loop end-to-end. SQLite by default, Supabase if you ask. The demo path Sprint Zero is tuned for.",
               tone: "accent" as const,
               featured: true,
             },
@@ -135,7 +131,7 @@ export function About({ onStart }: { onStart: () => void }) {
               key: "Prod",
               title: "Prod",
               tagline: "Ready for real users",
-              body: "MVP plus error boundaries, loading states, input validation, and a Playwright error-path test per loop.",
+              body: "MVP plus error boundaries, loading states, input validation, and a browser error-path test per loop.",
               tone: "neutral" as const,
             },
           ].map((lvl) => (
@@ -143,7 +139,7 @@ export function About({ onStart }: { onStart: () => void }) {
               key={lvl.key}
               className={
                 "relative p-6 " +
-                (lvl.featured ? "border-[rgba(91,91,214,0.35)] bg-gradient-to-b from-[rgba(91,91,214,0.06)] to-transparent" : "")
+                (lvl.featured ? "border-fg" : "")
               }
             >
               {lvl.featured && (
@@ -155,7 +151,7 @@ export function About({ onStart }: { onStart: () => void }) {
                 {lvl.key}
               </div>
               <h3 className="mt-2 text-[22px] font-semibold tracking-tight text-fg">{lvl.title}</h3>
-              <p className="mt-1 text-[13px] text-accent font-medium">{lvl.tagline}</p>
+              <p className="mt-1 text-[13px] text-fg-muted font-medium">{lvl.tagline}</p>
               <p className="mt-4 text-[14px] leading-relaxed text-fg-muted">{lvl.body}</p>
             </Card>
           ))}
@@ -167,7 +163,7 @@ export function About({ onStart }: { onStart: () => void }) {
         <SectionHeading
           kicker="The spec pipeline"
           title="Six documents, written in order. Each one feeds the next."
-          description="Nothing is built until the spec set is complete. The API contract is law — both engineers build to it in isolation."
+          description="Nothing is built until the spec set is complete. The API contract is law. Both engineers build to it in isolation."
         />
         <div className="mt-10">
           <PipelineTrack />
@@ -191,19 +187,19 @@ export function About({ onStart }: { onStart: () => void }) {
           <AgentCard
             icon={Cog}
             role="backend-engineer"
-            title="Builds the Express API against the contract."
-            body="Owns server/. Wires Supabase, JWT middleware, migrations, and a realistic seed script."
+            title="Builds the API against the contract."
+            body="Owns server/. Wires the data layer, JWT middleware, schema, and a realistic seed script. Express, FastAPI, or Next.js route handlers, per the stack."
           />
           <AgentCard
             icon={Zap}
             role="frontend-engineer"
-            title="Builds React + Vite + Supabase Auth."
-            body="Owns client/. Session context, protected routes, login/signup, and a polished landing page."
+            title="Builds the React client."
+            body="Owns client/. Session context, protected routes, login and signup, and a polished landing page. Talks to the backend auth API or Supabase Auth, per the data layer."
           />
           <AgentCard
             icon={ShieldCheck}
             role="qa-engineer"
-            title="Drives the app with Playwright."
+            title="Drives the app in a real browser."
             body="Auth dance, contract check, core loop happy path. Prod scope adds error-path tests per loop."
           />
         </div>
@@ -211,15 +207,15 @@ export function About({ onStart }: { onStart: () => void }) {
 
       {/* ----------------------------- contract ----------------------------- */}
       <section className="mt-28">
-        <Card className="p-8 md:p-10 bg-gradient-to-br from-[rgba(91,91,214,0.05)] to-surface-2 border-[rgba(91,91,214,0.18)]">
+        <Card className="p-8 md:p-10 bg-fg text-bg border-fg">
           <div className="flex items-start gap-5">
-            <Workflow className="w-8 h-8 text-accent shrink-0" strokeWidth={1.4} />
+            <Workflow className="w-8 h-8 shrink-0" strokeWidth={1.4} />
             <div>
-              <h3 className="text-[22px] font-semibold tracking-tight text-fg">
+              <h3 className="text-[22px] font-semibold tracking-tight">
                 The API contract is law.
               </h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-fg-muted max-w-[760px]">
-                Endpoint paths, request shapes, response shapes, status codes — all defined in
+              <p className="mt-3 text-[15px] leading-relaxed text-white/70 max-w-[760px]">
+                Endpoint paths, request shapes, response shapes, status codes, all defined in
                 one file. Backend implements it. Frontend consumes it. QA validates against it.
                 The engineers never speak to each other; they both build to the same contract.
               </p>
@@ -260,8 +256,8 @@ function SectionHeading({
 }) {
   return (
     <div className="max-w-[720px]">
-      <div className="text-[12px] font-mono text-accent uppercase tracking-widest">{kicker}</div>
-      <h2 className="mt-3 text-[32px] leading-[1.15] font-semibold tracking-[-0.02em] text-fg">
+      <div className="text-[12px] font-mono text-fg-subtle uppercase tracking-widest">{kicker}</div>
+      <h2 className="mt-3 text-[36px] leading-[1.1] font-semibold tracking-[-0.03em] text-fg">
         {title}
       </h2>
       {description && (
@@ -285,8 +281,8 @@ function AgentCard({
   return (
     <Card className="p-6">
       <div className="flex items-start gap-4">
-        <div className="h-10 w-10 rounded-lg bg-surface-3 border border-border flex items-center justify-center shrink-0">
-          <Icon className="w-4.5 h-4.5 text-accent" strokeWidth={1.5} />
+        <div className="h-10 w-10 rounded-md bg-surface-2 border border-border flex items-center justify-center shrink-0">
+          <Icon className="w-4.5 h-4.5 text-fg" strokeWidth={1.5} />
         </div>
         <div className="min-w-0">
           <code className="text-[12px] font-mono text-fg-subtle">{role}</code>
@@ -310,13 +306,13 @@ function PipelineTrack() {
 
   return (
     <div className="relative">
-      <div className="absolute left-0 right-0 top-5 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="absolute left-0 right-0 top-5 h-px bg-border" />
       <div className="relative grid grid-cols-2 md:grid-cols-6 gap-4">
         {steps.map((s, i) => (
           <div key={s.n} className="relative">
             <div className="flex items-center justify-center">
-              <div className="relative z-10 w-10 h-10 rounded-full bg-surface-2 border border-border flex items-center justify-center">
-                <span className="text-[13px] font-mono text-accent font-semibold">{s.n}</span>
+              <div className="relative z-10 w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center">
+                <span className="text-[13px] font-mono text-fg font-semibold">{s.n}</span>
               </div>
             </div>
             <div className="mt-4 text-center">

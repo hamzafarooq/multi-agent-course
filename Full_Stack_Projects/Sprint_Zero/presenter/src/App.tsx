@@ -13,11 +13,13 @@ export default function App() {
   const [section, setSection] = useState<Section>("about");
   const [userLocked, setUserLocked] = useState(false);
 
-  // Auto-advance to Live once the run has begun — unless the user has
+  // Auto-advance to Live once the run has begun, unless the user has
   // navigated manually (e.g. back to About for a second explanation).
   useEffect(() => {
     if (userLocked) return;
     if (status.phase === "idle") return;
+    // The sample run is already "done". Don't skip the audience past About.
+    if (status.demo) return;
     if (status.phase === "waiting-for-scope") {
       setSection("scope");
       return;
@@ -30,9 +32,24 @@ export default function App() {
     setSection(next);
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [section]);
+
   return (
     <div className="min-h-screen">
       <TopNav section={section} onChange={handleNav} status={status} />
+      {status.demo && (
+        <div className="border-b border-border bg-surface-2">
+          <div className="max-w-[1240px] mx-auto px-6 py-2 flex items-center gap-2 text-[13px] text-fg-muted">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-warn" />
+            <span>
+              <strong className="font-medium text-fg">Sample run.</strong> A real
+              {" "}<code className="font-mono text-[12px]">/sprint-zero</code> run replaces this the moment one starts.
+            </span>
+          </div>
+        </div>
+      )}
       <main className="max-w-[1240px] mx-auto px-6 pb-24">
         <AnimatePresence mode="wait">
           <motion.div
@@ -43,7 +60,9 @@ export default function App() {
             transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
           >
             {section === "about" && <About onStart={() => handleNav("scope")} />}
-            {section === "scope" && <Scope onSubmitted={() => handleNav("live")} status={status} />}
+            {section === "scope" && (
+              <Scope onSubmitted={() => handleNav("live")} onBack={() => handleNav("about")} status={status} />
+            )}
             {section === "live" && <Live status={status} />}
           </motion.div>
         </AnimatePresence>

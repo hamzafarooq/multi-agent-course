@@ -6,15 +6,15 @@ import type { Status } from "@/lib/types";
 
 export function QaPanel({ qa }: { qa: NonNullable<Status["qa"]> | undefined }) {
   const rows = [
-    { key: "contractBackend", label: "Contract check — backend" },
-    { key: "contractFrontend", label: "Contract check — frontend" },
+    { key: "contractBackend", label: "Contract check: backend" },
+    { key: "contractFrontend", label: "Contract check: frontend" },
     {
       key: "integration",
       label: qa?.integration
         ? `Integration tests (${qa.integration.passed}/${qa.integration.total})`
         : "Integration tests",
     },
-    { key: "authDance", label: "Auth dance (signup → session → 401)" },
+    { key: "authDance", label: "Auth dance (signup, session, logout, login, 401)" },
     { key: "coreLoop", label: "Core loop happy path" },
   ] as const;
 
@@ -28,11 +28,11 @@ export function QaPanel({ qa }: { qa: NonNullable<Status["qa"]> | undefined }) {
       <Card className="h-full" elevated>
         <CardHeader>
           <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-lg bg-surface-3 border border-border flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-4 h-4 text-accent" strokeWidth={1.75} />
+            <div className="h-9 w-9 rounded-md bg-surface-2 border border-border flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-4 h-4 text-fg" strokeWidth={1.75} />
             </div>
             <div>
-              <CardTitle>QA — Playwright</CardTitle>
+              <CardTitle>QA in a real browser</CardTitle>
               <CardDescription>
                 Validates both engineers against the contract and drives the live app in a real
                 browser.
@@ -51,7 +51,7 @@ export function QaPanel({ qa }: { qa: NonNullable<Status["qa"]> | undefined }) {
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-md",
                     "border border-transparent",
-                    state === "running" && "bg-accent/[0.04]"
+                    state === "running" && "bg-surface-2"
                   )}
                 >
                   <StateIcon state={state} />
@@ -100,8 +100,8 @@ function StateIcon({ state }: { state: RowState }) {
     );
   if (state === "running")
     return (
-      <div className="w-5 h-5 rounded-full bg-accent/10 border border-accent/40 flex items-center justify-center shrink-0">
-        <Loader2 className="w-3 h-3 text-accent animate-spin" strokeWidth={2} />
+      <div className="w-5 h-5 rounded-full bg-surface border border-fg flex items-center justify-center shrink-0">
+        <Loader2 className="w-3 h-3 text-fg animate-spin" strokeWidth={2} />
       </div>
     );
   if (state === "n/a")

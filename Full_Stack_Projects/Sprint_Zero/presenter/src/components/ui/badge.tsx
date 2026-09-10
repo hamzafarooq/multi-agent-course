@@ -5,10 +5,10 @@ type Tone = "neutral" | "accent" | "success" | "warn" | "danger";
 
 const toneClasses: Record<Tone, string> = {
   neutral: "bg-surface-3 text-fg-muted border-border",
-  accent: "bg-accent/10 text-accent border-accent/30",
-  success: "bg-success/10 text-success border-success/30",
-  warn: "bg-warn/10 text-warn border-warn/30",
-  danger: "bg-danger/10 text-danger border-danger/30",
+  accent: "bg-fg text-bg border-fg",
+  success: "bg-success/10 text-success border-success/25",
+  warn: "bg-warn/10 text-warn border-warn/25",
+  danger: "bg-danger/10 text-danger border-danger/25",
 };
 
 export function Badge({
@@ -32,7 +32,7 @@ export function Badge({
 export function Dot({ tone = "neutral" }: { tone?: "neutral" | "accent" | "success" | "warn" | "danger" }) {
   const color = {
     neutral: "bg-fg-subtle",
-    accent: "bg-accent",
+    accent: "bg-fg",
     success: "bg-success",
     warn: "bg-warn",
     danger: "bg-danger",
