@@ -19,9 +19,18 @@ If `$ARGUMENTS` is empty, trigger the guided intake (see Step 1). If URLs are pr
 
 Before each spec-writing step, check whether its expected output file already exists in `docs/`. If it does, print a skip message and move to the next step. This makes `/sprint-zero` safe to re-run after a partial failure — it picks up from where the previous run stopped.
 
-If `--fresh` was passed, delete `docs/` before step 2 so all spec steps run from scratch.
+The build and QA phases resume from `.sprint-zero/status.json`, which this command writes at every phase transition whether or not `--present` was passed (see Step 0c). At the start of a run, if that file exists, read it and print `Resuming from phase: <phase>.` Then:
 
-If `--rebuild` was passed, delete `server/` and `client/` before step 9 so the full build runs from scratch.
+- `build.backend` is `"done"` and the backend dir exists → do not re-spawn backend-engineer.
+- `build.frontend` is `"done"` and the frontend dir exists → do not re-spawn frontend-engineer.
+- `phase` is `"launch"` or `"done"` and the code dirs exist → skip straight to Step 11.
+- `phase` is `"failed"` → read `failure.state`, print its recovery instruction, and resume at the step that state names.
+
+Anything marked `"running"` when the previous session broke is treated as not done: re-spawn it. Engineers write their dir from scratch when it is missing and build on what exists when it is present, so a re-spawn after a partial build is safe. `--fresh` and `--rebuild` also delete `.sprint-zero/status.json`.
+
+If `--fresh` was passed, delete `docs/` and `.sprint-zero/status.json` before step 2 so all spec steps run from scratch.
+
+If `--rebuild` was passed, delete `server/` and `client/` (or `app/`, `cli/`) and reset `build` in `.sprint-zero/status.json` before step 9 so the full build runs from scratch.
 
 ## Named failure states
 
@@ -65,9 +74,9 @@ Print:
 
 > Presenter UI is up at <url>. Walk through the About section to teach the flow, then click "Start a run" to enter the scoping form.
 
-**0c. Status helper for the rest of this run.**
+**0c. Status helper for the rest of this run. This sub-step runs on every invocation, with or without `--present`.**
 
-Whenever a "presenter status update" is mentioned in steps 1–11 below, write a JSON file at `.sprint-zero/status.json` with this shape (keys are optional unless required by the specific step):
+Whenever a "presenter status update" is mentioned in steps 1–11 below, write a JSON file at `.sprint-zero/status.json` with this shape (keys are optional unless required by the specific step). The file is the run's checkpoint: the presenter UI reads it when present, and the Resumability rules above read it after a break.
 
 ```json
 {
@@ -88,7 +97,7 @@ Whenever a "presenter status update" is mentioned in steps 1–11 below, write a
 
 Use `bash` with `cat <<EOF > .sprint-zero/status.json … EOF` to overwrite atomically. Always include `phase`, `message`, and `docs` (the list of files currently in `docs/`). Other keys are additive.
 
-If `--present` was NOT passed, ignore every "presenter status update" instruction in the steps below — the rest of the flow runs identically to before.
+If `--present` was NOT passed, still write every status update (it is one small file and it is what makes a broken run resumable); only skip booting the UI in 0a and 0b.
 
 **0d. Project name.**
 
@@ -390,11 +399,9 @@ If any sub-step in 11 fails, print `STATE: LAUNCH_FAILED — start the servers m
 
 ---
 
-## Presenter status updates per step (only when `--present` was passed)
+## Status updates per step (always; the presenter reads them when `--present` was passed)
 
-Skip this whole section unless `--present` was set. The flow proceeds identically without it.
-
-When `--present` is active, write `.sprint-zero/status.json` once at the start of each step below, after the existing print statements but before invoking the sub-command. Always re-list the `docs/` directory contents into the `docs` array. Always set `timestamp` to the current ISO 8601 string. Never block on the write — it's atomic and trivially fast.
+Write `.sprint-zero/status.json` once at the start of each step below, after the existing print statements but before invoking the sub-command. Always re-list the `docs/` directory contents into the `docs` array. Always set `timestamp` to the current ISO 8601 string. Never block on the write — it's atomic and trivially fast.
 
 | Step | `phase`     | `stepNumber` | `step`             | `message`                                            |
 | ---- | ----------- | ------------ | ------------------ | ---------------------------------------------------- |
