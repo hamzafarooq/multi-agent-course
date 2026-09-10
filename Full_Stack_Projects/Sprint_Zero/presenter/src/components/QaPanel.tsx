@@ -34,8 +34,8 @@ export function QaPanel({ qa }: { qa: NonNullable<Status["qa"]> | undefined }) {
             <div>
               <CardTitle>QA in a real browser</CardTitle>
               <CardDescription>
-                Validates both engineers against the contract and drives the live app in a real
-                browser.
+                Reads both codebases against the contract, then drives the running app in a real
+                browser: signup, logout, login, an expired token, and the core loop.
               </CardDescription>
             </div>
           </div>

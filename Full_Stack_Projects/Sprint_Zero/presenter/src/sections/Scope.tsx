@@ -26,20 +26,20 @@ const LEVEL_OPTIONS: {
     value: "clickable",
     title: "Clickable",
     tagline: "Pitch-ready walkthrough",
-    body: "Mock backend, fake data, no auth. Fastest path to something you can show.",
+    body: "Fake data, no login, nothing persists. Fastest path to something you can click through.",
   },
   {
     value: "MVP",
     title: "MVP",
-    tagline: "The idea actually works",
-    body: "Real auth, real data, one core loop end-to-end.",
+    tagline: "The core loop works for real",
+    body: "Real signup and login, real rows in a database, one flow working end to end.",
     recommended: true,
   },
   {
     value: "Prod",
     title: "Prod",
-    tagline: "Ready for real users",
-    body: "MVP plus error states, validation, loading, and an error-path browser test.",
+    tagline: "Ready for a handful of real users",
+    body: "MVP plus form validation, loading states, error boundaries, and a browser test that submits bad input.",
   },
 ];
 
@@ -119,9 +119,9 @@ export function Scope({ onSubmitted, onBack, status }: ScopeProps) {
             Tell Sprint Zero what you want to build.
           </h1>
           <p className="mt-4 text-[16px] leading-relaxed text-fg-muted max-w-[620px]">
-            Sprint Zero normally asks these questions in the terminal. The answers go
-            straight into <code className="font-mono text-[13px] text-fg">docs/scope.md</code>,
-            which every downstream agent reads.
+            These are the same questions the terminal would ask. Your answers are written to{" "}
+            <code className="font-mono text-[13px] text-fg">docs/scope.md</code>, and every agent
+            in the run reads that file before it does anything else.
           </p>
         </motion.div>
 
@@ -160,7 +160,7 @@ export function Scope({ onSubmitted, onBack, status }: ScopeProps) {
                 />
               </div>
               <FieldHint>
-                The product Sprint Zero will study to build something similar. Required.
+                The product Sprint Zero studies and then rebuilds at the level you pick below. Required.
               </FieldHint>
             </Field>
 
@@ -177,8 +177,8 @@ export function Scope({ onSubmitted, onBack, status }: ScopeProps) {
                 />
               </div>
               <FieldHint>
-                Optional. Providing a repo lets the researcher read the source alongside the
-                product site.
+                Optional. With a repo, the researcher reads the README and folder structure
+                alongside the marketing site, which makes the API contract far less guessy.
               </FieldHint>
             </Field>
           </section>
@@ -272,8 +272,8 @@ export function Scope({ onSubmitted, onBack, status }: ScopeProps) {
                 className="min-h-[120px]"
               />
               <FieldHint>
-                If only one thing works end-to-end, what is it? Be specific. The agents follow
-                this literally.
+                If only one thing works end to end, what is it? Name the screens and the records.
+                The agents build exactly this and not much else.
               </FieldHint>
             </Field>
           </section>
@@ -292,7 +292,8 @@ export function Scope({ onSubmitted, onBack, status }: ScopeProps) {
                 className="min-h-[120px]"
               />
               <FieldHint>
-                One per line. The longer and more specific this list is, the tighter the build.
+                One per line. Anything listed here is a feature the agents will not attempt,
+                which is how you stop an MVP from growing a settings page.
               </FieldHint>
             </Field>
           </section>

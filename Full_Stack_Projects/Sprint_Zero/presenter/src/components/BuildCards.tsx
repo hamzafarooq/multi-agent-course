@@ -63,11 +63,13 @@ export function BuildCards({ backend = "idle", frontend = "idle", config }: Buil
               {hasFrontend ? "Both engineers are building to the contract." : "The backend engineer is building to the contract."}
             </h3>
             <p className="mt-2 text-[14px] leading-relaxed text-fg-muted max-w-[620px]">
-              {hasFrontend ? "Backend and frontend never speak to each other. They both read " : "The engineer reads "}
+              {hasFrontend
+                ? "Backend and frontend are building at the same time, in separate contexts, from the same file: "
+                : "The engineer is building from one file: "}
               <code className="font-mono text-[12.5px] text-fg">docs/api-contract.md</code>
               {hasFrontend
-                ? " and build in isolation. When they return, QA validates both against the same contract."
-                : " and builds to it. When it returns, QA validates against the same contract."}
+                ? ". Neither can see the other's code. When both report done, QA checks them against that file."
+                : ". When it reports done, QA checks the result against that file."}
               {authNote}
             </p>
           </div>
@@ -136,10 +138,10 @@ function BuildPanel({
                 {isRunning
                   ? "Building…"
                   : isDone
-                    ? "Complete. All endpoints match the contract."
+                    ? "Done. Reported every endpoint matching the contract."
                     : state === "failed"
-                      ? "Reported a failure."
-                      : "Waiting for the build brief."}
+                      ? "Stopped and reported a failure."
+                      : "Waiting for the tech lead's brief."}
               </CardDescription>
             </div>
           </div>

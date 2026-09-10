@@ -177,11 +177,11 @@ function WaitingPlaceholder({ message }: { message?: string }) {
         <Loader2 className="w-5 h-5 text-fg animate-spin mt-0.5" />
         <div>
           <h3 className="text-[16px] font-semibold tracking-tight text-fg">
-            Waiting for the next phase
+            Nothing new yet
           </h3>
           <p className="mt-2 text-[14px] text-fg-muted leading-relaxed max-w-[480px]">
             {message ??
-              "Sprint Zero is preparing the next step. Once a doc lands or a phase changes, this pane will update."}
+              "This pane updates the moment a doc lands in docs/ or the phase changes."}
           </p>
           <div className="mt-6 space-y-3">
             <div className="h-3.5 w-2/3 rounded shimmer" />
@@ -200,8 +200,8 @@ function BriefingPlaceholder() {
       <CardHeader className="px-0 pt-0">
         <CardTitle>Tech-lead build brief</CardTitle>
         <CardDescription>
-          Reading the spec set and synthesising the build plan. The brief lands in the terminal so
-          you can read it before the parallel build starts.
+          The tech lead is reading all six docs and deciding who builds what, on which ports.
+          Its brief prints in the terminal, and the engineers do not start until it does.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0 pb-0 mt-2 space-y-3">

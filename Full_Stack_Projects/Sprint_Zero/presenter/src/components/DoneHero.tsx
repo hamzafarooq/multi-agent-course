@@ -31,9 +31,8 @@ export function DoneHero({ appUrl, credentials, projectName }: DoneHeroProps) {
             Your product is live.
           </h2>
           <p className="mt-4 text-[15.5px] leading-relaxed text-fg-muted max-w-[560px]">
-            Sprint Zero finished the pipeline. Backend, frontend, and QA all passed.
-            {projectName ? ` Project: ${projectName}.` : null} Open the app and walk through the
-            core loop.
+            Both servers are up, QA passed, and the demo user below is already seeded
+            {projectName ? ` for ${projectName}` : ""}. Open the app and walk the core loop.
           </p>
 
           <UrlRow url={appUrl} />
@@ -50,7 +49,7 @@ export function DoneHero({ appUrl, credentials, projectName }: DoneHeroProps) {
               <ExternalLink className="w-4 h-4" />
             </Button>
             <p className="text-[12.5px] text-fg-subtle">
-              Opens in a new tab. Log in with the credentials above.
+              Opens in a new tab. Sign in with the demo login above.
             </p>
           </div>
         </div>
