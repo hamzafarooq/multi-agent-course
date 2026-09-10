@@ -27,7 +27,7 @@ Built by **[Yousuf Alvi](https://github.com/yousuf-alvi)** · **[Hamza Farooq](h
                                                                        └─ 🎨 frontend ┘
 ```
 
-Sprint Zero is a Claude Code kit that gives a PM or founder a full sub-agent product team on their laptop. You bring the idea and a reference URL. Sprint Zero handles scoping, research, specs, parallel engineering, and QA — and hands back a running product. The default build runs **straight after clone with no account, no keys, and no `.env`.**
+Sprint Zero is a Claude Code kit that gives a developer, founder, or PM a full sub-agent product team on their laptop. You bring the idea and a reference URL. Sprint Zero handles scoping, research, specs, parallel engineering, and QA — and hands back a running product. The default build runs **straight after clone with no account, no keys, and no `.env`.**
 
 ---
 

@@ -37,8 +37,8 @@ export function About({ onStart }: { onStart: () => void }) {
           Give it a URL. Get back six spec docs and an app that runs.
         </h1>
         <p className="mt-6 text-[18px] leading-relaxed text-fg-muted max-w-[640px]">
-          Sprint Zero is a Claude Code kit for PMs. You hand it a product to study and tell it
-          which one flow has to work. Four sub-agents write the specs, then build to them while
+          Sprint Zero is a Claude Code kit for developers, founders, and PMs. You hand it a product
+          to study and tell it which one flow has to work. Four sub-agents write the specs, then build to them while
           you watch from this screen. On the default stack there are no accounts or keys to set
           up first.
         </p>

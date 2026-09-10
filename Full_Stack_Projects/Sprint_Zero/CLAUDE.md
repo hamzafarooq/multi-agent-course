@@ -184,7 +184,7 @@ When a user invokes `/sprint-zero <url>`, the orchestrator adds:
 ## Context for Claude Code
 
 - Builder: Yousuf Alvi (co-facilitator on Hamza Farooq's Claude Code for PMs cohort)
-- Audience for this repo: PMs and non-developers using Claude Code
+- Audience for this repo: developers, founders, and PMs using Claude Code
 - This repo's own build is tracked in `plan.md`, phase by phase. Each phase is a single chat session. Do not skip ahead.
 - Mini Twenty is Sprint Zero's worked example (Phase 5). Until then, `examples/` is intentionally empty.
 
