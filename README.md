@@ -30,7 +30,11 @@ Welcome to the official course repository for the **FDE Agent Engineering Bootca
 
 Six modules teach the concepts; four projects make you ship them.
 
-> **Looking for a previous cohort?** The prior version of this course is preserved on the [`2026-02`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-02) branch (and `2026-01` before it).
+> **Branches are cohort archives.** `main` is always the course as it is being taught now. Every
+> past cohort is frozen on its own branch and never moves again: [`2026-02`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-02),
+> and `2026-01` before it. [`2026-03`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-03)
+> is an early snapshot of the current cohort, kept for reference; follow `main` for the live version.
+> Clone `main` unless you are deliberately looking at history.
 
 ## Why merge Agent Engineering and FDE?
 

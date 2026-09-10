@@ -27,6 +27,14 @@ file fully before responding to anything course-related.
 - **Progress:** `progress/learner-progress.md` — read it at the start of a session, update
   it at the end.
 
+## Branches
+
+`main` is the cohort being taught. Past cohorts are frozen on their own branches and must never
+be advanced: `2026-01`, `2026-02`, and `2026-03` (an early snapshot of the current cohort). Teach
+and edit from `main` only. If a local frozen branch is checked out, check its upstream before any
+pull: some were created tracking `origin/main`, so a bare `git pull` there would fast-forward the
+archive onto current `main` and destroy the snapshot.
+
 ## Course modules (update this list when modules change)
 
 The course is the **FDE Agent Engineering Bootcamp** (cohort 2026-03) — seven weeks: six
