@@ -31,6 +31,10 @@ export interface BuildConfig {
   stack: StackProfile | null;
   dataLayer: DataLayer | null;
   level: ScopeLevel | null;
+  companyUrl?: string | null;
+  repoUrl?: string | null;
+  coreLoop?: string | null;
+  excludes?: string[] | null;
 }
 
 export interface Status {

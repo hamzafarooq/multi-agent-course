@@ -437,7 +437,9 @@ cd examples/ghost-lite/client && npm install && npm run dev        # :5173
 
 Demo login `demo@traversaal.ai` / `inkwell-demo`. Public site at `http://localhost:5173/s/traversaal-ai`. See [`examples/ghost-lite/README.md`](examples/ghost-lite/README.md) for what QA verified and how.
 
-The same run is committed under `presenter/sample/` so the presenter can play it back. Start the presenter with no run on disk and it shows the sample automatically; with a live run on disk, the **Run demo** button in the top bar switches to the sample and **Exit demo** switches back. `SPRINT_ZERO_DEMO=0` turns the automatic fallback off (the button still works).
+[`presenter/sample/build-record.html`](presenter/sample/build-record.html) is the write-up for the class: what got built and how QA tested it, with screenshots. The presenter serves it at `/sample/build-record.html` and links it from the demo's finish screen.
+
+The same run is committed under `presenter/sample/` so the presenter can replay it. **Run demo** in the presenter's top bar (or `http://localhost:4000/#demo`) plays the run back in about a minute: the scoping form fills itself with the real scope, the pipeline advances step by step with each real doc appearing as it landed, the build cards and QA rows go green, and it ends on the finished product with a link to the build record. Only the clock is compressed; nothing is invented. **Skip to end**, **Replay**, and **Exit demo** sit in the sample bar. With no run on disk the presenter shows the finished sample automatically; `SPRINT_ZERO_DEMO=0` turns that fallback off (the button still works).
 
 ---
 

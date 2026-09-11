@@ -75,7 +75,16 @@ async function readConfig(dir) {
     const stack = pick("Stack profile");
     const dataLayer = pick("Data layer");
     if (!projectType && !stack && !dataLayer && !level) return null;
-    return { projectType, stack, dataLayer, level };
+    const section = (name) => md.match(new RegExp(`## ${name}\\s+([\\s\\S]*?)(?=\\n## |$)`))?.[1]?.trim() ?? "";
+    const companyUrl = md.match(/\*\*Company URL:\*\*\s*(\S+)/)?.[1] ?? null;
+    const repoUrlRaw = md.match(/\*\*Repo URL:\*\*\s*(.+)/)?.[1]?.trim() ?? "";
+    const repoUrl = /^https?:/.test(repoUrlRaw) ? repoUrlRaw : "";
+    const coreLoop = section("Core loop");
+    const excludes = section("Excludes")
+      .split("\n")
+      .map((l) => l.replace(/^-\s*/, "").trim())
+      .filter((l) => l && l !== "None specified.");
+    return { projectType, stack, dataLayer, level, companyUrl, repoUrl, coreLoop, excludes };
   } catch {
     return null;
   }
@@ -214,6 +223,13 @@ app.get("/api/sample/doc/:name", async (req, res) => {
   } catch {
     res.status(404).type("text/plain").send("Not in the sample");
   }
+});
+
+// The build record: a self-contained page describing what the sample run built and how QA tested it.
+app.get("/sample/build-record.html", (_req, res) => {
+  const file = path.join(SAMPLE_DIR, "build-record.html");
+  if (!existsSync(file)) return res.status(404).type("text/plain").send("No build record in presenter/sample/.");
+  res.sendFile(file);
 });
 
 app.get("/api/doc/:name", async (req, res) => {

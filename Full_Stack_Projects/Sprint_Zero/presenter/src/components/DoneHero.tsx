@@ -53,7 +53,7 @@ cd examples/${projectName ?? "ghost-lite"}/client && npm install && npm run dev`
             </div>
           )}
 
-          <div className="mt-9 flex items-center gap-3">
+          <div className="mt-9 flex items-center gap-3 flex-wrap">
             <Button
               size="lg"
               onClick={() => window.open(appUrl, "_blank", "noopener")}
@@ -62,8 +62,18 @@ cd examples/${projectName ?? "ghost-lite"}/client && npm install && npm run dev`
               Open the app
               <ExternalLink className="w-4 h-4" />
             </Button>
+            {demo && (
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={() => window.open("/sample/build-record.html", "_blank", "noopener")}
+              >
+                Read the build record
+                <ExternalLink className="w-4 h-4" />
+              </Button>
+            )}
             <p className="text-[12.5px] text-fg-subtle">
-              Opens in a new tab. Sign in with the demo login above.
+              {demo ? "The record says what got built and how QA tested it." : "Opens in a new tab. Sign in with the demo login above."}
             </p>
           </div>
         </div>
