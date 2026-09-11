@@ -53,7 +53,7 @@ export const REPLAY_TOTAL_MS = REPLAY_STEPS.reduce((a, s) => a + s.ms, 0);
 export function useReplay(sample: Status | null, active: boolean, onDone: () => void) {
   const [elapsed, setElapsed] = useState(0);
   const [finished, setFinished] = useState(false);
-  const raf = useRef<number | null>(null);
+  const raf = useRef<number | null>(null); // interval id
   const start = useRef<number>(0);
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
@@ -67,26 +67,27 @@ export function useReplay(sample: Status | null, active: boolean, onDone: () => 
   useEffect(() => {
     if (!active || finished) return;
     start.current = performance.now() - elapsed;
-    const tick = (now: number) => {
-      const e = now - start.current;
+    // A coarse clock: five updates a second is plenty for a progress bar and
+    // keeps the rest of the page from re-rendering sixty times a second.
+    raf.current = window.setInterval(() => {
+      const e = performance.now() - start.current;
       if (e >= REPLAY_TOTAL_MS) {
+        if (raf.current) clearInterval(raf.current);
         setElapsed(REPLAY_TOTAL_MS);
         setFinished(true);
         doneRef.current();
         return;
       }
       setElapsed(e);
-      raf.current = requestAnimationFrame(tick);
-    };
-    raf.current = requestAnimationFrame(tick);
+    }, 200);
     return () => {
-      if (raf.current) cancelAnimationFrame(raf.current);
+      if (raf.current) clearInterval(raf.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, finished]);
 
   const skip = () => {
-    if (raf.current) cancelAnimationFrame(raf.current);
+    if (raf.current) clearInterval(raf.current);
     setElapsed(REPLAY_TOTAL_MS);
     setFinished(true);
     doneRef.current();
@@ -124,7 +125,8 @@ export function useReplay(sample: Status | null, active: boolean, onDone: () => 
       appUrl: null,
       credentials: null,
       demo: true,
-      timestamp: String(Math.floor(elapsed / 250)),
+      // Stable per phase so the doc pane does not re-fetch or re-animate on every tick.
+      timestamp: `replay-${cur.step}`,
     };
   }
 

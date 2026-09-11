@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { TopNav } from "./components/TopNav";
 import { About } from "./sections/About";
@@ -21,7 +21,8 @@ export default function App() {
   const replay = useReplay(demo ? sample : null, demo && stage === "run", () => setStage("done"));
   const status = demo ? (stage === "form" ? { ...sample, phase: "waiting-for-scope" as const, docs: [], appUrl: null, credentials: null } : replay.status) : sample;
 
-  const autoplay: Partial<ScopeSubmission> | null =
+  const autoplay = useMemo<Partial<ScopeSubmission> | null>(
+    () =>
     demo && stage === "form" && sample.config
       ? {
           projectName: sample.projectName ?? "",
@@ -34,7 +35,9 @@ export default function App() {
           coreLoop: sample.config.coreLoop ?? "",
           excludes: (sample.config.excludes ?? []).join("\n"),
         }
-      : null;
+      : null,
+    [demo, stage, sample.config, sample.projectName]
+  );
 
   const startDemo = () => {
     setDemo(true);
