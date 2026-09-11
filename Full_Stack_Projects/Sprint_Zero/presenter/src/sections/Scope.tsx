@@ -13,7 +13,7 @@ interface ScopeProps {
   onSubmitted: () => void;
   onBack: () => void;
   status: Status;
-  /** Demo replay: fill the form with these real values, typing them in, then submit without writing to disk. */
+  /** Demo replay: open the form prefilled with these real values; Start begins the replay without writing to disk. */
   autoplay?: Partial<ScopeSubmission> | null;
 }
 
@@ -84,51 +84,18 @@ export function Scope({ onSubmitted, onBack, status, autoplay }: ScopeProps) {
     }
   }, [status.phase, onSubmitted, autoplay]);
 
-  // Demo replay: type the real scope into the form, field by field, then press Start.
+  // Demo replay: open the form already filled with the real scope. The presenter presses Start.
   useEffect(() => {
     if (!autoplay) return;
-    let cancelled = false;
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    const type = async (set: (v: string) => void, value: string, perChar: number) => {
-      let out = "";
-      const step = Math.max(1, Math.round(value.length / Math.max(1, Math.floor(value.length * perChar / 16))));
-      for (let i = 0; i < value.length && !cancelled; i += step) {
-        out = value.slice(0, i + step);
-        set(out);
-        await sleep(16);
-      }
-      if (!cancelled) set(value);
-    };
-    (async () => {
-      await sleep(600);
-      await type(setProjectName, autoplay.projectName ?? "", 45);
-      await sleep(250);
-      await type(setCompanyUrl, autoplay.companyUrl ?? "", 35);
-      await sleep(250);
-      await type(setRepoUrl, autoplay.repoUrl ?? "", 20);
-      await sleep(350);
-      if (autoplay.level) setLevel(autoplay.level);
-      await sleep(400);
-      if (autoplay.projectType) setProjectType(autoplay.projectType);
-      await sleep(300);
-      if (autoplay.stack) setStack(autoplay.stack);
-      await sleep(300);
-      if (autoplay.dataLayer) setDataLayer(autoplay.dataLayer);
-      await sleep(400);
-      document.getElementById("coreLoop")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      await type(setCoreLoop, autoplay.coreLoop ?? "", 6);
-      await sleep(300);
-      document.getElementById("excludes")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      await type(setExcludes, autoplay.excludes ?? "", 5);
-      await sleep(500);
-      if (cancelled) return;
-      setSubmitting(true);
-      await sleep(900);
-      if (!cancelled) onSubmitted();
-    })();
-    return () => {
-      cancelled = true;
-    };
+    setProjectName(autoplay.projectName ?? "");
+    setCompanyUrl(autoplay.companyUrl ?? "");
+    setRepoUrl(autoplay.repoUrl ?? "");
+    if (autoplay.level) setLevel(autoplay.level);
+    if (autoplay.projectType) setProjectType(autoplay.projectType);
+    if (autoplay.stack) setStack(autoplay.stack);
+    if (autoplay.dataLayer) setDataLayer(autoplay.dataLayer);
+    setCoreLoop(autoplay.coreLoop ?? "");
+    setExcludes(autoplay.excludes ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoplay]);
 
