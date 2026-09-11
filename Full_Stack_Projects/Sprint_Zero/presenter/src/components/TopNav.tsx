@@ -9,9 +9,10 @@ interface TopNavProps {
   section: Section;
   onChange: (next: Section) => void;
   status: Status;
+  onRunDemo?: () => void;
 }
 
-export function TopNav({ section, onChange, status }: TopNavProps) {
+export function TopNav({ section, onChange, status, onRunDemo }: TopNavProps) {
   const runStarted = status.phase !== "idle" && status.phase !== "waiting-for-scope";
   const runFinished = status.phase === "done";
   const runFailed = status.phase === "failed";
@@ -46,7 +47,15 @@ export function TopNav({ section, onChange, status }: TopNavProps) {
             );
           })}
         </nav>
-        <div className="flex items-center gap-2 text-[12px] text-fg-muted font-mono">
+        <div className="flex items-center gap-3 text-[12px] text-fg-muted font-mono">
+          {onRunDemo && (
+            <button
+              onClick={onRunDemo}
+              className="h-8 px-3 rounded-md bg-fg text-bg font-sans text-[13px] font-medium tracking-tight hover:bg-fg-hover transition-colors"
+            >
+              Run demo
+            </button>
+          )}
           <Dot
             tone={
               runFailed ? "danger" : runFinished ? "success" : runStarted ? "accent" : "neutral"

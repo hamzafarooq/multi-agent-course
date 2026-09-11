@@ -11,9 +11,10 @@ interface DoneHeroProps {
   appUrl: string;
   credentials?: Credentials | null;
   projectName?: string | null;
+  demo?: boolean;
 }
 
-export function DoneHero({ appUrl, credentials, projectName }: DoneHeroProps) {
+export function DoneHero({ appUrl, credentials, projectName, demo }: DoneHeroProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
@@ -38,6 +39,19 @@ export function DoneHero({ appUrl, credentials, projectName }: DoneHeroProps) {
           <UrlRow url={appUrl} />
 
           {credentials && <CredentialsBlock credentials={credentials} />}
+
+          {demo && (
+            <div className="mt-5 w-full max-w-[560px]">
+              <div className="text-[11px] font-mono text-fg-subtle uppercase tracking-widest mb-2">
+                Start the app first
+              </div>
+              <pre className="rounded-md border border-border bg-surface-2 p-4 text-[12.5px] font-mono leading-relaxed text-fg overflow-x-auto">{`cd examples/${projectName ?? "ghost-lite"}/server && npm install && node index.js
+cd examples/${projectName ?? "ghost-lite"}/client && npm install && npm run dev`}</pre>
+              <p className="mt-2 text-[12.5px] text-fg-subtle">
+                The sample is a recording. The URL above only answers once those two commands are running.
+              </p>
+            </div>
+          )}
 
           <div className="mt-9 flex items-center gap-3">
             <Button

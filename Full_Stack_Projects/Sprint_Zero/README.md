@@ -345,7 +345,8 @@ sprint-zero/
 │       ├── frontend-engineer.md
 │       └── qa-engineer.md
 ├── docs/                            ← generated specs (gitignored; filled at runtime)
-├── examples/                        ← worked examples (Mini Twenty lands here in Phase 5)
+├── examples/
+│   └── ghost-lite/                  ← the worked example: a real run against ghost.org, committed as-is
 ├── server/ + client/  (or app/, or cli/)  ← the build, per stack profile (gitignored; created at runtime)
 ├── .env.example                     ← only for the supabase data layer (local needs none)
 ├── .gitignore
@@ -423,6 +424,23 @@ cd presenter && npm install && npm run build && npm start
 
 ---
 
+## Worked example: ghost-lite
+
+[`examples/ghost-lite/`](examples/ghost-lite/) is one complete Sprint Zero run, copied from the pipeline's output without edits: the six spec docs, the Express + SQLite backend, the React client, and QA's integration test. The reference was [Ghost](https://ghost.org), the open-source publishing platform, at MVP / web-app / node-react / local, plus one feature Ghost does not have: an "Ask me" box that answers reader questions from the site's own posts with citations (SQLite full-text search; Claude writes the answer only when `ANTHROPIC_API_KEY` is set, otherwise the box returns the matching passages). The seeded site is the Traversaal.ai blog, ten real articles, so Ask me has something worth answering from on first launch.
+
+Run it:
+
+```
+cd examples/ghost-lite/server && npm install && node index.js      # :3001, seeds on start
+cd examples/ghost-lite/client && npm install && npm run dev        # :5173
+```
+
+Demo login `demo@traversaal.ai` / `inkwell-demo`. Public site at `http://localhost:5173/s/traversaal-ai`. See [`examples/ghost-lite/README.md`](examples/ghost-lite/README.md) for what QA verified and how.
+
+The same run is committed under `presenter/sample/` so the presenter can play it back. Start the presenter with no run on disk and it shows the sample automatically; with a live run on disk, the **Run demo** button in the top bar switches to the sample and **Exit demo** switches back. `SPRINT_ZERO_DEMO=0` turns the automatic fallback off (the button still works).
+
+---
+
 ## 🩺 Troubleshooting
 
 **The page shows "Failed to load data" (or similar).** Tables aren't created yet. Re-run the seed command for your build (e.g. `cd server && node seed.js`).
@@ -457,7 +475,7 @@ Deliberate cuts, tracked in [plan.md](plan.md) as v2 candidates:
 - Phase 2 — Scoping and discovery layer — complete
 - Phase 3 — Build layer — complete
 - Phase 4 — Kickoff orchestrator — complete
-- Phase 5 — Mini Twenty worked example — not started
+- Phase 5 — Worked example (ghost-lite, a real run against ghost.org) — complete
 - Phase 6 — Polish for launch — not started
 
 See [plan.md](plan.md) for the full roadmap.

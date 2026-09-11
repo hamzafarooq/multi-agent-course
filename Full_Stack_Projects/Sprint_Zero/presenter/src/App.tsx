@@ -9,9 +9,23 @@ import { useStatus } from "./lib/status";
 type Section = "about" | "scope" | "live";
 
 export default function App() {
-  const status = useStatus();
-  const [section, setSection] = useState<Section>("about");
-  const [userLocked, setUserLocked] = useState(false);
+  const [demo, setDemo] = useState(() => window.location.hash === "#demo");
+  const status = useStatus(demo);
+  const [section, setSection] = useState<Section>(() => (window.location.hash === "#demo" ? "live" : "about"));
+  const [userLocked, setUserLocked] = useState(() => window.location.hash === "#demo");
+
+  const startDemo = () => {
+    setDemo(true);
+    window.location.hash = "demo";
+    setUserLocked(true);
+    setSection("live");
+  };
+  const exitDemo = () => {
+    setDemo(false);
+    if (window.location.hash === "#demo") history.replaceState(null, "", window.location.pathname);
+    setUserLocked(true);
+    setSection("about");
+  };
 
   // Auto-advance to Live once the run has begun, unless the user has
   // navigated manually (e.g. back to About for a second explanation).
@@ -38,15 +52,21 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <TopNav section={section} onChange={handleNav} status={status} />
+      <TopNav section={section} onChange={handleNav} status={status} onRunDemo={demo ? undefined : startDemo} />
       {status.demo && (
         <div className="border-b border-border bg-surface-2">
           <div className="max-w-[1240px] mx-auto px-6 py-2 flex items-center gap-2 text-[13px] text-fg-muted">
             <span className="inline-flex h-1.5 w-1.5 rounded-full bg-warn" />
             <span>
-              <strong className="font-medium text-fg">Sample run.</strong> A real
-              {" "}<code className="font-mono text-[12px]">/sprint-zero</code> run replaces this the moment one starts.
+              <strong className="font-medium text-fg">Sample run.</strong> A recorded
+              {" "}<code className="font-mono text-[12px]">/sprint-zero</code> run against ghost.org, saved from the real
+              pipeline. Nothing here is live.
             </span>
+            {demo && (
+              <button onClick={exitDemo} className="ml-auto text-[13px] font-medium text-fg hover:underline underline-offset-2">
+                Exit demo
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -63,7 +83,7 @@ export default function App() {
             {section === "scope" && (
               <Scope onSubmitted={() => handleNav("live")} onBack={() => handleNav("about")} status={status} />
             )}
-            {section === "live" && <Live status={status} />}
+            {section === "live" && <Live status={status} demo={demo} />}
           </motion.div>
         </AnimatePresence>
       </main>

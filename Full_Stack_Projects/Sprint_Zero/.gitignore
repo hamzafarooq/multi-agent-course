@@ -84,3 +84,8 @@ plan.md
 # Presenter UI build output (committed source lives in presenter/src and presenter/server)
 presenter/dist/
 presenter/node_modules/
+# Worked example: committed build output copied from a real run. Keep its
+# dependencies and database out; keep its seed file in (the seed script reads it).
+examples/**/node_modules/
+examples/**/*.db
+!examples/ghost-lite/.sprint-zero/

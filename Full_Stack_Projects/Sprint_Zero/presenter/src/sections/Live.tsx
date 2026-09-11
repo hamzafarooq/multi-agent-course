@@ -13,9 +13,10 @@ import { Activity, Loader2 } from "lucide-react";
 
 interface LiveProps {
   status: Status;
+  demo?: boolean;
 }
 
-export function Live({ status }: LiveProps) {
+export function Live({ status, demo }: LiveProps) {
   const failed = status.phase === "failed";
   const isDone = status.phase === "done";
 
@@ -80,7 +81,7 @@ export function Live({ status }: LiveProps) {
               phase={status.phase}
               docs={status.docs}
               selectedKey={activeKey}
-              onSelect={(p) => setPinnedKey(p.key)}
+              onSelect={(p) => setPinnedKey((cur) => (cur === p.key ? null : p.key))}
               failed={failed}
             />
           </div>
@@ -96,12 +97,13 @@ export function Live({ status }: LiveProps) {
                 message={status.failure.message}
                 recovery={status.failure.recovery}
               />
-            ) : isDone && status.appUrl ? (
+            ) : isDone && status.appUrl && !pinnedKey ? (
               <DoneHero
                 key="done"
                 appUrl={status.appUrl}
                 credentials={status.credentials}
                 projectName={status.projectName}
+                demo={demo}
               />
             ) : activePhase?.key === "building" ? (
               <BuildCards

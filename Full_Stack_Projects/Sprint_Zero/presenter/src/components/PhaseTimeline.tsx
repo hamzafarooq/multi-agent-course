@@ -25,7 +25,7 @@ export function PhaseTimeline({
       {PHASES.map((p) => {
         const state = phaseState(p, phase);
         const hasDoc = p.docFile ? docs.includes(p.docFile) : false;
-        const selectable = state === "done" || (state === "running" && hasDoc);
+        const selectable = (state === "done" && !!p.docFile) || (state === "running" && hasDoc);
         const selected = selectedKey === p.key;
         const currentFailure = failed && state === "running";
 
@@ -62,7 +62,7 @@ export function PhaseTimeline({
                   )}
                   {hasDoc && state === "done" && (
                     <span className="ml-auto text-[11px] text-fg-subtle group-hover:text-fg-muted transition-colors">
-                      view doc
+                      {selected ? "close" : "view doc"}
                     </span>
                   )}
                 </div>

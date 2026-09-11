@@ -6,12 +6,32 @@ const EMPTY_STATUS: Status = {
   docs: [],
 };
 
-export function useStatus(): Status {
+let demoMode = false;
+export function isDemoMode() {
+  return demoMode;
+}
+
+export function useStatus(demo = false): Status {
   const [status, setStatus] = useState<Status>(EMPTY_STATUS);
   const esRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    demoMode = demo;
+
+    if (demo) {
+      fetch("/api/sample/state")
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error("no sample"))))
+        .then((data) => {
+          if (!cancelled) setStatus({ ...data, demo: true });
+        })
+        .catch(() => {
+          if (!cancelled) setStatus({ ...EMPTY_STATUS, demo: true });
+        });
+      return () => {
+        cancelled = true;
+      };
+    }
 
     // Hydrate from the server, then open SSE stream.
     fetch("/api/state")
@@ -39,7 +59,7 @@ export function useStatus(): Status {
       cancelled = true;
       es.close();
     };
-  }, []);
+  }, [demo]);
 
   return status;
 }
@@ -62,7 +82,8 @@ export async function submitScope(payload: unknown): Promise<{ ok: boolean; erro
 }
 
 export async function fetchDoc(name: string): Promise<string> {
-  const r = await fetch(`/api/doc/${encodeURIComponent(name)}`);
+  const base = demoMode ? "/api/sample/doc" : "/api/doc";
+  const r = await fetch(`${base}/${encodeURIComponent(name)}`);
   if (!r.ok) throw new Error(`Could not load ${name}`);
   return r.text();
 }

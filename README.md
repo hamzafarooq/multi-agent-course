@@ -345,6 +345,8 @@ A Claude Code kit that runs a full sub-agent product team on your laptop: scopin
 
 [![Open Sprint Zero](https://img.shields.io/badge/▶%20Open-Sprint%20Zero-6E40C9?style=for-the-badge)](Full_Stack_Projects/Sprint_Zero)
 
+Want to see a finished run before you start one? [`examples/ghost-lite`](Full_Stack_Projects/Sprint_Zero/examples/ghost-lite/) is a real Sprint Zero run against Ghost, with an added "Ask me" box that answers questions from the seeded blog posts, committed exactly as the agents produced it.
+
 Built by [Yousuf Alvi](https://github.com/yousuf-alvi) and [Hamza Farooq](https://www.linkedin.com/in/hamzafarooq/).
 
 ---

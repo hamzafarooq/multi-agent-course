@@ -83,8 +83,8 @@ async function readConfig(dir) {
 
 // The committed sample run. Returned only when the real run is absent, and
 // flagged `demo: true` so the UI can label it as a recording, not a live run.
-async function readSampleStatus() {
-  if (!DEMO_ENABLED) return null;
+async function readSampleStatus(force = false) {
+  if (!DEMO_ENABLED && !force) return null;
   try {
     const parsed = JSON.parse(await fs.readFile(SAMPLE_STATUS_FILE, "utf8"));
     const docs = await listDocs(SAMPLE_DOCS_DIR);
@@ -197,6 +197,23 @@ app.get("/api/stream", (req, res) => {
     clearInterval(heartbeat);
     sseClients.delete(res);
   });
+});
+
+// The committed sample run, served on demand for the "Run demo" button.
+app.get("/api/sample/state", async (_req, res) => {
+  const sample = await readSampleStatus(true);
+  if (!sample) return res.status(404).json({ error: "No sample run is committed at presenter/sample/." });
+  res.json(sample);
+});
+
+app.get("/api/sample/doc/:name", async (req, res) => {
+  const name = req.params.name;
+  if (!DOC_FILES.includes(name)) return res.status(404).type("text/plain").send("Unknown doc");
+  try {
+    res.type("text/plain").send(await fs.readFile(path.join(SAMPLE_DOCS_DIR, name), "utf8"));
+  } catch {
+    res.status(404).type("text/plain").send("Not in the sample");
+  }
 });
 
 app.get("/api/doc/:name", async (req, res) => {
