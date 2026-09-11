@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { HeroObject } from "@/components/HeroObject";
 
 const stagger: Variants = {
   animate: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
@@ -28,6 +29,7 @@ export function About({ onStart }: { onStart: () => void }) {
   return (
     <motion.div variants={stagger} initial="initial" animate="animate" className="pt-16 pb-8">
       {/* ------------------------------- hero ------------------------------- */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_480px] gap-10 items-center">
       <motion.div variants={item} className="max-w-[840px]">
         <Badge className="mb-6">
           <Sparkles className="w-3 h-3" />
@@ -55,6 +57,10 @@ export function About({ onStart }: { onStart: () => void }) {
           </a>
         </div>
       </motion.div>
+      <motion.div variants={item} className="hidden lg:block">
+        <HeroObject />
+      </motion.div>
+      </div>
 
       {/* ------------------------------ concept ------------------------------ */}
       <section id="concept" className="mt-28">
