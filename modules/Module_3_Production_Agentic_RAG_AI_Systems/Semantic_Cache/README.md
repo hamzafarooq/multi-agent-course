@@ -14,7 +14,7 @@ A keyword-based **time-sensitivity guard** sits in front of the cache so live/te
 
 | Notebook | Open in Colab |
 |---|---|
-| [`Semantic_cache_from_scratch.ipynb`](Semantic_cache_from_scratch.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/modules/Module_3_Production_Agentic_RAG_AI_Systems/Semantic_Cache/Semantic_cache_from_scratch.ipynb) |
+| [`002. Semantic Caching.ipynb`](../002.%20Semantic%20Caching.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/modules/Module_3_Production_Agentic_RAG_AI_Systems/002.%20Semantic%20Caching.ipynb) |
 
 The folder also includes **`Amazon Simple Storage Service - User Guide.pdf`** — the AWS document you
 upload into your Traversaal Pro project during setup (see [Setup](#setup)). It becomes the corpus the
@@ -135,4 +135,4 @@ pip install transformers sentence-transformers faiss-cpu \
 ---
 
 This notebook teaches caching in isolation. To see it wrapped around the full three-way agentic RAG
-pipeline, head to **[`../Agentic_RAG_with_Semantic_Cache.ipynb`](../Agentic_RAG_with_Semantic_Cache.ipynb)**.
+pipeline, head to **[`003. Agentic Router_semantic_caching_rbac.ipynb`](../003.%20Agentic%20Router_semantic_caching_rbac.ipynb)**.

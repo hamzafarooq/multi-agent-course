@@ -25,6 +25,7 @@ route you finish lights one up.
 
 | # | Read | Why |
 |---|---|---|
+| 0 | [`START_HERE.md`](../../../START_HERE.md) *(repo root)* | Course-wide orientation, read once for the whole course: which files are for you, which are for your coding agent, what's yours to decide, and how to drive the build with Claude Code. ~10 min. |
 | 1 | [`PRD.md`](PRD.md) | What the product is and the four rules that decide your grade. ~15 min. |
 | 2 | `packages/contract/src/` | The contract, as zod schemas rather than prose — the literal answer to "what do I return?". Start with `sse.ts`, then `http.ts`. Best half hour you can spend. |
 | 3 | [`DESIGN.template.md`](DESIGN.template.md) | Copy to `DESIGN.md` and answer the five questions **before you write code**. It is graded. |
@@ -32,7 +33,8 @@ route you finish lights one up.
 | 5 | [`TECHNICAL.md`](TECHNICAL.md) | The build guide: architecture, commands, checklists, troubleshooting. |
 
 Your coding agent should read [`AGENTS.md`](AGENTS.md) and [`SPEC.md`](SPEC.md) instead —
-the first is the non-negotiables, the second is every requirement stated explicitly.
+the first is the non-negotiables, the second is every requirement stated explicitly. Where
+your `DESIGN.md` and the `SPEC.md` disagree, the spec wins — change the design.
 
 ## What you build
 

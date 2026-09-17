@@ -2,6 +2,9 @@
 
 One rule for every project in this course: **you submit a URL, and the URL proves itself.**
 
+New to how these assignments are structured? Start with
+[`START_HERE.md`](START_HERE.md).
+
 ## What you submit
 
 A single **Vercel link** to your deployed app. That's it. **No repo, no zip, no code.** Nobody reads

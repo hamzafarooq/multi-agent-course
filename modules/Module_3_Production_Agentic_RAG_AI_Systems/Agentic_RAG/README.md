@@ -14,7 +14,7 @@ Everything is built **from scratch** — no LangChain, no LlamaIndex.
 | # | Notebook | Open in Colab |
 |---|---|---|
 | 1 | [`Upload_data_to_Qdrant_Notebook.ipynb`](Upload_data_to_Qdrant_Notebook.ipynb) — build the vector store | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/modules/Module_3_Production_Agentic_RAG_AI_Systems/Agentic_RAG/Upload_data_to_Qdrant_Notebook.ipynb) |
-| 2 | [`Agentic_RAG_Notebook.ipynb`](Agentic_RAG_Notebook.ipynb) — the routing + retrieval + generation pipeline | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/modules/Module_3_Production_Agentic_RAG_AI_Systems/Agentic_RAG/Agentic_RAG_Notebook.ipynb) |
+| 2 | [`001. Agentic Router.ipynb`](../001.%20Agentic%20Router.ipynb) — the routing + retrieval + generation pipeline | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/modules/Module_3_Production_Agentic_RAG_AI_Systems/001.%20Agentic%20Router.ipynb) |
 
 > **Start with Notebook 2.** The pre-built `qdrant_data/` directory ships with the repo, so you can
 > jump straight into querying. Only run Notebook 1 if you want to rebuild the index or add your own
@@ -32,7 +32,7 @@ store the agent retrieves from:
 - Generate **768-dimensional embeddings** using `nomic-ai/nomic-embed-text-v1.5`
 - Upload vectors with metadata to two **Qdrant** collections:
   - `opnai_data` — OpenAI Agents official documentation
-  - `10k_data` — Uber 2021 and Lyft 2020–2024 SEC 10-K filings
+  - `10k_data` — SEC 10-K filings: Lyft FY2020–2022 and Uber FY2021
 
 The output lands in `qdrant_data/collection/`, which is already included in the repo.
 
@@ -40,7 +40,7 @@ The output lands in `qdrant_data/collection/`, which is already included in the 
 
 ## 2. Agentic RAG
 
-**`Agentic_RAG_Notebook.ipynb`** — the core of this track. An LLM router classifies each query, then
+**`001. Agentic Router.ipynb`** — the core of this track. An LLM router classifies each query, then
 the matching backend retrieves context and an LLM generates a cited answer.
 
 ```
@@ -84,7 +84,7 @@ the matching backend retrieves context and an LLM generates a cited answer.
 ### Data sources
 
 - **OpenAI documentation** — Agents, tools, chat completions, best practices (`opnai_data`)
-- **10-K SEC filings** — Uber 2021 and Lyft 2020–2024 financial data (`10k_data`)
+- **10-K SEC filings** — Lyft FY2020, FY2021, FY2022 and Uber FY2021 (`10k_data`)
 - **Live internet** — any query outside the above two domains, via SerpApi
 
 ### Assignment
@@ -128,5 +128,5 @@ pip install openai qdrant-client transformers sentence-transformers \
 ---
 
 Once you understand this pipeline, see **[`../Semantic_Cache/`](../Semantic_Cache/)** to make it
-*fast*, and **[`../Agentic_RAG_with_Semantic_Cache.ipynb`](../Agentic_RAG_with_Semantic_Cache.ipynb)**
+*fast*, and **[`003. Agentic Router_semantic_caching_rbac.ipynb`](../003.%20Agentic%20Router_semantic_caching_rbac.ipynb)**
 for the two combined.

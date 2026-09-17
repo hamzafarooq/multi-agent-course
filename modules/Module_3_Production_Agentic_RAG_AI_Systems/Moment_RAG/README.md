@@ -8,7 +8,7 @@ It's the agentic-RAG ideas from this module made tangible on **video**: the inte
 the *query* side (decompose → hybrid retrieve → re-rank), and retrieval resolves to **moments**,
 not just documents — which is what you actually cite in a generated answer.
 
-> Companion to the notebooks in this module. Where `Agentic_RAG_Notebook.ipynb` routes a query
+> Companion to the notebooks in this module. Where `001. Agentic Router.ipynb` routes a query
 > to a backend, this shows the next step: **decompose** one query into facets, retrieve across
 > **three fused signals**, **re-rank** to the precise moment, and **stream** a grounded answer.
 

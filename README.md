@@ -66,6 +66,9 @@ Modern AI builders need more than model skills.
 
 ## Quick Links
 
+> 🧭 **New here? Read [`START_HERE.md`](START_HERE.md) first.** Ten minutes, once — how an assignment is structured, which files are written for you and which for your
+> coding agent, what's yours to decide, and how to drive a build with Claude Code.
+
 **Course modules** (in teaching order):
 
 1. [Week 1: Agent Foundations, Agent Harness & System Design](#week-1-agent-foundations-agent-harness--system-design)
@@ -76,7 +79,7 @@ Modern AI builders need more than model skills.
 6. [Week 6: Leading AI Systems Across Teams](#week-6-leading-ai-systems-across-teams)
 7. [Week 7: Demo Day, Production-Ready AI Systems](#week-7-demo-day-production-ready-ai-systems)
 
-**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects) · [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback) · [How to submit](SUBMISSION.md)
+**Also on this page:** [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects) · [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback) · [Start here](START_HERE.md) · [How to submit](SUBMISSION.md)
 
 ### 🗺️ Course at a glance
 

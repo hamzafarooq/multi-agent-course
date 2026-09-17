@@ -49,16 +49,26 @@ MODULE 3 — Production Agentic RAG & AI Systems
 ```
 Module_3_Production_Agentic_RAG_AI_Systems/
 │
-├── Agentic_RAG/
-│   ├── Agentic_RAG_Notebook.ipynb            # Core agentic RAG — routing + retrieval + generation
+│   ── the teaching sequence, in order ──
+├── 001. Agentic Router.ipynb                 # ① router → Qdrant retrieval → cited generation (+ route-level RBAC)
+├── 002. Semantic Caching.ipynb               # ② a FAISS semantic cache, built from the ground up
+├── 003. Agentic Router_semantic_caching_rbac.ipynb   # ③ the combined system: routing + cache + file-level RBAC
+├── rag_helpers.py                            # Shared helpers — all pipeline logic behind notebook 003
+│
+├── Agentic_RAG/                              # Data + docs for notebook 001
 │   ├── Upload_data_to_Qdrant_Notebook.ipynb  # Data pipeline — PDF → embeddings → Qdrant
+│   ├── README.md
 │   └── qdrant_data/                          # Pre-built vector collections (cloned from repo)
 │       └── collection/
 │           ├── opnai_data/                   # OpenAI Agents documentation embeddings
-│           └── 10k_data/                     # Uber & Lyft SEC 10-K financial filing embeddings
+│           └── 10k_data/                     # Lyft FY20–22 + Uber FY21 10-K embeddings
 │
-├── Semantic_Cache/
-│   └── Semantic_cache_from_scratch.ipynb     # Build a semantic cache from the ground up
+├── Semantic_Cache/                           # Docs + corpus for notebook 002
+│   ├── README.md
+│   └── Amazon Simple Storage Service - User Guide.pdf
+│
+├── Semantic_Chunking/                        # Chunking strategies compared, on real 10-Ks
+│   └── Comparison_of_Different_Semantic_Chunking_Techniques.ipynb
 │
 ├── Knowledge_Graphs/                         # Structured retrieval track — RAG vs Knowledge Graph
 │   ├── knowledge_graph_neo4j_with_evals.ipynb  # RAG vs KG comparison + LLM-judge evaluation
@@ -74,9 +84,6 @@ Module_3_Production_Agentic_RAG_AI_Systems/
 │
 ├── Evaluation_and_Guardrails/                # How you prove it works
 │   └── AI_Eval_Metrics.ipynb                 # Eval pyramid: LLM → RAG → agent metrics (stdlib only)
-│
-├── rag_helpers.py                            # Shared helpers — all pipeline logic for notebook 4
-├── Agentic_RAG_with_Semantic_Cache.ipynb     # Combined: agentic RAG + semantic cache (minimal notebook)
 │
 └── .env                                      # API keys (OpenAI, SerpApi, Traversaal Pro, Neo4j)
 ```
@@ -95,14 +102,14 @@ Before you can retrieve anything you need to build your vector store. This noteb
 - Generate **768-dimensional embeddings** using `nomic-ai/nomic-embed-text-v1.5`
 - Upload vectors with metadata to two **Qdrant** collections:
   - `opnai_data` — OpenAI Agents official documentation
-  - `10k_data` — Uber 2021 and Lyft 2020–2024 SEC 10-K filings
+  - `10k_data` — SEC 10-K filings: Lyft FY2020–2022 and Uber FY2021
 
 > The pre-built `qdrant_data/` directory is already included in the repo so you can skip this step and jump straight into querying. Run this notebook only if you want to rebuild the index or add your own documents.
 
 ---
 
 ### 2. Agentic RAG
-**`Agentic_RAG/Agentic_RAG_Notebook.ipynb`**
+**`001. Agentic Router.ipynb`**
 
 The core of this module. This notebook introduces **agentic decision-making** as the first step in a RAG pipeline — the system thinks before it retrieves.
 
@@ -113,7 +120,7 @@ The core of this module. This notebook introduces **agentic decision-making** as
                             │
                             ▼
               ┌─────────────────────────┐
-              │   Router LLM (GPT-4o)   │
+              │  Router LLM (GPT-5.6)   │
               │      route_query()      │
               └────────────┬────────────┘
                            │
@@ -139,25 +146,45 @@ The core of this module. This notebook introduces **agentic decision-making** as
 
 | Function | Role |
 |---|---|
-| `route_query()` | Calls GPT-4o with a router prompt; returns `action`, `reason`, and a short `answer` as JSON |
+| `route_query()` | Calls GPT-5.6-Luna with a router prompt; returns `action`, `reason`, and a short `answer` as JSON |
 | `get_text_embeddings()` | Converts a query string to a 768-dim Nomic vector |
 | `retrieve_and_response()` | Async function — queries Qdrant (top-3 chunks) then calls the RAG generator |
-| `rag_formatted_response()` | Passes retrieved context to GPT-4 and asks it to answer with inline citations |
+| `rag_formatted_response()` | Passes retrieved context to GPT-5.6-Luna and asks it to answer with inline citations |
 | `get_internet_content()` | Calls the SerpApi Google Search API for real-time answers |
 | `agentic_rag()` | Main orchestrator — ties routing, retrieval, and generation together |
+| `secure_agentic_rag()` | Section 6 — the same loop with an RBAC check between routing and retrieval |
 
 #### Data sources
 - **OpenAI documentation** — Agents, tools, chat completions, best practices
-- **10-K SEC filings** — Uber 2021 and Lyft 2020–2024 financial data
+- **10-K SEC filings** — Lyft FY2020, FY2021, FY2022 and Uber FY2021
 - **Live internet** — Any query outside the above two domains via SerpApi
 
+#### Section 6 — Role-Based Access Control
+
+The last section adds an RBAC layer on top of the router. Two roles (`engineer`,
+`finance_analyst`) are mapped to the route labels each may reach, and the check sits
+between the router's decision and the tool call — so an unauthorized request is rejected
+before anything is embedded, searched, or grounded.
+
+| Knowledge source | Route label | `engineer` | `finance_analyst` |
+|---|---|---|---|
+| OpenAI documentation | `OPENAI_QUERY` | ✅ | ✅ |
+| 10-K filings | `10K_DOCUMENT_QUERY` | ❌ | ✅ |
+| Live internet search | `INTERNET_QUERY` | ✅ | ❌ |
+
+File-level RBAC — gating individual documents rather than whole sources — is covered in
+`003. Agentic Router_semantic_caching_rbac.ipynb`.
+
 #### Assignment
-Implement **sub-query division** — split compound questions (e.g. *"What was Uber's and Lyft's revenue in 2021?"*) into individual sub-queries and process each one through the agentic pipeline independently.
+
+**Required — sub-query division.** Split compound questions (e.g. *"What was Uber's and Lyft's revenue in 2021?"*) into individual sub-queries, route each one independently (they may land on different sources), and synthesise a single composed answer with citations preserved.
+
+**Bonus (optional, ungraded) — RBAC with a semantic cache.** Put a cache behind the Section 6 access gate without leaking across roles: a cache keyed only on the question will happily serve a finance answer to an engineer who was just denied. Learners build a role-partitioned (or permission-tagged) cache and pass a self-check that includes an explicit leak test. Good warm-up for **ARGUS**, where caching and cost-per-source reporting are first-class requirements.
 
 ---
 
 ### 3. Semantic Cache from Scratch
-**`Semantic_Cache/Semantic_cache_from_scratch.ipynb`**
+**`002. Semantic Caching.ipynb`**
 
 Builds a semantic cache without using any high-level caching library. The goal is to understand exactly how vector-based answer reuse works under the hood.
 
@@ -224,7 +251,7 @@ The FAISS `IndexFlatL2` is rebuilt in-memory from the JSON file on every load, s
 ---
 
 ### 4. Agentic RAG with Semantic Cache
-**`Agentic_RAG_with_Semantic_Cache.ipynb`** + **`rag_helpers.py`**
+**`003. Agentic Router_semantic_caching_rbac.ipynb`** + **`rag_helpers.py`**
 
 This notebook combines everything — it wraps the full three-way agentic RAG pipeline from Notebook 2 inside the semantic cache layer from Notebook 3. The result is a system that is both *intelligent* (routes queries to the right source) and *efficient* (avoids redundant calls for similar questions).
 
@@ -237,7 +264,7 @@ All implementation lives in `rag_helpers.py` so the notebook stays minimal and f
 | `init_rag(openai_api_key, serp_api_key, qdrant_path)` | function | One-time setup — loads Nomic model, wires OpenAI client, Qdrant, and SerpApi |
 | `SemanticCaching` | class | FAISS-backed cache with time-sensitivity filter, JSON persistence, `check_cache()` / `add_to_cache()` |
 | `get_internet_content(query)` | function | Live Google search via SerpApi |
-| `route_query(query)` | function | GPT-4o router returning `OPENAI_QUERY`, `10K_DOCUMENT_QUERY`, or `INTERNET_QUERY` |
+| `route_query(query)` | function | GPT-5.6-Luna router returning `OPENAI_QUERY`, `10K_DOCUMENT_QUERY`, or `INTERNET_QUERY` |
 | `agentic_rag_with_cache(query, cache)` | function | **Public entry point** — cache check → route → retrieve → store → return |
 
 #### Full combined pipeline
@@ -253,8 +280,8 @@ User Query
                   │
                   └─ MISS ──▶ Agentic RAG router
                                   │
-                                  ├─ OPENAI_QUERY       ──▶ Qdrant (opnai_data) ──▶ GPT-4o RAG
-                                  ├─ 10K_DOCUMENT_QUERY ──▶ Qdrant (10k_data)   ──▶ GPT-4o RAG
+                                  ├─ OPENAI_QUERY       ──▶ Qdrant (opnai_data) ──▶ GPT-5.6 RAG
+                                  ├─ 10K_DOCUMENT_QUERY ──▶ Qdrant (10k_data)   ──▶ GPT-5.6 RAG
                                   └─ INTERNET_QUERY     ──▶ SerpApi (live web)
                                   │
                                   └─ Store result in cache ──▶ Return response
@@ -269,7 +296,10 @@ User Query
 | 3 | Create Cache | `cache = SemanticCaching(clear_on_init=True)` |
 | 4 | Pipeline reference | Markdown table pointing to `rag_helpers.py` |
 | 5 | Demo | 7 test cells, each a single `agentic_rag_with_cache(query, cache)` call |
-| 6 | Inspect | Cache state printout |
+| 6 | RBAC | File-level access control — `secure_agentic_rag(user_id, file_id, query)`, 2 roles × 3 files, 6 allow/deny demos |
+| 7 | Inspect | Cache state printout |
+
+> **Note on Section 6.** The RBAC gate here is file-scoped and bypasses the cache — it calls the retriever directly. Combining the two safely (a cache that can't serve an answer across a permission boundary) is the bonus exercise in `001. Agentic Router.ipynb`.
 
 ---
 
@@ -298,6 +328,46 @@ A parallel track that swaps vector search for **structured graph retrieval**. Wh
 #### Streamlit app
 
 Beyond the notebooks, `Knowledge_Graphs/` ships a runnable Streamlit app (`app.py`) with side-by-side RAG-vs-KG comparison and interactive **Pyvis** graph visualizations (full graph + query-specific subgraph). Run `python setup.py` once to load data, then `streamlit run app.py`. See `Knowledge_Graphs/README.md` for the full walkthrough.
+
+---
+
+## Assignments
+
+Two sets, very different in size. The first is the coursework inside the notebooks. The second
+is **ARGUS** — the full-stack project for this module, where you ship the production version of
+what these notebooks teach.
+
+### Set 1 — Notebook assignments
+
+In [`001. Agentic Router.ipynb`](001.%20Agentic%20Router.ipynb), at the end.
+
+| | Task | Status |
+|---|---|---|
+| 1 | **Sub-query division** — split compound questions, route each sub-query independently (they may land on different sources), synthesise one answer with citations preserved | **Required** |
+| 2 | **RBAC with a semantic cache** — put a cache behind the Section 6 access gate without leaking across roles, and pass the leak test in the self-check | Bonus |
+
+The bonus assumes the semantic cache material, so attempt it after notebooks 3 and 4.
+
+### Set 2 — ARGUS (full-stack assignment)
+
+**[Moment Search at Scale](../../FDE-01-assignments/Assignment_3_Moment_Search_Scaled/README.md)** — starts Week 3, due before the Week 5 live session.
+
+*Full stack* here means full-stack SWE **and** AI engineering: the frontend, the agent logic, the
+ingestion pipeline, the caching, and the deployment — one product, entirely yours.
+
+Take [`traversaal-ai/momentsearch`](https://github.com/traversaal-ai/momentsearch), a working
+video-only moment-search product, and turn it into a **multi-source knowledge engine**: ingest
+papers and slide decks alongside talks, run them through an **asynchronous work queue**, and
+answer one question with cited moments across every source — the video timestamp *and* the paper
+page *and* the deck slide. Ends with a Fly.io deploy and a benchmark proving ingestion never
+starves search.
+
+It's the production form of this module: routing, hybrid retrieval, caching and cost reporting,
+all under real ingestion load. Read the spec yourself before touching any code — it's a reading
+assignment first, and it says so.
+
+Submission is a single Vercel URL with a working `/` and a self-proving `/evals` page — see
+[`SUBMISSION.md`](../../SUBMISSION.md).
 
 ---
 
@@ -369,10 +439,10 @@ pip install openai qdrant-client transformers sentence-transformers \
 
 ### Recommended notebook order
 
-1. `Agentic_RAG/Agentic_RAG_Notebook.ipynb` — start here to understand the routing architecture
-2. `Agentic_RAG/Upload_data_to_Qdrant_Notebook.ipynb` — optional, only if you want to rebuild the vector index
-3. `Semantic_Cache/Semantic_cache_from_scratch.ipynb` — understand caching mechanics in isolation
-4. `Agentic_RAG_with_Semantic_Cache.ipynb` — the complete combined system
+1. **`001. Agentic Router.ipynb`** — the routing architecture, and route-level RBAC on top of it
+2. **`002. Semantic Caching.ipynb`** — caching mechanics in isolation
+3. **`003. Agentic Router_semantic_caching_rbac.ipynb`** — the complete combined system: routing + cache + file-level RBAC
+4. `Agentic_RAG/Upload_data_to_Qdrant_Notebook.ipynb` — optional, only if you want to rebuild the vector index
 5. `Knowledge_Graphs/knowledge_graph_neo4j_with_evals.ipynb` — structured retrieval: RAG vs Knowledge Graph (independent track; needs a Neo4j Aura instance)
 
 ---

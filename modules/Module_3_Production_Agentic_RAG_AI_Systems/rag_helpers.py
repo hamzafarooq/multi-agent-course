@@ -17,6 +17,12 @@ Quick start in a Colab/Jupyter notebook:
     agentic_rag_with_cache("What was Uber's revenue in 2021?", cache)
 """
 
+# NOTE: import sentence_transformers BEFORE faiss.
+# Both ship their own OpenMP runtime; on macOS, loading a SentenceTransformer
+# after faiss aborts the process with no traceback (the kernel just dies).
+from sentence_transformers import SentenceTransformer
+from transformers import AutoTokenizer, AutoModel
+
 import faiss
 import json
 import re
@@ -27,8 +33,6 @@ import os
 import numpy as np
 import requests
 
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, AutoModel
 from openai import OpenAI, OpenAIError
 import qdrant_client as _qdrant_lib
 
@@ -257,7 +261,7 @@ def get_internet_content(user_query: str, action: str = "INTERNET_QUERY") -> str
 
 def route_query(user_query: str) -> dict:
     """
-    Use GPT-4o to classify the query into one of three route labels.
+    Use GPT-5.6-Luna to classify the query into one of three route labels.
 
     Returns:
         dict with keys 'action', 'reason', 'answer'.
@@ -283,7 +287,7 @@ def route_query(user_query: str) -> dict:
     """
     try:
         response = _openaiclient.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-5.6-luna",
             messages=[{"role": "system", "content": prompt}],
         )
         content = response.choices[0].message.content
@@ -301,14 +305,14 @@ def _get_text_embeddings(text: str) -> np.ndarray:
 
 
 def _rag_formatted_response(user_query: str, context: list) -> str:
-    """Generate a GPT-4o answer grounded in retrieved Qdrant chunks, with citations."""
+    """Generate a GPT-5.6-Luna answer grounded in retrieved Qdrant chunks, with citations."""
     prompt = f"""
     Based on the given context, answer the user query: {user_query}
     Context: {context}
     Cite sources as [1][2]...
     """
     response = _openaiclient.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-5.6-luna",
         messages=[{"role": "system", "content": prompt}],
     )
     return response.choices[0].message.content

@@ -42,3 +42,11 @@ modules/2026-03/
 
 # Staff authoring notes: internal process, quotes student feedback, not student-facing
 AUTHORING.md
+
+# Module 3 staging copy — promoted into the canonical notebooks, kept locally only
+modules/Module_3_Production_Agentic_RAG_AI_Systems/updated-code/
+
+# Module 3 notebook run artifacts
+modules/Module_3_Production_Agentic_RAG_AI_Systems/cache.json
+modules/Module_3_Production_Agentic_RAG_AI_Systems/rag_cache.json
+modules/Module_3_Production_Agentic_RAG_AI_Systems/**/qdrant_data/.lock

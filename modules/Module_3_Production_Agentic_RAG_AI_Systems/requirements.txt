@@ -1,0 +1,24 @@
+# Module 3 — Production Agentic RAG & AI Systems
+# Pinned to match the notebooks' own !pip lines. The transformers/sentence-transformers
+# pins matter: newer versions break nomic-embed-text-v1.5's trust_remote_code path.
+#
+#   conda create -n m3-rag python=3.11 && conda activate m3-rag
+#   pip install -r requirements.txt
+
+transformers==4.48.0
+sentence-transformers==3.4.1
+einops==0.8.1
+torch>=2.2
+
+faiss-cpu
+qdrant-client
+openai
+requests
+numpy
+python-dotenv
+nest_asyncio
+
+# notebook execution
+jupyter
+nbconvert
+ipykernel
