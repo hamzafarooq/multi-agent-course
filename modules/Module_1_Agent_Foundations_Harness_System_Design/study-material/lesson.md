@@ -62,5 +62,12 @@ does." Components: context management, agent loop, tools, memory, permissions, h
 2. Architectures range from a plain LLM to multi-agent systems — pick the simplest that fits.
 3. ReAct = reasoning interleaved with tool use; the harness is the runtime body around it.
 
+## The principles behind the harness
+
+The nine rules in [`reference/harness-principles.md`](../reference/harness-principles.md) are
+the transferable layer of this module — what stays true when you change language, framework
+or model. Each is tied to the line of LUMINA that implements it. Read it once now, and again
+after you've built something; it reads differently the second time.
+
 ## Where to next
 - Do `exercises.md` for hands-on, or ask to be quizzed (`quiz.md`).

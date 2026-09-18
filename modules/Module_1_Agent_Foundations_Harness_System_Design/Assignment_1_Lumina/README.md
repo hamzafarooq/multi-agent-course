@@ -32,6 +32,10 @@ route you finish lights one up.
 | 4 | `benchmark/sla.json`, `expectations.json`, `eval/rubric.json` | The targets, the budgets, the points. Declared before you run, on purpose. |
 | 5 | [`TECHNICAL.md`](TECHNICAL.md) | The build guide: architecture, commands, checklists, troubleshooting. |
 
+When a rule in here looks arbitrary — *"flush after every token"*, *"sources before the
+first token"* — [`../reference/harness-principles.md`](../reference/harness-principles.md)
+says which principle it serves and why it exists.
+
 Your coding agent should read [`AGENTS.md`](AGENTS.md) and [`SPEC.md`](SPEC.md) instead —
 the first is the non-negotiables, the second is every requirement stated explicitly. Where
 your `DESIGN.md` and the `SPEC.md` disagree, the spec wins — change the design.

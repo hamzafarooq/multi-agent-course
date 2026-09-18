@@ -103,13 +103,16 @@ class SemanticCaching:
     def __init__(
         self,
         json_file: str = "rag_cache.json",
-        threshold: float = 0.2,
+        threshold: float = 0.30,
         clear_on_init: bool = False,
     ):
         """
         Args:
             json_file:      Path to the JSON file used for cache persistence.
-            threshold:      Max Euclidean distance for a cache hit (lower = stricter).
+            threshold:      Max (squared L2) distance for a cache hit — lower is stricter.
+                            0.30 separates real paraphrases (~0.16–0.25 on the course's
+                            demo questions) from merely related questions (~0.38+).
+                            Measure this on your own queries; it is a product decision.
             clear_on_init:  If True, wipe any existing cache on startup.
         """
         self.embedding_dim = 768

@@ -91,7 +91,9 @@ node eval/eval.mjs       # or the assignment's equivalent
 The gates are not a final exam. They're your feedback loop, and they're the same ones the
 grader runs.
 
-**6. When something tiny looks arbitrary, ask why.** Instructions like *"flush after every
+**6. When something tiny looks arbitrary, ask why.** The nine rules in
+[`modules/Module_1_Agent_Foundations_Harness_System_Design/reference/harness-principles.md`](modules/Module_1_Agent_Foundations_Harness_System_Design/reference/harness-principles.md)
+cover most of them. Instructions like *"flush after every
 token"* are small on purpose and load-bearing anyway — that one is the difference between a
 streaming product and a batch one wearing a streaming costume. If a rule looks pointless, ask
 your agent to explain what breaks without it. That question is where most of the learning in
