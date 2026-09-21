@@ -99,5 +99,9 @@ If no style is recorded yet, run the `/start` onboarding before teaching.
 - `build-along` — guide a hands-on exercise step by step.
 - `warmup` — run a quick ~15-min pre-class review (recap prior module, preview the next),
   using the module's `recap-and-preview.md`.
+- `fde-assignment` — break a one-line problem into a spec pack a coding agent can build from and
+  be graded against, in seven moves (deconstruct, contract, numbers, evals and QA, documents,
+  scaffold, lint); Socratic by default, `--generate` for instructor authoring. LUMINA is the
+  worked example (`references/00-how-lumina-happened.md`), not the template.
 
 Invoke the matching skill whenever the learner's request fits its description.
