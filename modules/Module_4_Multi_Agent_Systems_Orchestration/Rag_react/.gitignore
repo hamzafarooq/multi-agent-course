@@ -1,0 +1,6 @@
+.venv/
+.env
+.DS_Store
+__pycache__/
+.ipynb_checkpoints/
+Agentic_RAG/qdrant_data/.lock

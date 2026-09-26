@@ -1,0 +1,26 @@
+# Module 4 — ReAct loop on top of the Module 3 agentic RAG pipeline
+# The transformers/sentence-transformers pins matter: newer versions break
+# nomic-embed-text-v1.5's trust_remote_code path.
+#
+#   python3.11 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+
+transformers==4.48.0
+sentence-transformers==3.4.1
+einops==0.8.1
+torch>=2.2
+
+faiss-cpu
+qdrant-client
+openai
+requests
+numpy
+python-dotenv
+nest_asyncio
+
+jupyter
+ipykernel
+
+streamlit
+
+pytest

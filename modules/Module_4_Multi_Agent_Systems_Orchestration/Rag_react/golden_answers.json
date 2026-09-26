@@ -1,0 +1,251 @@
+{
+  "_about": "Golden (expected) answers for the six HARD_QUESTIONS. Every 10-K fact below is quoted from a chunk in Agentic_RAG/qdrant_data (10-K figures are in $ millions for Uber, $ thousands for Lyft). 'accept' holds regexes; a fact passes when at least 'min' (default 1) of them match the answer. Facts marked time_dependent come from the live web and were recorded on 2026-09-23.",
+  "questions": [
+    {
+      "id": "Q1",
+      "question": "According to Uber's 2021 10-K, which freight logistics company did Uber acquire in 2021, how much did Uber pay for it, and what percentage of Uber's 2021 revenue was that price?",
+      "answer": "Transplace, for $2.3 billion (acquisition-date fair value of consideration), which is about 13.2% of Uber's 2021 revenue of $17,455 million.",
+      "key_facts": [
+        {
+          "label": "Company: Transplace",
+          "accept": [
+            "Transplace"
+          ]
+        },
+        {
+          "label": "Price: $2.3 billion",
+          "accept": [
+            "2\\.30?\\s?(billion|bn|B)\\b",
+            "2,300"
+          ]
+        },
+        {
+          "label": "Share of revenue: ≈13.1–13.2%",
+          "accept": [
+            "13\\.1[4-9]",
+            "13\\.[12]\\s?%"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "we completed the acquisition of Transplace."
+        },
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "The acquisition date fair value of the consideration transferred for Transplace was $ 2.3 billion."
+        },
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "Year Ended December 31, 2019 2020 2021 Revenue $ 13,000 $ 11,139 $ 17,455"
+        }
+      ],
+      "notes": "Uber's deal announcement quoted about $2.25B; the 10-K reports $2.3B. $2.25B (≈12.9%) is not in the documents. Using the exact revenue ($17,455M) gives 13.18%; the 10-K's rounded '$17.5 billion' gives 13.14%, so both count."
+    },
+    {
+      "id": "Q2",
+      "question": "Which company reported higher annual revenue in its 10-K: Uber (2021) or Lyft (2022)? For that company, find its research and development expense for the same year and express it as a percentage of its revenue.",
+      "answer": "Uber: $17,455 million (2021) vs Lyft $4,095,135 thousand (2022). Uber's 2021 R&D was $2,054 million, about 11.8% of revenue.",
+      "key_facts": [
+        {
+          "label": "Uber 2021 revenue: $17,455M",
+          "accept": [
+            "17[.,]455",
+            "17\\.46"
+          ]
+        },
+        {
+          "label": "Lyft 2022 revenue: $4,095M",
+          "accept": [
+            "4[.,]095"
+          ]
+        },
+        {
+          "label": "Uber 2021 R&D: $2,054M",
+          "accept": [
+            "2[.,]054"
+          ]
+        },
+        {
+          "label": "R&D share of revenue: ≈11.8%",
+          "accept": [
+            "11\\.7[67]",
+            "11\\.8\\s?%"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "Revenue $ 13,000 $ 11,139 $ 17,455"
+        },
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "Research and development 4,836 2,205 2,054"
+        },
+        {
+          "filing": "Lyft 10-K FY2022",
+          "quote": "Total revenue $ 4,095,135 $ 3,208,323 $ 2,364,681"
+        }
+      ],
+      "notes": "Figures by year: Uber 2019 / 2020 / 2021; Lyft 2022 / 2021 / 2020."
+    },
+    {
+      "id": "Q3",
+      "question": "According to Lyft's 2022 10-K, what was Lyft's long-term debt, net of current portion, at December 31, 2022, and what percentage of Lyft's 2022 revenue is that?",
+      "answer": "$803,207 thousand (≈$803.2 million), about 19.6% of Lyft's 2022 revenue of $4,095,135 thousand.",
+      "key_facts": [
+        {
+          "label": "Long-term debt, net of current portion: $803.2M",
+          "accept": [
+            "803[.,]2",
+            "803,207"
+          ]
+        },
+        {
+          "label": "Share of revenue: ≈19.6%",
+          "accept": [
+            "19\\.6"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "filing": "Lyft 10-K FY2022",
+          "quote": "Long-term debt, net of current portion 803,207 655,173"
+        },
+        {
+          "filing": "Lyft 10-K FY2022",
+          "quote": "Less: long-term debt maturing within one year 36,287 56,264 Total long-term debt $ 803,207 $ 655,173"
+        },
+        {
+          "filing": "Lyft 10-K FY2022",
+          "quote": "Total revenue $ 4,095,135 $ 3,208,323 $ 2,364,681"
+        }
+      ],
+      "notes": "Including current maturities the total is $839,494 thousand (≈20.5%); the question asks for the figure net of current portion."
+    },
+    {
+      "id": "Q4",
+      "question": "Uber reported its 2021 revenue in its 10-K. Using Uber's current market cap from the web, what is its approximate price-to-sales ratio against that 2021 revenue?",
+      "answer": "Market cap ÷ $17,455 million. On 2026-09-23 the web reported a market cap of about $142.6B, giving roughly 8.2×.",
+      "key_facts": [
+        {
+          "label": "Uber 2021 revenue: $17,455M",
+          "accept": [
+            "17[.,]455",
+            "17\\.46"
+          ]
+        },
+        {
+          "label": "P/S ≈ 8.2× (market cap ≈ $142.6B on 2026-09-23)",
+          "accept": [
+            "\\b8\\.[12]\\d*\\s?(×|x)",
+            "\\b8\\.[12]\\d*\\b"
+          ],
+          "time_dependent": true
+        }
+      ],
+      "sources": [
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "Revenue $ 13,000 $ 11,139 $ 17,455"
+        },
+        {
+          "filing": "Web (companiesmarketcap.com, 2026-09-23)",
+          "quote": "As of September 2026 Uber has a market cap of $142.63 Billion USD."
+        }
+      ],
+      "notes": "The ratio changes with Uber's share price; only the 10-K revenue half is fixed."
+    },
+    {
+      "id": "Q5",
+      "question": "Name two risk factors from Uber's 2021 10-K, then explain which OpenAI Agents SDK feature (e.g. guardrails, handoffs, tracing) would help an agent that answers questions about those risks.",
+      "answer": "Any two risk factors stated in the filing, e.g. driver classification as employees, data privacy/processing, COVID-19, new products and features, operational metrics, competition, regulation, security breaches; plus a relevant SDK feature (guardrails, tracing or handoffs) with a reason.",
+      "key_facts": [
+        {
+          "label": "At least two risk factors that appear in the 10-K",
+          "min": 2,
+          "accept": [
+            "(?i)classified as employees|driver classification|independent contractor",
+            "(?i)(processing|privacy|protection) of (personal )?data|data privacy|privacy",
+            "(?i)covid|pandemic",
+            "(?i)new or upgraded products|new products",
+            "(?i)operational metrics|metrics",
+            "(?i)competit",
+            "(?i)regulat|laws and regulations",
+            "(?i)security breach|data breach|cyber"
+          ]
+        },
+        {
+          "label": "Names a relevant Agents SDK feature",
+          "accept": [
+            "(?i)guardrail",
+            "(?i)tracing",
+            "(?i)handoff"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "Our business would be adversely affected if Drivers were classified as employees, workers or quasi-employees instead of independent contractors."
+        },
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "We face risks related to our collection, use, transfer, disclosure, and other processing of data"
+        },
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "If we are unable to successfully introduce new or upgraded products, offerings, or features"
+        },
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "Certain of our operational metrics are subject to inherent challenges in measurement, and real or perceived inaccuracies in such metrics may harm our reputation"
+        },
+        {
+          "filing": "OpenAI docs",
+          "quote": "Building guardrails: Set up guardrails that address the risks you've already identified for your use case"
+        }
+      ],
+      "notes": "Open-ended: many answers are correct. The check confirms the content, not whether the SDK half was retrieved from the docs rather than recalled from memory."
+    },
+    {
+      "id": "Q6",
+      "question": "According to its FY2021 10-K, how many MAPCs did Uber have in Q4 2021? Then look up on the web how many MAPCs Uber reported for Q2 2026, and calculate how much that metric has grown since Q4 2021.",
+      "answer": "118 million MAPCs in Q4 2021 (10-K) and 208 million in Q2 2026 (web): growth of about 76%.",
+      "key_facts": [
+        {
+          "label": "Q4 2021 MAPCs: 118 million",
+          "accept": [
+            "118\\s?(million|M)\\b"
+          ]
+        },
+        {
+          "label": "Q2 2026 MAPCs: 208 million",
+          "accept": [
+            "208\\s?(million|M)\\b"
+          ]
+        },
+        {
+          "label": "Growth since Q4 2021: ≈76%",
+          "accept": [
+            "\\b76(\\.\\d+)?\\s?%"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "filing": "Uber 10-K FY2021",
+          "quote": "Monthly Active Platform Consumers (“MAPCs”) (2), (3) 93 118 27 %"
+        },
+        {
+          "filing": "Web (investor.uber.com, 2026-09-23)",
+          "quote": "Uber 208 million · monthly active platform consumers* (*For the qu…"
+        }
+      ],
+      "notes": "Q2 2026 is fixed now that it has been reported; the 10-K half comes from the filing, the Q2 2026 figure from Uber's investor page."
+    }
+  ]
+}
