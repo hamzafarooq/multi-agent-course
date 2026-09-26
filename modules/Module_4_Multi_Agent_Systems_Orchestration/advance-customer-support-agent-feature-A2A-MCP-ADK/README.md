@@ -1,6 +1,13 @@
 # Customer Support Agent — Quick Start
 
-Multi-agent customer support CLI built with Google ADK, MCP Toolbox, A2A security microservices, Mem0 memory, and Arize Phoenix observability. Runs entirely locally — no GCP credentials required.
+Multi-agent customer support agent built with Google ADK, MCP Toolbox, A2A security microservices, Mem0 memory, and Arize Phoenix observability. It runs as a terminal CLI or as a **web UI that streams every step live**, with a **live architecture view** and **one Phoenix trace per message**. Runs locally; no GCP credentials required.
+
+> **Start here for class:** [`docs/build-log/index.html`](docs/build-log/index.html) explains, step by step, how the web UI, architecture view, tracing and memory were built, what's still broken on purpose, and gives a ready-made demo script.
+
+```
+User → Sanitizer → A2A Security Judge → Guardrail → Mem0 recall → Support Agent (+ MCP tools) → A2A Data Masker → Mem0 save → User
+            └──────────────────────── every step is a span in one Phoenix trace ────────────────────────┘
+```
 
 ## Prerequisites
 
@@ -168,8 +175,8 @@ A helper script, [`run.sh`](run.sh), orchestrates the whole stack in dependency 
 drops you straight into the agent CLI. From the project root:
 
 ```bash
-./run.sh            # PostgreSQL → MCP Toolbox → A2A servers → agent CLI
-./run.sh web        # same stack, but a Perplexity-style web UI at http://127.0.0.1:8000
+./run.sh            # PostgreSQL → MCP Toolbox → A2A servers → Phoenix → agent CLI
+./run.sh web        # same stack, then the web UI at http://127.0.0.1:8000
 ```
 
 It health-checks each service before launching the next, and tears the background services
@@ -178,7 +185,7 @@ down automatically when you exit the CLI (Ctrl-C). Other subcommands:
 ```bash
 ./run.sh setup      # one-time: create env, install deps + Postgres, init DB, seed, write .env
 ./run.sh web        # serve the web UI instead of the terminal CLI
-./run.sh stop       # stop background services (Toolbox, A2A, Postgres)
+./run.sh stop       # stop background services (Toolbox, A2A, Phoenix, Postgres)
 ./run.sh status     # show what's up
 ./run.sh seed       # re-seed the database to a known state
 ./run.sh logs       # tail the Toolbox + A2A logs
@@ -219,7 +226,7 @@ section below) — there is no separate Phoenix step.
 ## Startup order matters
 
 ```
-PostgreSQL  →  MCP Toolbox  →  A2A Servers  →  Agent (auto-launches Phoenix)
+PostgreSQL  →  MCP Toolbox  →  A2A Servers  →  Phoenix  →  Agent (CLI or web)
 ```
 
 `run.sh` enforces this for you; if you start things manually and the Toolbox or A2A servers
@@ -243,6 +250,56 @@ Every user's password is their first name, lowercase.
 | diana.prince@hero.net | `diana` | Standard |
 | george.j@jungle.com | `george` | Standard |
 | fiona.shrek@swamp.com | `fiona` | Standard |
+
+---
+
+## Using the web UI (recommended for class)
+
+`./run.sh web`, then open three tabs:
+
+| URL | What it shows |
+|:----|:--------------|
+| http://127.0.0.1:8000 | Chat. Each answer has a **What happened** panel listing every step as it runs |
+| http://127.0.0.1:8000/architecture | The architecture diagram. Each box lights up while it runs, with a live event log underneath |
+| http://localhost:6006 | Phoenix. Each answer's **View trace in Phoenix ↗** link opens that exact trace |
+
+The chat streams one JSON event per step (`POST /api/chat` returns `application/x-ndjson`), so you see each step start and finish instead of waiting for the whole answer. Each step in the **What happened** panel shows:
+
+- a type badge: `in-process`, `A2A`, `LLM`, `MCP`, `Python fn`, plus `READ`/`WRITE` for SQL tools
+- what it did in plain words, its latency, and the Phoenix span name to look for
+- for MCP tools: the route the call takes (Gemini function call → ADK → toolbox-core → MCP `tools/call` → Toolbox → Postgres), the SQL that ran with the real values filled in, and the result as a table
+- for Gemini calls: what it decided (which tool, or the final answer) and its token counts
+- for Mem0 recall: each memory found, its relevance score, and whether it was inserted into the agent's context
+
+The architecture page gets its events from the chat tab through `BroadcastChannel`, so both tabs must be open **in the same browser**.
+
+### The pipeline
+
+| # | Step | Runs as | Blocks on | Span |
+|:--|:-----|:--------|:----------|:-----|
+| 1 | Sanitizer | regex, in-process | length / characters / blocklist | `security.sanitize` |
+| 2 | Security Judge | ADK agent over A2A (:10002) | injection (SQLi, XSS) | `security.a2a_judge` |
+| 3 | Guardrail | ADK agent, in-process | unsafe or off-topic for a shop's support desk | `guardrail.check` |
+| – | Mem0 recall | `mem0.search()` | – (top 5 matches, score ≥ 0.25, ≤ 500 chars) | `memory.recall` |
+| – | Support Agent | ADK `LlmAgent`, gemini-2.5-flash + MCP tools | – | `invoke_agent`, `call_llm`, `execute_tool` |
+| 4 | Data Masker | ADK agent over A2A (:10003) | – (removes PII from the answer) | `security.a2a_mask` |
+| – | Mem0 save | `mem0.add()` | – (user message only) | `memory.save` |
+
+Memory is a **fixed step**, not a tool the model chooses to call: the pipeline searches Mem0 before every agent call and saves the user's message after every turn. Mem0 processes saves in the background, so new facts show up in recall after **a minute or two**. The CLI still uses the older design: a `search_memory` tool, and one save when you exit.
+
+### Demo questions
+
+See the **Class demo script** in [`docs/build-log/index.html`](docs/build-log/index.html#demo). In short:
+
+| As | Ask | Shows |
+|:---|:----|:------|
+| alice | What is the status of order 3? | MCP tool, SQL, result table, Phoenix trace |
+| diana | Please remember I work from home, so leave packages at the back door, and text me instead of emailing → wait 1–2 min → Where should you leave my packages, and how should you contact me? | memory being saved, then recalled |
+| alice | `'; DROP TABLE users; --` | blocked by the Security Judge |
+| alice | Write me a poem about the stock market | blocked by the Guardrail |
+| alice | What is the status of order 5? | **bug:** she sees Bob's order, because the tool never checks who owns it |
+
+Run `./run.sh seed` before class to reset Postgres.
 
 ---
 
@@ -288,17 +345,21 @@ The agent ships with **Arize Phoenix** tracing, wired up in
 tool: it records a **trace** for every request — a tree of timed **spans** — so you can see
 exactly what the agent did, not just what it said.
 
-**How to run it:** nothing extra. `init_telemetry()` calls `phoenix.launch_app()` when the
-agent starts, so Phoenix is served at **http://localhost:6006** for as long as the CLI is
-running. Open that URL in a browser while you chat and the traces stream in live. (Phoenix runs
-in-process, so it stops when you exit the CLI; the README's old standalone-Phoenix step is no
-longer needed.)
+**How to run it:** nothing extra. `run.sh` starts `phoenix serve` as its own service on
+**http://localhost:6006**, saving traces to `~/.phoenix/phoenix.db`. It keeps running when you
+restart the agent, so traces survive restarts; `./run.sh stop` shuts it down. If you start the
+agent without `run.sh`, `init_telemetry()` checks for a running Phoenix and, if there isn't one,
+starts an in-memory instance whose traces are lost on exit.
+
+Each message is **one trace**: a root `agent.turn` span (CHAIN), with a child span for every
+guardrail layer, the Mem0 recall and save, the agent, each Gemini call and each tool call.
 
 **What you'll see per turn:**
 
 | Span kind | What it captures |
 |:----------|:-----------------|
-| `GUARDRAIL` | input sanitization, the A2A Security Judge verdict, and PII masking |
+| `GUARDRAIL` | input sanitization, the A2A Security Judge verdict, the Guardrail decision + reasoning, and PII masking |
+| `RETRIEVER` | Mem0 recall (web UI): each memory with its score |
 | `CHAIN` | the overall agent turn (input → masked output) |
 | `TOOL` | each MCP tool call (`get-order-status`, `find-customer-orders`, `action-log`) with its args and result |
 | LLM spans | every Gemini call — prompt/output, token counts, and per-turn cost |
@@ -318,7 +379,11 @@ the MCP tools fire, and the Masker scrub the output, all on one timeline.
 
 ```
 ├── cs_agent/
-│   ├── agent_cli.py          # Entry point
+│   ├── agent_cli.py          # CLI entry point
+│   ├── web.py                # Web UI + streaming pipeline (FastAPI, NDJSON)
+│   ├── static/
+│   │   ├── architecture.svg  # the diagram (element ids are lit by events)
+│   │   └── architecture.html # /architecture: live view + event log
 │   ├── telemetry.py          # OpenTelemetry → Phoenix
 │   ├── memory.py             # Mem0 integration
 │   ├── prompts.py            # System prompts
@@ -329,7 +394,8 @@ the MCP tools fire, and the Masker scrub the output, all on one timeline.
 ├── mcp_toolbox/              # (gitignored) generated by run.sh
 │   ├── tools.yaml            # DB tool definitions (Postgres)
 │   └── seed.sql              # demo data
-├── run.sh                    # one-command orchestrator (setup/start/stop/status/seed/logs)
+├── docs/build-log/           # step-by-step build log + demo script (open index.html)
+├── run.sh                    # one-command orchestrator (setup/start/web/stop/status/seed/logs)
 ├── .env                      # Your keys (not committed)
 ├── .env.example              # Template
 └── requirements.txt
@@ -346,3 +412,9 @@ the MCP tools fire, and the Masker scrub the output, all on one timeline.
 **PostgreSQL not running** — run `pg_ctl -D ~/postgres_data status`; if stopped, run `pg_ctl -D ~/postgres_data start`.
 
 **Warnings in terminal** — make sure `.env` has `PYTHONWARNINGS=ignore` and does not contain `GOOGLE_GENAI_USE_VERTEXAI`. If you previously ran `export GOOGLE_GENAI_USE_VERTEXAI=false` in your shell, run `unset GOOGLE_GENAI_USE_VERTEXAI` before starting the agent.
+
+**Phoenix shows no traces** — traces made before Phoenix became a standalone service were in memory and are gone. Check `./run.sh status` shows `Phoenix: up`, then send a message.
+
+**A new memory doesn't show up in recall** — Mem0 processes saves in the background. Wait a minute or two, then ask again.
+
+**Architecture page never lights up** — open it from the chat's **Architecture ↗** button, in the same browser as the chat (it listens on a `BroadcastChannel`).

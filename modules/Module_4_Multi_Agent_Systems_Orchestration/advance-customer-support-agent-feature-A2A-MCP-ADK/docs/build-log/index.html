@@ -1,0 +1,553 @@
+<title>Support Agent Build Log</title>
+<meta name="description" content="Step by step: how the Module 4 multi-agent customer support app got its live web UI, architecture view, Phoenix tracing and Mem0 memory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#F2F5F5; --surface:#FFFFFF; --panel:#FFFFFF; --panel-2:#EDF1F2; --line:#D9E1E3;
+    --ink:#132026; --text:#132026; --muted:#5A6B72; --accent:#0E8595; --accent-soft:#E2F4F6;
+    --bug:#A85A0C; --bug-soft:#FDF1E1; --block:#B42318; --block-soft:#FDECEA; --ok:#1F7A3A;
+    --code-bg:#0F1B20; --code-ink:#DCE8EA; --code-muted:#7F979E; --code-key:#6FD3E0; --code-str:#F3C77B;
+    --display:"Schibsted Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --ground:#0C1315; --surface:#131E22; --panel:#131E22; --panel-2:#1A272C; --line:#26363C;
+      --ink:#E2ECEE; --text:#E2ECEE; --muted:#93A6AC; --accent:#48C4D4; --accent-soft:#12303A;
+      --bug:#F0A94B; --bug-soft:#2E2213; --block:#F2877C; --block-soft:#34191A; --ok:#6BCB8B;
+      --code-bg:#081013; --code-ink:#DCE8EA; --code-muted:#6E858C; --code-key:#6FD3E0; --code-str:#F3C77B;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --ground:#0C1315; --surface:#131E22; --panel:#131E22; --panel-2:#1A272C; --line:#26363C;
+    --ink:#E2ECEE; --text:#E2ECEE; --muted:#93A6AC; --accent:#48C4D4; --accent-soft:#12303A;
+    --bug:#F0A94B; --bug-soft:#2E2213; --block:#F2877C; --block-soft:#34191A; --ok:#6BCB8B;
+    --code-bg:#081013; --code-ink:#DCE8EA; --code-muted:#6E858C; --code-key:#6FD3E0; --code-str:#F3C77B;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font:16px/1.65 var(--body);margin:0;padding-inline:20px;padding-block:0 80px}
+  a{color:var(--accent);text-underline-offset:3px}
+  a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+  code{font:500 .86em/1.4 var(--mono);background:var(--panel-2);padding:.08em .38em;border-radius:5px}
+  .shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:260px minmax(0,1fr);gap:56px}
+  @media (max-width:900px){.shell{grid-template-columns:minmax(0,1fr);gap:0}.rail{display:none}}
+
+  /* header */
+  .mast{max-width:1180px;margin:0 auto;padding-block:44px 30px;border-bottom:1px solid var(--line);margin-bottom:36px}
+  .eyebrow{font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  h1{font:800 clamp(34px,5vw,56px)/1.02 var(--display);letter-spacing:-.02em;margin:14px 0 16px;text-wrap:balance;max-width:17ch}
+  .lede{font-size:18.5px;color:var(--muted);max-width:64ch;margin:0}
+  .lede strong{color:var(--ink);font-weight:600}
+  .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;font:500 13px/1.4 var(--mono);color:var(--muted)}
+  .facts b{color:var(--ink);font-weight:600}
+
+  /* rail: table of contents drawn as a span tree */
+  .rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);align-self:start;max-height:calc(100vh - 40px);overflow:auto;padding-bottom:20px}
+  .rail h2{font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+  .tree{list-style:none;margin:0;padding:0;font:13px/1.35 var(--mono)}
+  .tree li{position:relative}
+  .tree a{display:flex;gap:8px;align-items:baseline;padding:5px 8px;border-radius:6px;color:var(--ink);text-decoration:none}
+  .tree a:hover{background:var(--panel-2)}
+  .tree a.on{background:var(--accent-soft);color:var(--accent)}
+  .tree .kid{padding-left:16px;border-left:1px solid var(--line);margin-left:10px}
+  .tree .k{font-size:9.5px;font-weight:600;letter-spacing:.04em;padding:1px 5px;border-radius:4px;flex:none;color:var(--muted);background:var(--panel-2)}
+
+  /* main */
+  main{min-width:0}
+  section{scroll-margin-top:24px}
+  .intro p,.step p,.step li{max-width:68ch}
+  h2.sec{font:700 28px/1.15 var(--display);letter-spacing:-.01em;margin:56px 0 14px;text-wrap:balance}
+  h2.sec:first-child{margin-top:0}
+  .step{padding-block:34px;border-top:1px solid var(--line)}
+  .step-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:10px}
+  .num{font:700 13px/1 var(--mono);color:var(--accent);background:var(--accent-soft);padding:6px 9px;border-radius:7px;font-variant-numeric:tabular-nums}
+  .step h3{font:700 23px/1.2 var(--display);margin:0;letter-spacing:-.005em;text-wrap:balance;flex:1 1 320px}
+  .span-tag{font:500 12px/1 var(--mono);color:var(--muted);border:1px solid var(--line);padding:5px 8px;border-radius:6px;background:var(--surface)}
+  .label{font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 6px}
+  .label.why{color:var(--bug)}
+  .step ul{padding-left:20px}
+  .step li{margin:4px 0}
+
+  pre.code{background:var(--code-bg);color:var(--code-ink);font:13px/1.6 var(--mono);padding:16px 18px;border-radius:12px;overflow-x:auto;margin:10px 0 4px}
+  pre.code .c{color:var(--code-muted)} pre.code .s{color:var(--code-str)} pre.code .k{color:var(--code-key)}
+  .file{font:500 12px/1 var(--mono);color:var(--muted);margin-top:14px}
+
+  figure{margin:18px 0 6px}
+  figure img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+  figcaption{font-size:13.5px;color:var(--muted);margin-top:8px;max-width:68ch}
+  .fig-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+
+  .see{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:18px}
+  .see div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14.5px}
+  .see b{display:block;font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+
+  /* architecture */
+  .arch{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;overflow-x:auto;margin:18px 0}
+  .arch svg{display:block;width:100%;min-width:720px;height:auto}
+  .layers{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0}
+  .tablewrap{overflow-x:auto}
+  .layers th{text-align:left;font:600 11px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+  .layers td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .layers td:first-child{font-weight:600;white-space:nowrap}
+  .layers code{white-space:nowrap}
+
+  /* span tree (phoenix) */
+  .spans{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font:13px/1.75 var(--mono);overflow-x:auto;white-space:pre}
+  .spans .kd{display:inline-block;width:88px;color:var(--muted)}
+  .spans .g{color:var(--bug)} .spans .t{color:var(--accent)}
+
+  /* findings */
+  .findings{display:grid;gap:12px;margin-top:16px}
+  .finding{background:var(--bug-soft);border:1px solid color-mix(in srgb,var(--bug) 30%,transparent);border-radius:12px;padding:14px 16px}
+  .finding h4{font:700 16px/1.3 var(--display);margin:0 0 4px}
+  .finding p{margin:4px 0;font-size:15px}
+  .finding .try{font:500 13px/1.5 var(--mono);color:var(--bug)}
+
+  /* demo script */
+  .demo{width:100%;border-collapse:collapse;font-size:14.5px}
+  .demo th{text-align:left;font:600 11px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+  .demo td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .demo td:nth-child(2){font-family:var(--mono);font-size:13px}
+  .demo .who{font:600 12px/1.3 var(--mono);color:var(--accent);white-space:nowrap}
+  .demo tr.group td{background:var(--panel-2);font:700 14px/1.3 var(--display);padding:8px 10px}
+
+  .files{columns:2 260px;font:13px/1.8 var(--mono);padding-left:18px}
+  footer{max-width:1180px;margin:60px auto 0;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px}
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+  html{scroll-behavior:smooth}
+</style>
+
+<header class="mast">
+  <div class="eyebrow">Module 4 · Multi-agent systems &amp; orchestration · build log</div>
+  <h1>From terminal agent to traceable system</h1>
+  <p class="lede">This support agent started as a command-line program. This page walks through, in order, how we gave it a <strong>live web UI</strong>, a <strong>diagram of the architecture that lights up as each part runs</strong>, <strong>one Phoenix trace per message</strong>, and <strong>Mem0 memory you can watch working</strong>. Each step covers what was wrong, what changed, and where to see it.</p>
+  <div class="facts">
+    <span><b>Google ADK</b> agents</span><span><b>MCP</b> Toolbox → Postgres</span><span><b>A2A</b> Judge &amp; Masker</span>
+    <span><b>Mem0</b> memory</span><span><b>Arize Phoenix</b> tracing</span><span>gemini-2.5-flash</span>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="rail" aria-label="Contents">
+    <h2>agent.turn</h2>
+    <ul class="tree" id="toc">
+      <li><a href="#system"><span class="k">CHAIN</span>The finished system</a></li>
+      <li><a href="#run"><span class="k">RUN</span>Run it</a></li>
+      <li class="kid"><a href="#s1"><span class="k">01</span>Web UI + Phoenix</a></li>
+      <li class="kid"><a href="#s2"><span class="k">02</span>Readable tool results</a></li>
+      <li class="kid"><a href="#s3"><span class="k">03</span>Stream every step</a></li>
+      <li class="kid"><a href="#s4"><span class="k">04</span>Live architecture</a></li>
+      <li class="kid"><a href="#s5"><span class="k">05</span>One trace per turn</a></li>
+      <li class="kid"><a href="#s6"><span class="k">06</span>Guardrail layer</a></li>
+      <li class="kid"><a href="#s7"><span class="k">07</span>Explain every call</a></li>
+      <li class="kid"><a href="#s8"><span class="k">08</span>Memory as a step</a></li>
+      <li class="kid"><a href="#s9"><span class="k">09</span>Guardrail scope</a></li>
+      <li><a href="#findings"><span class="k">BUG</span>What's still broken</a></li>
+      <li><a href="#demo"><span class="k">DEMO</span>Class demo script</a></li>
+      <li><a href="#files"><span class="k">FILES</span>What changed where</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="system" class="intro">
+      <h2 class="sec">The finished system</h2>
+      <p>Every message goes through a fixed pipeline. Four layers check what goes in and what comes out, and the model is only responsible for the middle step. Solid boxes run inside the web server process; dashed boxes are separate services the web server calls over the network.</p>
+      <div class="arch" role="img" aria-label="Architecture diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 410" class="ax" role="img" aria-label="Customer support agent architecture">
+<style>
+  .ax{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --ax-bg:var(--panel,#fff);--ax-line:var(--line,#d6dbe2);--ax-text:var(--text,#1a1d23);
+      --ax-muted:var(--muted,#6b7280);--ax-accent:var(--accent,#0f9aae)}
+  .ax-node rect{fill:var(--ax-bg);stroke:var(--ax-line);stroke-width:1.5;transition:all .25s}
+  .ax-node.svc rect.box{stroke-dasharray:6 4}
+  .ax-title{font-size:13.5px;font-weight:600;fill:var(--ax-text)}
+  .ax-sub{font-size:11px;fill:var(--ax-muted)}
+  .ax-tag rect{fill:var(--ax-accent);stroke:none}
+  .ax-tag text{font-size:9.5px;font-weight:700;fill:#fff;letter-spacing:.6px}
+  .ax-chip rect{fill:var(--panel-2,#f1f3f6);stroke:var(--ax-line);stroke-width:1}
+  .ax-chip text{font-size:9.5px;fill:var(--ax-text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .ax-edge{fill:none;stroke:var(--ax-line);stroke-width:1.6;marker-end:url(#ax-arrow);transition:stroke .25s}
+  .ax-edge-label{font-size:10.5px;fill:var(--ax-muted)}
+  .ax-trace{fill:none;stroke:var(--ax-line);stroke-width:1;stroke-dasharray:2 4}
+  .ax-lane{font-size:10px;font-weight:700;letter-spacing:1px;fill:var(--ax-muted)}
+  #ax-arrow path{fill:var(--ax-line)}
+  #ax-arrow-on path{fill:var(--ax-accent)}
+
+  .ax-node.active rect.box{stroke:var(--ax-accent);stroke-width:2.5;fill:#e7f7f9;filter:drop-shadow(0 0 8px rgba(15,154,174,.45))}
+  .ax-node.done rect.box{stroke:var(--ax-accent);stroke-width:1.8}
+  .ax-node.blocked rect.box{stroke:#d9534f;stroke-width:2.5;fill:#fdecea}
+  .ax-chip.active rect{fill:var(--ax-accent);stroke:var(--ax-accent)}
+  .ax-chip.active text{fill:#fff}
+  .ax-chip.done rect{stroke:var(--ax-accent)}
+  .ax-edge.active{stroke:var(--ax-accent);stroke-width:2.2;stroke-dasharray:7 5;marker-end:url(#ax-arrow-on);animation:ax-flow .6s linear infinite}
+  .ax-edge.done{stroke:var(--ax-accent);marker-end:url(#ax-arrow-on)}
+  .ax-trace.active{stroke:var(--ax-accent)}
+  @keyframes ax-flow{to{stroke-dashoffset:-12}}
+</style>
+<defs>
+  <marker id="ax-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="ax-arrow-on" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+
+<text class="ax-lane" x="200" y="48">REQUEST PIPELINE</text>
+<text class="ax-lane" x="510" y="236">TOOLS &amp; MEMORY</text>
+
+<path id="e-return" class="ax-edge" d="M1010,62 V30 H100 V58"/>
+<text class="ax-edge-label" x="555" y="24" text-anchor="middle">masked response</text>
+
+<path id="e-user-san" class="ax-edge" d="M170,98 H196"/>
+<path id="e-san-judge" class="ax-edge" d="M350,98 H376"/>
+<path id="e-judge-guard" class="ax-edge" d="M530,98 H556"/>
+<path id="e-guard-agent" class="ax-edge" d="M710,98 H736"/>
+<path id="e-agent-mask" class="ax-edge" d="M900,98 H926"/>
+<path id="e-agent-toolbox" class="ax-edge" d="M820,138 V226"/>
+<text class="ax-edge-label" x="828" y="190">MCP</text>
+<path id="e-toolbox-pg" class="ax-edge" d="M704,282 H664"/>
+<text class="ax-edge-label" x="684" y="274" text-anchor="middle">SQL</text>
+<path id="e-agent-mem0" class="ax-edge" d="M880,138 L990,226"/>
+<text class="ax-edge-label" x="948" y="178">memory</text>
+
+<g id="n-user" class="ax-node">
+  <rect class="box" x="20" y="58" width="150" height="80" rx="12"/>
+  <text class="ax-title" x="95" y="92" text-anchor="middle">User</text>
+  <text class="ax-sub" x="95" y="110" text-anchor="middle">web UI · :8000</text>
+</g>
+
+<g id="n-sanitize" class="ax-node">
+  <rect class="box" x="200" y="58" width="150" height="80" rx="12"/>
+  <text class="ax-title" x="275" y="88" text-anchor="middle">Sanitizer</text>
+  <text class="ax-sub" x="275" y="106" text-anchor="middle">regex blocker</text>
+  <text class="ax-sub" x="275" y="121" text-anchor="middle">in-process · layer 1</text>
+</g>
+
+<g id="n-judge" class="ax-node svc">
+  <rect class="box" x="380" y="58" width="150" height="80" rx="12"/>
+  <g class="ax-tag"><rect x="496" y="50" width="30" height="16" rx="8"/><text x="511" y="61.5" text-anchor="middle">A2A</text></g>
+  <text class="ax-title" x="455" y="88" text-anchor="middle">Security Judge</text>
+  <text class="ax-sub" x="455" y="106" text-anchor="middle">ADK agent · :10002</text>
+  <text class="ax-sub" x="455" y="121" text-anchor="middle">layer 2 · injection check</text>
+</g>
+
+<g id="n-guardrail" class="ax-node">
+  <rect class="box" x="560" y="58" width="150" height="80" rx="12"/>
+  <text class="ax-title" x="635" y="88" text-anchor="middle">Guardrail</text>
+  <text class="ax-sub" x="635" y="106" text-anchor="middle">ADK agent · in-process</text>
+  <text class="ax-sub" x="635" y="121" text-anchor="middle">layer 3 · safe &amp; on-topic</text>
+</g>
+
+<g id="n-agent" class="ax-node">
+  <rect class="box" x="740" y="58" width="160" height="80" rx="12"/>
+  <text class="ax-title" x="820" y="88" text-anchor="middle">Support Agent</text>
+  <text class="ax-sub" x="820" y="106" text-anchor="middle">Google ADK LlmAgent</text>
+  <text class="ax-sub" x="820" y="121" text-anchor="middle">gemini-2.5-flash</text>
+</g>
+
+<g id="n-mask" class="ax-node svc">
+  <rect class="box" x="930" y="58" width="150" height="80" rx="12"/>
+  <g class="ax-tag"><rect x="1046" y="50" width="30" height="16" rx="8"/><text x="1061" y="61.5" text-anchor="middle">A2A</text></g>
+  <text class="ax-title" x="1005" y="88" text-anchor="middle">Data Masker</text>
+  <text class="ax-sub" x="1005" y="106" text-anchor="middle">ADK agent · :10003</text>
+  <text class="ax-sub" x="1005" y="121" text-anchor="middle">layer 4 · PII scrub</text>
+</g>
+
+<g id="n-pg" class="ax-node svc">
+  <rect class="box" x="510" y="246" width="150" height="72" rx="12"/>
+  <text class="ax-title" x="585" y="276" text-anchor="middle">PostgreSQL</text>
+  <text class="ax-sub" x="585" y="294" text-anchor="middle">users · orders · actions</text>
+</g>
+
+<g id="n-toolbox" class="ax-node svc">
+  <rect class="box" x="704" y="230" width="232" height="106" rx="12"/>
+  <text class="ax-title" x="820" y="252" text-anchor="middle">MCP Toolbox · :5000</text>
+  <g id="t-get-order-status" class="ax-chip"><rect x="710" y="262" width="108" height="22" rx="6"/><text x="764" y="277" text-anchor="middle">get-order-status</text></g>
+  <g id="t-find-customer-orders" class="ax-chip"><rect x="822" y="262" width="108" height="22" rx="6"/><text x="876" y="277" text-anchor="middle">find-orders</text></g>
+  <g id="t-update-order-status" class="ax-chip"><rect x="710" y="290" width="108" height="22" rx="6"/><text x="764" y="305" text-anchor="middle">update-status</text></g>
+  <g id="t-action-log" class="ax-chip"><rect x="822" y="290" width="108" height="22" rx="6"/><text x="876" y="305" text-anchor="middle">action-log</text></g>
+</g>
+
+<g id="n-mem0" class="ax-node svc">
+  <rect class="box" x="950" y="230" width="130" height="72" rx="12"/>
+  <text class="ax-title" x="1015" y="260" text-anchor="middle">Mem0</text>
+  <text class="ax-sub" x="1015" y="278" text-anchor="middle">recall · save</text>
+</g>
+
+<path id="e-trace" class="ax-trace" d="M95,138 V362 M275,138 V362 M455,138 V362 M1015,302 V362"/>
+<g id="n-phoenix" class="ax-node svc">
+  <rect class="box" x="20" y="362" width="1060" height="38" rx="10"/>
+  <text class="ax-title" x="40" y="386">Arize Phoenix · :6006</text>
+  <text class="ax-sub" x="196" y="386">OpenTelemetry spans from every step: each guardrail layer, the agent turn, each tool call, each Gemini call</text>
+</g>
+</svg>
+</div>
+      <div class="tablewrap">
+      <table class="layers">
+        <thead><tr><th>Step</th><th>What it is</th><th>What it decides</th><th>Phoenix span</th></tr></thead>
+        <tbody>
+          <tr><td>Sanitizer</td><td>Regex blocklist, in-process</td><td>Length, allowed characters, obvious attack patterns</td><td><code>security.sanitize</code></td></tr>
+          <tr><td>Security Judge</td><td>ADK agent behind an A2A server (:10002)</td><td>Injection attempts: SQL injection, XSS</td><td><code>security.a2a_judge</code></td></tr>
+          <tr><td>Guardrail</td><td>ADK agent, in-process</td><td>Is this safe and on-topic for a shop's support desk?</td><td><code>guardrail.check</code></td></tr>
+          <tr><td>Mem0 recall</td><td>Python function → Mem0 cloud</td><td>Which past facts about this customer to insert into the agent's context</td><td><code>memory.recall</code></td></tr>
+          <tr><td>Support Agent</td><td>ADK <code>LlmAgent</code>, gemini-2.5-flash</td><td>Which MCP tools to call, then the answer</td><td><code>invoke_agent</code>, <code>call_llm</code>, <code>execute_tool</code></td></tr>
+          <tr><td>Data Masker</td><td>ADK agent behind an A2A server (:10003)</td><td>Strip PII (personal data) from the answer</td><td><code>security.a2a_mask</code></td></tr>
+          <tr><td>Mem0 save</td><td>Python function → Mem0 cloud</td><td>Store what the user said, for future turns</td><td><code>memory.save</code></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <section id="run">
+      <h2 class="sec">Run it</h2>
+      <p>One script starts every service in dependency order and health-checks each one before starting the next.</p>
+<pre class="code"><span class="c"># once per machine: conda env, deps, Postgres, seed data, .env template</span>
+./run.sh setup          <span class="c"># then put GOOGLE_API_KEY and MEM0_API_KEY in .env</span>
+
+./run.sh web            <span class="c"># Postgres → MCP Toolbox :5000 → A2A :10002/:10003 → Phoenix :6006 → web :8000</span>
+./run.sh seed           <span class="c"># reset the database before class</span>
+./run.sh status         <span class="c"># what is up</span>
+./run.sh stop           <span class="c"># stop everything, Phoenix included</span></pre>
+      <div class="see">
+        <div><b>Chat</b>http://127.0.0.1:8000 · log in as <code>alice.jones@example.com</code> / <code>alice</code></div>
+        <div><b>Architecture</b>http://127.0.0.1:8000/architecture · open it next to the chat</div>
+        <div><b>Phoenix</b>http://localhost:6006 · each message's trace, linked from the chat</div>
+      </div>
+    </section>
+
+    <section id="s1" class="step">
+      <div class="step-head"><span class="num">01</span><h3>Give the web UI the same tracing as the CLI</h3><span class="span-tag">cs_agent/web.py</span></div>
+      <div class="label why">What was wrong</div>
+      <p>There was already a basic web UI (<code>./run.sh web</code>). But only the CLI started Phoenix, even though <code>run.sh</code> printed the Phoenix URL in web mode too. Messages sent from the browser were never traced.</p>
+      <div class="label">What changed</div>
+      <p>One import and one call. <code>init_telemetry()</code> connects OpenTelemetry to Phoenix and instruments every Gemini call automatically.</p>
+<pre class="code"><span class="k">from</span> telemetry <span class="k">import</span> init_telemetry
+tracer = init_telemetry()</pre>
+      <p>Lesson: an interface without tracing is a black box, even when the CLI next to it is fully traced. Check each entry point on its own.</p>
+    </section>
+
+    <section id="s2" class="step">
+      <div class="step-head"><span class="num">02</span><h3>Make tool results readable</h3><span class="span-tag">_unwrap() · renderResult()</span></div>
+      <div class="label why">What was wrong</div>
+      <p>The MCP Toolbox returns <code>{"result": "&lt;JSON as a string&gt;"}</code>: JSON packed inside JSON. The UI showed that raw string, full of escaped quotes and cut off at 800 characters.</p>
+      <div class="label">What changed</div>
+      <p>The server unpacks the result before sending it. The browser then draws rows as a table, with status badges, prices and dates formatted, and "1× Product" for order items. A Raw JSON toggle keeps the original visible for teaching.</p>
+<pre class="code"><span class="k">def</span> _unwrap(resp):
+    <span class="k">if</span> isinstance(resp, dict) <span class="k">and</span> set(resp) == {<span class="s">"result"</span>}:
+        resp = resp[<span class="s">"result"</span>]
+    <span class="k">if</span> isinstance(resp, str):
+        <span class="k">try</span>:
+            <span class="k">return</span> json.loads(resp)
+        <span class="k">except</span> ValueError:
+            <span class="k">return</span> resp
+    <span class="k">return</span> resp</pre>
+      <p>The same issue came up with tool <em>arguments</em>. The model sends <code>action-log</code>'s <code>parameters</code> as a JSON string, so <code>_decode()</code> parses any string argument that starts with <code>{</code> or <code>[</code>.</p>
+    </section>
+
+    <section id="s3" class="step">
+      <div class="step-head"><span class="num">03</span><h3>Stream every step as it happens</h3><span class="span-tag">StreamingResponse · NDJSON</span></div>
+      <div class="label why">What was wrong</div>
+      <p><code>/api/chat</code> ran the whole turn, then returned one JSON object, so the user saw a spinner and then everything at once. That hides the most important thing to see: the agent choosing a tool, waiting for the result, and choosing again.</p>
+      <div class="label">What changed</div>
+      <p>The endpoint now returns a stream: one JSON object per line (NDJSON), sent the moment each step happens. <code>runner.run_async()</code> yields ADK events as they occur, so a tool call reaches the browser before its result comes back.</p>
+<pre class="code"><span class="k">@app.post</span>(<span class="s">"/api/chat"</span>)
+<span class="k">async def</span> chat(req: ChatReq):
+    <span class="k">return</span> StreamingResponse(_chat_events(runner, req), media_type=<span class="s">"application/x-ndjson"</span>)
+
+<span class="c"># one line per event</span>
+{<span class="s">"type"</span>: <span class="s">"stage"</span>,       <span class="s">"key"</span>: <span class="s">"judge"</span>, <span class="s">"stage"</span>: <span class="s">"A2A Security Judge"</span>}
+{<span class="s">"type"</span>: <span class="s">"tool_call"</span>,   <span class="s">"name"</span>: <span class="s">"get-order-status"</span>, <span class="s">"args"</span>: {<span class="s">"order_id"</span>: 3}, <span class="s">"info"</span>: {...}}
+{<span class="s">"type"</span>: <span class="s">"tool_result"</span>, <span class="s">"name"</span>: <span class="s">"get-order-status"</span>, <span class="s">"ms"</span>: 9, <span class="s">"result"</span>: {...}}
+{<span class="s">"type"</span>: <span class="s">"final"</span>,       <span class="s">"blocked"</span>: false, <span class="s">"response"</span>: <span class="s">"Order 3 is SHIPPED..."</span>}</pre>
+      <p>The browser reads the stream with <code>fetch()</code> plus <code>response.body.getReader()</code> and splits it on newlines. There's no WebSocket and no extra library. Try it from the terminal with <code>curl -N</code> to watch the lines arrive.</p>
+    </section>
+
+    <section id="s4" class="step">
+      <div class="step-head"><span class="num">04</span><h3>Draw the architecture and light it up live</h3><span class="span-tag">static/architecture.svg · BroadcastChannel</span></div>
+      <p>The diagram is a plain SVG file. Each box and arrow has an id (<code>n-judge</code>, <code>e-agent-toolbox</code>, <code>t-get-order-status</code>…). The chat page forwards every stream event to a second tab, where each event adds a CSS class: <code>active</code> for the part running now, <code>done</code> once it finishes, <code>blocked</code> if it stopped the message.</p>
+<pre class="code"><span class="c">// chat tab</span>
+<span class="k">const</span> archBus = <span class="k">new</span> BroadcastChannel(<span class="s">'cs-agent'</span>);
+archBus.postMessage(event);
+
+<span class="c">// architecture tab</span>
+<span class="k">new</span> BroadcastChannel(<span class="s">'cs-agent'</span>).onmessage = ({data}) =&gt; { light(data); log(data); };</pre>
+      <p>It started inside the chat page and moved to its own page (<code>/architecture</code>), so you can put it on the projector and chat in another window. Limitation: BroadcastChannel only reaches tabs in the same browser, so the two pages can't be on different machines.</p>
+    </section>
+
+    <section id="s5" class="step">
+      <div class="step-head"><span class="num">05</span><h3>One Phoenix trace per message, and traces that survive restarts</h3><span class="span-tag">agent.turn · phoenix serve</span></div>
+      <div class="label why">What was wrong</div>
+      <ul>
+        <li><b>Traces vanished.</b> <code>px.launch_app()</code> ran Phoenix inside the web server process with in-memory storage, so every restart wiped all traces.</li>
+        <li><b>Missing layers.</b> Phoenix showed the agent's model calls, but not the Judge, the Masker or the Sanitizer, the layers this module is about.</li>
+        <li><b>Answers all in lowercase.</b> The Masker code called <code>.lower()</code> on every reply.</li>
+      </ul>
+      <div class="label">What changed</div>
+      <p><code>run.sh</code> starts <code>phoenix serve</code> as its own service, storing traces in <code>~/.phoenix/phoenix.db</code>, and keeps it running when the agent restarts. <code>init_telemetry()</code> only starts an in-memory Phoenix if no Phoenix is already running. Each message now opens a root span, and every layer creates a child span inside it:</p>
+<pre class="code"><span class="k">with</span> tracer.start_as_current_span(<span class="s">"agent.turn"</span>) <span class="k">as</span> turn:
+    turn.set_attribute(SpanAttributes.OPENINFERENCE_SPAN_KIND, <span class="s">"CHAIN"</span>)
+    ...
+    <span class="k">with</span> tracer.start_as_current_span(<span class="s">"security.a2a_judge"</span>) <span class="k">as</span> span:
+        span.set_attribute(SpanAttributes.OPENINFERENCE_SPAN_KIND, <span class="s">"GUARDRAIL"</span>)</pre>
+      <div class="label">What one message looks like in Phoenix</div>
+<div class="spans">agent.turn                                  <span class="kd">CHAIN</span>
+├─ security.sanitize                        <span class="kd g">GUARDRAIL</span>
+├─ security.a2a_judge                       <span class="kd g">GUARDRAIL</span>
+├─ guardrail.check                          <span class="kd g">GUARDRAIL</span>
+│   └─ invoke_agent guardrail_agent
+├─ memory.recall                            <span class="kd t">RETRIEVER</span>
+├─ invoke_agent customer_support_assistant  <span class="kd">AGENT</span>
+│   ├─ call_llm → gemini-2.5-flash           <span class="kd">LLM</span>
+│   │   └─ execute_tool get-order-status     <span class="kd t">TOOL</span>
+│   └─ call_llm → gemini-2.5-flash           <span class="kd">LLM</span>
+├─ security.a2a_mask                        <span class="kd g">GUARDRAIL</span>
+└─ memory.save                              <span class="kd t">TOOL</span></div>
+      <figure><img src="img/phoenix-trace.png" alt="Phoenix trace view showing agent.turn with security, guardrail, memory, LLM and tool child spans" loading="lazy">
+      <figcaption>The same trace in Phoenix. The chat's "View trace in Phoenix ↗" link opens it directly, at <code>/projects/&lt;project&gt;/traces/&lt;trace_id&gt;</code>.</figcaption></figure>
+    </section>
+
+    <section id="s6" class="step">
+      <div class="step-head"><span class="num">06</span><h3>Add the Guardrail layer the web UI was missing</h3><span class="span-tag">guardrail.check</span></div>
+      <p>The CLI runs a second Gemini check, a <code>guardrail_agent</code>, that asks "is this safe and on-topic?" before the support agent runs. The web UI had skipped it, so it had one fewer safety layer than the CLI. It's now step 3 of 4. Each message gets a fresh ADK session, which is deleted after the check.</p>
+      <div class="fig-pair">
+        <figure><img src="img/blocked-judge.png" alt="SQL injection blocked by the Security Judge" loading="lazy"><figcaption><code>'; DROP TABLE users; --</code> stops at the Judge.</figcaption></figure>
+        <figure><img src="img/blocked-guardrail.png" alt="Off-topic poem request blocked by the Guardrail" loading="lazy"><figcaption>"Write me a poem…" passes the Judge but stops at the Guardrail.</figcaption></figure>
+      </div>
+      <p>Design choice to discuss in class: like the CLI, this Guardrail <b>lets messages through when it fails</b>. If its JSON can't be parsed, the message is allowed. That keeps the service available, but a broken guardrail stops protecting anything, and nobody notices.</p>
+    </section>
+
+    <section id="s7" class="step">
+      <div class="step-head"><span class="num">07</span><h3>Explain every call: what it is, what it did, where to trace it</h3><span class="span-tag">"What happened" timeline</span></div>
+      <p>The question that prompted this step was: is <code>get-order-status</code> a SQL query, a Python function, or an MCP call? It's all three, in layers. Each row in the timeline now shows:</p>
+      <ul>
+        <li><b>A type badge:</b> <code>in-process</code>, <code>A2A</code>, <code>LLM</code>, <code>MCP</code>, <code>Python fn</code>, plus <code>READ</code> or <code>WRITE</code> for SQL tools, read straight from <code>mcp_toolbox/tools.yaml</code>.</li>
+        <li><b>The path the call took:</b> Gemini function call → ADK → toolbox-core → MCP <code>tools/call</code> → Toolbox :5000 → PostgreSQL. (<code>toolbox-core</code> 1.1 speaks real MCP: JSON-RPC over <code>POST /mcp/</code>.)</li>
+        <li><b>The SQL the Toolbox ran</b>, with <code>$1</code>, <code>$2</code> replaced by the actual values.</li>
+        <li><b>What happened</b> in plain words, how long it took, and the Phoenix span name to look for.</li>
+        <li><b>For each Gemini call:</b> what it decided ("decided to call get-order-status" or "wrote the final answer") and its token counts.</li>
+      </ul>
+      <figure><img src="img/timeline.png" alt="Timeline of one turn: sanitizer, judge, guardrail, memory recall, two Gemini calls, the MCP tool with its SQL and result table, masker, memory save" loading="lazy">
+      <figcaption>One question, every step. Latency is easy to read here: the two A2A calls and the Guardrail take about 1–2 seconds each, while the SQL takes 9 ms.</figcaption></figure>
+    </section>
+
+    <section id="s8" class="step">
+      <div class="step-head"><span class="num">08</span><h3>Make memory a guaranteed step you can watch</h3><span class="span-tag">memory.recall · memory.save</span></div>
+      <div class="label why">What was wrong</div>
+      <ul>
+        <li><b>The web UI never saved anything to Mem0.</b> Only the CLI did, once, when you exited.</li>
+        <li><b>Reading was up to the model.</b> The prompt said "ALWAYS use <code>search_memory</code>", and Gemini sometimes didn't. An "always" instruction in a prompt is only a suggestion.</li>
+      </ul>
+      <div class="label">What changed</div>
+      <p>Memory is no longer a tool the model can skip. The pipeline itself searches Mem0 before every agent call, filters the results, and puts them at the top of the message the agent receives:</p>
+<pre class="code">MEMORY_TOP_K = 5          <span class="c"># ask Mem0 for its 5 best matches</span>
+MEMORY_MIN_SCORE = 0.25   <span class="c"># insert only those scoring at least this</span>
+MEMORY_MAX_CHARS = 500    <span class="c"># reject runaway memories (see below)</span>
+
+found = mem0.search(text, filters={<span class="s">"user_id"</span>: user_id})[<span class="s">"results"</span>][:MEMORY_TOP_K]
+hits  = [m <span class="k">for</span> m <span class="k">in</span> found <span class="k">if</span> m[<span class="s">"score"</span>] &gt;= MEMORY_MIN_SCORE]
+
+agent_input = (<span class="s">"Relevant memories about this customer (from Mem0):\n"</span>
+               + <span class="s">"\n"</span>.join(<span class="s">f"- {m['memory']}"</span> <span class="k">for</span> m <span class="k">in</span> hits)
+               + <span class="s">f"\n\nCustomer message: {clean}"</span>)</pre>
+      <figure><img src="img/recall.png" alt="Mem0 recall step listing memories with relevance scores" loading="lazy">
+      <figcaption>Each memory is shown with its relevance score. Memories below the cutoff are listed separately, marked "not inserted".</figcaption></figure>
+      <div class="label">Three tuning decisions, each prompted by a failure</div>
+      <ul>
+        <li><b>Cutoff 0.25, not 0.3.</b> Mem0's scores are low. Alice's "email only" preference scored 0.30 on a question about contact preferences, right at the edge.</li>
+        <li><b>Save only the user's words.</b> Saving the agent's replies turned its mistakes into "facts". Bob's memories included "Assistant states it cannot set a delivery location", and the agent trusted that over his actual preference.</li>
+        <li><b>Reject memories over 500 characters.</b> Mem0 merges new facts into existing memories using an LLM, and that merge can loop. Alice's order-4 memory grew to 30,100 characters of repeated "(Note: The assistant previously noted…)" text, and it was being inserted into every prompt. Memories that long are now rejected and shown as "corrupted".</li>
+        <li><b>Saves take a minute or two to appear.</b> <code>mem0.add()</code> returns <code>PENDING</code>, and Mem0 extracts the facts in the background, so wait before asking the follow-up question.</li>
+      </ul>
+      <p>The web agent no longer has the <code>search_memory</code> tool. Its prompt swaps the "ALWAYS call search_memory" section for one saying memories arrive already inserted, and to trust the tools over memories for order facts. The CLI keeps its original prompt.</p>
+    </section>
+
+    <section id="s9" class="step">
+      <div class="step-head"><span class="num">09</span><h3>Tell the Guardrail what the agent is for</h3><span class="span-tag">prompts.py · GUARDRAIL_PROMPT_INSTRUCTION</span></div>
+      <div class="label why">What was wrong</div>
+      <p>The Guardrail was wrong in both directions. It <b>blocked</b> "Please remember I work from home, so leave packages at the back door" as personal chat, and <b>allowed</b> "Write me a poem about the stock market". Its prompt never said what the agent was for, and its examples of safe input were "Tell me about the history of AI" and "What are the benefits of cloud computing?"</p>
+      <div class="label">What changed</div>
+      <p>The prompt now says the agent is support for an online shop. It states that personal details shared to get better service are on-topic, names general-assistant tasks (creative writing, coding, trivia) as off-topic, and has shop-specific examples of safe and unsafe input. After the change, all four test messages were handled correctly.</p>
+      <p>Lesson: a guardrail is only as good as its definition of on-topic. A generic safety prompt copied from a tutorial doesn't know what your agent does.</p>
+    </section>
+
+    <section id="findings">
+      <h2 class="sec">What's still broken, on purpose</h2>
+      <p>These are real bugs in the shipped system. They're left in because each one teaches something that a working demo can't.</p>
+      <div class="findings">
+        <div class="finding"><h4>Anyone can read anyone's order</h4>
+          <p><code>get-order-status</code> runs <code>WHERE order_id = $1</code> and never checks who owns the order. Alice asking about order 5 gets Bob's $1,500 gaming laptop. The prompt says "only this user", but a prompt can't enforce access control. The fix belongs in the SQL: <code>AND customer_email = $2</code>.</p>
+          <p class="try">Try: log in as Alice → "What is the status of order 5?"</p></div>
+        <div class="finding"><h4>Memory poisoning</h4>
+          <p>Bob's memories include the agent's own earlier refusal, saved before the user-only fix. When he asks where to leave packages, his back-door preference is inserted alongside that refusal, and the agent goes with the refusal.</p>
+          <p class="try">Try: log in as Bob → "Where should you leave my packages?"</p></div>
+        <div class="finding"><h4>Action types the model makes up</h4>
+          <p><code>action-log</code> takes <code>action_type</code> as free text, so the same intent was logged as <code>RETURN_ORDER</code>, <code>RETURN_ITEM</code> and <code>UPDATE_DELIVERY_PREFERENCE</code> in one afternoon. Anything that later reads <code>actions_log</code> will miss rows. It needs a fixed set of allowed values.</p>
+          <p class="try">Try: SELECT action_type FROM actions_log;</p></div>
+        <div class="finding"><h4>The Judge says "safe" by echoing the input</h4>
+          <p>The Security Judge signals "safe" by returning the message unchanged, and "unsafe" by returning <code>BLOCKED</code>. A Judge that silently does nothing looks exactly like one that approved the message.</p></div>
+        <div class="finding"><h4>The Masker needs Google Cloud DLP</h4>
+          <p>Without <code>GOOGLE_CLOUD_PROJECT</code> set, the Masker changes nothing. Its step still shows "passed", so the diagram looks protected when it isn't.</p></div>
+        <div class="finding"><h4>Memory can grow out of control</h4>
+          <p>Mem0 rewrites memories with an LLM, and it can loop. Two memories reached 30,100 and 16,784 characters before we deleted them. The 500-character limit keeps them out of the prompt, but only a length check catches this. Nothing checks whether a memory is actually correct.</p></div>
+        <div class="finding"><h4>Memories go stale</h4>
+          <p>Mem0 holds "order 4 is processing". Cancel order 4 and the memory and the database disagree. The prompt tells the agent to trust the tools for order facts, but that's a prompt instruction, not a guarantee.</p></div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <h2 class="sec">Class demo script</h2>
+      <p>Put the chat and <code>/architecture</code> side by side, with Phoenix in a third tab. Run <code>./run.sh seed</code> first. Diana, George, Hannah, Charlie, Evan, Fiona and Ian start with no memories. Every password is the user's first name, lowercase.</p>
+      <div class="tablewrap">
+      <table class="demo">
+        <thead><tr><th>User</th><th>Ask</th><th>Point at</th></tr></thead>
+        <tbody>
+          <tr class="group"><td colspan="3">Tools over MCP</td></tr>
+          <tr><td class="who">alice</td><td>What is the status of order 3?</td><td>MCP + READ badges, the call's path, the SQL with 3 filled in, the result table, then click through to the Phoenix trace</td></tr>
+          <tr><td class="who">alice</td><td>Show me all my orders</td><td><code>find-customer-orders</code> returns 4 rows</td></tr>
+          <tr><td class="who">alice</td><td>Cancel my processing order</td><td>A WRITE to <code>action-log</code>: the agent records the request and doesn't change the order itself</td></tr>
+          <tr class="group"><td colspan="3">Memory that grows</td></tr>
+          <tr><td class="who">diana</td><td>Where should you leave my packages?</td><td>Recall: "no memories yet"</td></tr>
+          <tr><td class="who">diana</td><td>Please remember I work from home, so leave packages at the back door, and text me instead of emailing</td><td>The Mem0 save step. Then teach something else for 1–2 minutes.</td></tr>
+          <tr><td class="who">diana</td><td>Where should you leave my packages, and how should you contact me?</td><td>The recalled memories and their scores; the answer uses both facts</td></tr>
+          <tr><td class="who">alice</td><td>How do I prefer to be contacted, and when do I like deliveries?</td><td>A long memory history: the cutoff in action, with some memories listed as not inserted</td></tr>
+          <tr class="group"><td colspan="3">Three layers, three different blocks</td></tr>
+          <tr><td class="who">alice</td><td>'; DROP TABLE users; --</td><td>The Judge turns red. The Guardrail and the agent never run.</td></tr>
+          <tr><td class="who">alice</td><td>Write me a poem about the stock market</td><td>Passes the Judge, stopped by the Guardrail; read its reasoning</td></tr>
+          <tr class="group"><td colspan="3">Find the bug</td></tr>
+          <tr><td class="who">alice</td><td>What is the status of order 5?</td><td>She sees Bob's order. Ask the class where the fix belongs.</td></tr>
+          <tr><td class="who">bob</td><td>Where should you leave my packages?</td><td>Memory poisoning: compare the memories inserted with the answer</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <section id="files">
+      <h2 class="sec">What changed where</h2>
+      <ul class="files">
+        <li>cs_agent/web.py: streaming pipeline, spans, memory, UI</li>
+        <li>cs_agent/static/architecture.svg</li>
+        <li>cs_agent/static/architecture.html</li>
+        <li>cs_agent/telemetry.py: reuse a running Phoenix</li>
+        <li>cs_agent/prompts.py: Guardrail scope</li>
+        <li>cs_agent/agent_cli.py: no more lowercase replies</li>
+        <li>run.sh: Phoenix as its own service</li>
+        <li>docs/build-log/: this page</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<footer>Agent Engineering Bootcamp · Module 4. Every screenshot comes from the running system: gemini-2.5-flash, Mem0 cloud, Phoenix 17.</footer>
+
+<script>
+(function(){
+  const links=[...document.querySelectorAll('#toc a')];
+  const byId=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  if(!('IntersectionObserver' in window)) return;
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ links.forEach(l=>l.classList.remove('on')); const a=byId.get(e.target.id); if(a) a.classList.add('on'); } });
+  },{rootMargin:'-20% 0px -70% 0px'});
+  document.querySelectorAll('main section[id]').forEach(s=>io.observe(s));
+})();
+</script>

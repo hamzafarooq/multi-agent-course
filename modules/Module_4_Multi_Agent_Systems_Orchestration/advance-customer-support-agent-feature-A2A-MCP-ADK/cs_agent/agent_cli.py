@@ -162,9 +162,8 @@ async def _mask_response(text: str) -> str:
             if not masked:
                 span.set_attribute(SpanAttributes.OUTPUT_VALUE, text[:500])
                 return text
-            lower_masked = masked.lower()
-            span.set_attribute(SpanAttributes.OUTPUT_VALUE, lower_masked[:500])
-            return lower_masked
+            span.set_attribute(SpanAttributes.OUTPUT_VALUE, masked[:500])
+            return masked
         except Exception as exc:
             span.set_attribute(SpanAttributes.OUTPUT_VALUE, f"mask_skipped: {exc}")
             logger.warning("Mask A2A agent unreachable, returning raw text: %s", exc)

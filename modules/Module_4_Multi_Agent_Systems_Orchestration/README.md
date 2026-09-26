@@ -165,7 +165,7 @@ combining sources but isn't a ratio an analyst would use.
 
 **[`advance-customer-support-agent-feature-A2A-MCP-ADK/`](advance-customer-support-agent-feature-A2A-MCP-ADK/)**
 
-A CLI customer-support chatbot that ties all three protocols together in one running system. It's a
+A customer-support agent, with both a CLI and a live web UI, that ties all three protocols together in one running system. It's a
 deliberately small but realistic example: a support agent that can look up orders, modify them under
 business rules, and remember past conversations — wrapped in a security pipeline that runs as its own
 set of agents.
@@ -177,7 +177,11 @@ How the pieces map to the module's concepts:
 | **ADK** | The support agent, the Security Judge, and the Data Masker are all ADK `LlmAgent`s (Gemini 2.5 Flash); the Judge → Mask pipeline is a `SequentialAgent`. |
 | **A2A** | The Judge (port `10002`) and Masker (port `10003`) run as standalone A2A servers; the CLI calls them over JSON-RPC for every request and refuses to start if they're unreachable. |
 | **MCP** | Database operations (`get-order-status`, `find-customer-orders`, `update-order-status`) are exposed through the **MCP Toolbox** server, not hard-coded into the agent. |
-| **Security pipeline** | Input sanitization → an A2A Security Judge (100+ regex patterns) → the agent → A2A PII masking via Google Cloud DLP on the way out. |
+| **Security pipeline** | Input sanitization → an A2A Security Judge (100+ regex patterns) → a Guardrail agent (safe and on-topic?) → the agent → A2A PII masking via Google Cloud DLP on the way out. |
+| **Shared memory** | Mem0: recalled before every agent call and shown with relevance scores; the user's message is saved after every turn. |
+| **Observability** | Arize Phoenix: one trace per message, with a span for every layer, Gemini call and MCP tool call. The web UI links each answer to its trace. |
+
+Run `./run.sh web` inside the project for the chat (`:8000`), the live architecture view (`/architecture`) and Phoenix (`:6006`). **[`docs/build-log/index.html`](advance-customer-support-agent-feature-A2A-MCP-ADK/docs/build-log/index.html)** walks through how each piece was built, which bugs are left in on purpose, and a class demo script.
 
 The project's own [`README.md`](advance-customer-support-agent-feature-A2A-MCP-ADK/README.md) has the
 full prerequisites, step-by-step setup (PostgreSQL, MCP Toolbox, A2A servers, the CLI), the request

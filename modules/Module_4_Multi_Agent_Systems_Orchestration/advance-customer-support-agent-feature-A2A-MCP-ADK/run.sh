@@ -54,6 +54,9 @@ TOOLBOX_LOG="$RUN_DIR/toolbox.log"
 A2A_LOG="$RUN_DIR/a2a.log"
 TOOLBOX_PID="$RUN_DIR/toolbox.pid"
 A2A_PID="$RUN_DIR/a2a.pid"
+PHOENIX_PORT="6006"
+PHOENIX_LOG="$RUN_DIR/phoenix.log"
+PHOENIX_PID="$RUN_DIR/phoenix.pid"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -442,6 +445,18 @@ start_services() {
   wait_for "http://localhost:$MASK_PORT/.well-known/agent.json" "Data Masker" 40 \
     || die "Mask A2A server did not come up — see $A2A_LOG"
 
+  # Phoenix outlives the agent (not in stop_bg) so traces persist across restarts;
+  # it stores them in ~/.phoenix/phoenix.db. `./run.sh stop` shuts it down.
+  if port_up "http://localhost:$PHOENIX_PORT/healthz"; then
+    ok "Phoenix already running on :$PHOENIX_PORT"
+  else
+    say "Starting Phoenix on :$PHOENIX_PORT"
+    ( exec phoenix serve >"$PHOENIX_LOG" 2>&1 ) &
+    echo $! > "$PHOENIX_PID"
+    wait_for "http://localhost:$PHOENIX_PORT/healthz" "Phoenix" 60 \
+      || die "Phoenix did not come up — see $PHOENIX_LOG"
+  fi
+
   # Tear down background services when the foreground process exits.
   trap 'echo; say "Shutting down services"; stop_bg; ok "stopped"' EXIT INT TERM
 }
@@ -472,6 +487,8 @@ cmd_web() {
 cmd_stop() {
   say "Stopping background services"
   stop_bg
+  [ -f "$PHOENIX_PID" ] && { kill "$(cat "$PHOENIX_PID")" 2>/dev/null || true; rm -f "$PHOENIX_PID"; }
+  kill_port "$PHOENIX_PORT"
   if pg_running; then
     # shellcheck disable=SC1091
     source "$(conda info --base)/etc/profile.d/conda.sh"; conda activate "$ENV_NAME" 2>/dev/null || true
@@ -486,6 +503,7 @@ cmd_status() {
   port_up "http://127.0.0.1:$TOOLBOX_PORT/api/toolset/cs_agent_tools" && ok "MCP Toolbox: up (:$TOOLBOX_PORT)" || warn "MCP Toolbox: down"
   port_up "http://localhost:$JUDGE_PORT/.well-known/agent.json" && ok "Security Judge: up (:$JUDGE_PORT)" || warn "Security Judge: down"
   port_up "http://localhost:$MASK_PORT/.well-known/agent.json"  && ok "Data Masker: up (:$MASK_PORT)"   || warn "Data Masker: down"
+  port_up "http://localhost:$PHOENIX_PORT/healthz" && ok "Phoenix: up (:$PHOENIX_PORT)" || warn "Phoenix: down"
 }
 
 cmd_logs() { tail -n 40 -F "$TOOLBOX_LOG" "$A2A_LOG"; }
