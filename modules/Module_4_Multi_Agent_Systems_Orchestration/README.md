@@ -189,6 +189,18 @@ flow, and a troubleshooting guide. Start there once you've got the conceptual pi
 
 ---
 
+## Assignment 3: Customer Support
+
+**[`Assignment_3_Customer_Support/`](Assignment_3_Customer_Support/README.md)** — build the project above **from an
+empty folder**: first as a CLI, then as a streaming web UI over the same pipeline. No starter code, only Markdown:
+a plain-language [`README`](Assignment_3_Customer_Support/README.md), the [`PRD`](Assignment_3_Customer_Support/PRD.md),
+an exhaustive [`SPEC`](Assignment_3_Customer_Support/SPEC.md) for coding agents, a ten-stage
+[build guide](Assignment_3_Customer_Support/TECHNICAL.md) where the student makes a decision, runs a check and logs
+what happened at every stage, and seven [gold sets](Assignment_3_Customer_Support/EVALS.md) that grade every guard
+on both sides: attacks blocked **and** real customers not blocked.
+
+---
+
 ## Environment Setup
 
 The capstone targets **Python 3.12+**. Create an isolated conda environment before installing:
