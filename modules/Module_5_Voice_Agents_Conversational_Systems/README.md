@@ -14,7 +14,7 @@ honestly on cost, latency, and capability.
 | [`advance-customer-support-agent-feature-A2A-MCP-ADK_cascading`](advance-customer-support-agent-feature-A2A-MCP-ADK_cascading/) | **Cascade voice agent** — STT → sanitize → A2A judge (gate) → ADK agent (+MCP tools, Mem0) → TTS. A pipeline of separately-owned stages. |
 | [`advance-customer-support-agent-feature-A2A-MCP-ADK-s2s`](advance-customer-support-agent-feature-A2A-MCP-ADK-s2s/) | **Speech-to-speech voice agent** — Gemini Live, native audio in/out, tools via function calling, judge as a concurrent monitor. One model instead of a pipeline. |
 | [`benchmarking_voice_agents`](benchmarking_voice_agents/) | **Cascade vs. S2S benchmark** — runs the *same* agent through both architectures on 15 audio queries and compares cost, latency, and agentic capability. |
-| [Assignment](#assignment-optional--a-production-style-voice-reservation-agent-for-hotels) | **Optional** — **Aurora Hotel voice reservation agent** — build a production-style cascade with booking tools, front-desk transfer, guardrails, telemetry, and evals. See [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/). |
+| [Assignment](#assignment-optional-a-production-style-voice-reservation-agent-for-hotels) | **Optional.** **Aurora Hotel voice reservation agent**: build a production-style cascade with booking tools, front-desk transfer, guardrails, telemetry, and evals. See [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/). |
 | [`bonus/`](bonus/) 🎁 | **Optional** — LLM inference optimization: 4-bit quantization + KV caching, and speculative decoding from scratch. Not required to finish the module. |
 
 > **Note:** Like Module 4, this module is taught primarily through its hands-on projects — the
@@ -58,11 +58,11 @@ conda env, Postgres, seed data, and `.env`), then run the `-s2s` variant, then c
 
 ---
 
-## Assignment (optional) — A Production-Style Voice Reservation Agent for Hotels
+## Assignment (optional): A Production-Style Voice Reservation Agent for Hotels
 
-> **Optional.** Not required to complete the module — focus on your Demo Day capstone first, and come back to this if you have time.
+> **Optional.** Not required to complete the module. Focus on your Demo Day capstone first, and come back to this if you have time.
 
-**Project:** [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/) — **Aurora Hotel**, a cascade voice agent for room reservations. Runs offline in mock mode; no API key needed.
+**Project:** [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/): **Aurora Hotel**, a cascade voice agent for room reservations. Runs offline in mock mode; no API key needed.
 
 - **4.1** Understand the voice agent architecture (STT → LLM → tools → TTS).
 - **4.2** Build the reservation workflow with structured tool calling.
