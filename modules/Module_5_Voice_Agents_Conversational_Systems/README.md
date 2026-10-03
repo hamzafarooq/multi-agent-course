@@ -64,10 +64,10 @@ conda env, Postgres, seed data, and `.env`), then run the `-s2s` variant, then c
 
 **Project:** [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/): **Aurora Hotel**, a cascade voice agent for room reservations. Runs offline in mock mode; no API key needed.
 
-- **4.1** Understand the voice agent architecture (STT → LLM → tools → TTS).
-- **4.2** Build the reservation workflow with structured tool calling.
-- **4.3** Handle front-desk transfer, off-topic redirects, and call endings.
-- **4.4** Analyze latency, observability, fallbacks, and production readiness.
+- Understand the voice agent architecture (STT → LLM → tools → TTS).
+- Build the reservation workflow with structured tool calling.
+- Handle front-desk transfer, off-topic redirects, and call endings.
+- Analyze latency, observability, fallbacks, and production readiness.
 
 Start with the assignment's [`README.md`](../../FDE-01-assignments/Assignment_2_voice_agent/README.md) and [`RUNBOOK.md`](../../FDE-01-assignments/Assignment_2_voice_agent/RUNBOOK.md).
 
