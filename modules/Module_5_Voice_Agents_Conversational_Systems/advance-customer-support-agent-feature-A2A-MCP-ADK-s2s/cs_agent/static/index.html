@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Customer Support · Speech to Speech</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --panel:#ffffff; --panel-2:#f1f3f6; --line:#e4e7ec;
+    --text:#1a1d23; --muted:#6b7280; --accent:#0f9aae; --accent-2:#0c8294;
+    --user:#eef1f6; --tool:#f4f6f9; --live:#e5484d;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  header .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  header h1{font-size:15px;font-weight:600;margin:0;letter-spacing:.2px}
+  header h1 small{font-weight:500;color:var(--muted)}
+  header .who{margin-left:auto;color:var(--muted);font-size:13px}
+  header .logout{margin-left:14px;background:transparent;color:var(--muted);border:1px solid var(--line);
+       border-radius:9px;padding:5px 12px;font-size:13px;font-weight:500;cursor:pointer}
+  header .logout:hover{color:var(--text);border-color:var(--muted)}
+  header a.logout{text-decoration:none;display:inline-block}
+  main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .col{width:100%;max-width:760px;margin:0 auto;padding:24px 20px 170px}
+  .msg{margin:0 0 22px}
+  .msg .role{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+  .msg .role .chan{margin-left:6px;font-size:10px;letter-spacing:.4px;background:var(--panel-2);border:1px solid var(--line);
+       border-radius:4px;padding:0 5px;text-transform:none}
+  .bubble{padding:14px 16px;border-radius:14px;border:1px solid var(--line)}
+  .user .bubble{background:var(--user)}
+  .assistant .bubble{background:var(--panel)}
+  .assistant .bubble :first-child{margin-top:0}
+  .assistant .bubble :last-child{margin-bottom:0}
+  .bubble h1,.bubble h2,.bubble h3{font-size:1.05em;margin:.6em 0 .3em}
+  .bubble ul,.bubble ol{margin:.3em 0;padding-left:1.3em}
+  .bubble code{background:#eef1f6;padding:2px 6px;border-radius:6px;font-size:.9em}
+  .bubble pre{background:#eef1f6;padding:12px;border-radius:10px;overflow:auto}
+  .steps{margin:10px 0 0;border:1px solid var(--line);border-radius:12px;background:var(--tool);overflow:hidden}
+  .steps summary{cursor:pointer;padding:9px 13px;color:var(--muted);font-size:13px;user-select:none;list-style:none;
+       display:flex;align-items:center;gap:6px}
+  .steps summary::-webkit-details-marker{display:none}
+  .steps summary .pill{display:inline-block;background:var(--panel-2);border:1px solid var(--line);
+       border-radius:999px;padding:1px 9px;margin-left:6px;font-size:12px;color:var(--accent)}
+  .steps .trace-link{margin-left:auto;color:var(--accent);text-decoration:none;font-weight:600}
+  .steps .trace-link:hover{text-decoration:underline}
+  .step{padding:10px 14px;border-top:1px solid var(--line);font-size:13px}
+  .step.bad{background:#fdf3f2}
+  .step .call{display:flex;align-items:center;gap:8px;color:var(--accent)}
+  .step .call b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600;color:var(--text)}
+  .step .state{margin-left:auto;font-size:11px;color:var(--muted)}
+  .step .res{color:var(--muted);white-space:pre-wrap;word-break:break-word;margin-top:4px;
+       font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .step .res.text{font-family:inherit}
+  .ic{width:14px;text-align:center;font-weight:700;flex:none}
+  .ic.ok{color:#1f7a3a}.ic.no{color:#a23b30}
+  .kb{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.4px;padding:1px 7px;border-radius:5px;flex:none}
+  .kb-mcp{background:#e0f0ff;color:#1f5f99}.kb-py{background:#efe9fb;color:#5b3d99}
+  .kb-a2a{background:#e3f6f8;color:#0c6f7e}.kb-local{background:#eef1f6;color:#4b5563}
+  .kb-llm{background:#fff4d6;color:#8a6100}.kb-voice{background:#fde8f3;color:#9d2b6b}
+  .kb-read{background:#e3f6e8;color:#1f7a3a}.kb-write{background:#fde8e6;color:#a23b30}
+  .what{margin:5px 0 0 22px;color:var(--text)}
+  .sub{margin:4px 0 0 22px;font-size:11.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+  .sub .meta{margin-left:auto}
+  .sub code{font-size:11px;background:var(--panel-2);padding:0 5px;border-radius:4px}
+  .path{margin:5px 0 0 22px;font-size:12px;color:var(--muted)}
+  .path .arr{color:var(--accent)}
+  .step .args{margin-left:22px}
+  .sql{margin:6px 0 0 22px;font-size:12px}
+  .sql summary{cursor:pointer;color:var(--muted);list-style:none}
+  .sql summary::-webkit-details-marker{display:none}
+  .sql .legend{margin-left:8px;font-size:11px;opacity:.8}
+  .sql pre{margin:6px 0 0;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;
+       font:11.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap}
+  .sql mark{background:#fff4d6;color:#8a6100;border-radius:3px;padding:0 2px}
+  .step > div:has(.rtable){margin-left:22px}
+  .mems{margin:6px 0 0 22px;padding:0;list-style:none;font-size:12.5px}
+  .mems li{display:flex;gap:8px;padding:4px 8px;background:var(--panel);border:1px solid var(--line);border-radius:7px;margin-top:4px}
+  .mems .score{flex:none;font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;color:#5b3d99;background:#efe9fb;border-radius:4px;padding:1px 5px;height:fit-content}
+  .args{display:grid;grid-template-columns:max-content 1fr;gap:3px 14px;margin:6px 0 0 19px;font-size:12.5px}
+  .args .k{color:var(--muted)}
+  .args .v{color:var(--text);word-break:break-word}
+  .args.nested{margin:0;padding-left:10px;border-left:2px solid var(--line)}
+  .spin{width:11px;height:11px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;
+       animation:spin .7s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .typing{color:var(--muted);font-size:13px}
+  .typing .spin{display:inline-block;vertical-align:-1px;margin-right:6px}
+  .rtable{width:100%;border-collapse:collapse;margin-top:8px;font-size:12.5px;background:var(--panel);
+       border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .rtable th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;
+       letter-spacing:.5px;padding:6px 10px;background:var(--panel-2);border-bottom:1px solid var(--line)}
+  .rtable td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .rtable tr:last-child td{border-bottom:0}
+  .rtable td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.3px}
+  .b-PROCESSING{background:#fff4d6;color:#8a6100}.b-SHIPPED{background:#e0f0ff;color:#1f5f99}
+  .b-DELIVERED{background:#e3f6e8;color:#1f7a3a}.b-CANCELLED{background:#fde8e6;color:#a23b30}
+  .b-RETURNED{background:#efe9fb;color:#5b3d99}
+  .raw{margin-top:6px;font-size:11.5px;color:var(--muted)}
+  .raw summary{cursor:pointer;list-style:none}
+  .raw pre{margin:6px 0 0;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;
+       max-height:260px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .blocked .bubble{border-color:#e0a59f;background:#fdecea;color:#a23b30}
+  footer{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,var(--bg) 22%);padding:14px 20px 18px}
+  .inwrap{max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:flex-end;
+       background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px 14px}
+  textarea{flex:1;resize:none;border:0;outline:0;background:transparent;color:var(--text);font:inherit;max-height:140px;padding:8px 0}
+  button{background:var(--accent);color:#ffffff;border:0;border-radius:11px;padding:10px 16px;font-weight:700;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  .vbtn{flex:0 0 auto;background:var(--panel-2);color:var(--text);border:1px solid var(--line);
+       border-radius:11px;padding:10px 14px;font-size:15px;font-weight:600;cursor:pointer}
+  .vbtn:hover{border-color:var(--accent)}
+  .vbtn.live{background:var(--accent);border-color:var(--accent);color:#fff}
+  .vbtn.on{background:#e0a59f;border-color:#e0a59f;color:#7a2d24}
+  .status{max-width:760px;margin:8px auto 0;color:var(--muted);font-size:13px;text-align:center;min-height:18px}
+  .hint{max-width:760px;margin:2px auto 0;color:var(--muted);font-size:12px;text-align:center}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+  .chips .label{flex-basis:100%;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 14px;
+       font-size:13px;color:var(--text);cursor:pointer;transition:border-color .15s,color .15s}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  /* login */
+  .login{margin:auto;max-width:380px;width:100%;background:var(--panel);border:1px solid var(--line);
+       border-radius:16px;padding:26px}
+  .login h2{margin:0 0 4px;font-size:18px}
+  .login p{margin:0 0 18px;color:var(--muted);font-size:13px}
+  .login input{width:100%;padding:11px 13px;margin:6px 0;background:var(--panel-2);border:1px solid var(--line);
+       border-radius:10px;color:var(--text);font:inherit;outline:0}
+  .login button{width:100%;margin-top:10px;padding:12px}
+  .err{color:#a23b30;font-size:13px;margin-top:8px;min-height:18px}
+  .seed{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.7}
+  .seed code{background:var(--panel-2);padding:1px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+<header>
+  <span class="dot"></span>
+  <h1>Customer Support Agent <small>· speech-to-speech voice agent (Gemini Live)</small></h1>
+  <span class="who" id="who"></span>
+  <a id="archLink" class="logout" href="/architecture" target="arch">Architecture ↗</a>
+  <button id="logout" class="logout" style="display:none">Sign out</button>
+</header>
+
+<main>
+  <div class="col" id="col">
+    <div class="login" id="login">
+      <h2>Sign in</h2>
+      <p>Use a seeded demo account. Password is the first name, lowercase.</p>
+      <input id="email" placeholder="email" value="alice.jones@example.com" autocomplete="off"/>
+      <input id="password" placeholder="password" type="password" value="alice"/>
+      <button id="loginBtn">Sign in</button>
+      <div class="err" id="loginErr"></div>
+      <div class="seed">Try: <code>alice.jones@example.com</code> / <code>alice</code> ·
+        <code>bob.smith@techmail.com</code> / <code>bob</code> ·
+        <code>julia.child@kitchen.com</code> / <code>julia</code></div>
+    </div>
+  </div>
+</main>
+
+<footer id="footer" style="display:none">
+  <div class="inwrap">
+    <textarea id="input" rows="1" placeholder="Ask about your orders… or tap the mic"></textarea>
+    <button id="send">Send</button>
+  </div>
+  <div class="status" id="voiceStatus"></div>
+  <div class="hint">Native speech-to-speech: audio goes straight into the Live model and audio comes back. The A2A Security Judge runs post-hoc on the transcript; typed turns are sanitized and judged before the model sees them.</div>
+</footer>
+
+<script>
+// Tiny self-contained markdown renderer (no external CDN — works offline/behind CSP).
+function md(src){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inline=s=>esc(s)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*]+)\*/g,'$1<em>$2</em>');
+  const lines=(src||'').split(/\r?\n/);
+  let html='',list=null;
+  const closeList=()=>{if(list){html+=`</${list}>`;list=null;}};
+  for(let raw of lines){
+    const line=raw.trimEnd();
+    let m;
+    if(!line.trim()){closeList();continue;}
+    if(m=line.match(/^(#{1,3})\s+(.*)$/)){closeList();const n=m[1].length;html+=`<h${n}>${inline(m[2])}</h${n}>`;continue;}
+    if(m=line.match(/^\s*[-*]\s+(.*)$/)){if(list!=='ul'){closeList();list='ul';html+='<ul>';}html+=`<li>${inline(m[1])}</li>`;continue;}
+    if(m=line.match(/^\s*\d+\.\s+(.*)$/)){if(list!=='ol'){closeList();list='ol';html+='<ol>';}html+=`<li>${inline(m[1])}</li>`;continue;}
+    closeList();html+=`<p>${inline(line)}</p>`;
+  }
+  closeList();
+  return html;
+}
+let USER=null;
+const col=document.getElementById('col');
+const footer=document.getElementById('footer');
+const who=document.getElementById('who');
+
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstChild;}
+function scroll(){const m=document.querySelector('main');requestAnimationFrame(()=>{m.scrollTop=m.scrollHeight;});}
+function esc(v){return String(v).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+function label(k){return k.replace(/_/g,' ');}
+
+// ---- chat bubbles -----------------------------------------------------------
+// `channel` ("voice") adds a small tag to the role line so typed and spoken turns
+// are told apart in the transcript.
+function addUser(text,channel){
+  const n=el(`<div class="msg user"><div class="role">You${channel?`<span class="chan">${esc(channel)}</span>`:''}</div><div class="bubble"></div></div>`);
+  n.querySelector('.bubble').textContent=text; col.appendChild(n); scroll(); return n;
+}
+function addAssistant(channel){
+  const node=el(`<div class="msg assistant"><div class="role">Agent${channel?`<span class="chan">${esc(channel)}</span>`:''}</div><div class="steps-host"></div><div class="bubble"><span class="typing"><span class="spin"></span>thinking…</span></div></div>`);
+  col.appendChild(node); scroll(); return node;
+}
+// Replace the bubble's "thinking…" status; never overwrite an answer already streaming in.
+function setStatus(node,t){
+  const b=node.querySelector('.bubble');
+  if(b.querySelector('.typing')||!b.textContent.trim()) b.innerHTML=`<span class="typing"><span class="spin"></span>${esc(t)}…</span>`;
+}
+
+// ---- "What happened" panel: one row per pipeline step -----------------------
+function cell(k,v){
+  if(v==null) return '<td>–</td>';
+  if(k==='status') return `<td><span class="badge b-${esc(v)}">${esc(v)}</span></td>`;
+  if(/amount|price|total/.test(k)&&!isNaN(v)) return `<td class="num">$${Number(v).toFixed(2)}</td>`;
+  if(/date|timestamp/.test(k)&&!isNaN(Date.parse(v))) return `<td>${new Date(v).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}</td>`;
+  if(Array.isArray(v)) return `<td>${v.map(i=>i&&i.product?`${i.qty||1}× ${esc(i.product)}`:esc(JSON.stringify(i))).join('<br>')}</td>`;
+  if(typeof v==='object') return `<td>${esc(JSON.stringify(v))}</td>`;
+  return `<td${typeof v==='number'?' class="num"':''}>${esc(v)}</td>`;
+}
+function table(rows){
+  const keys=[...new Set(rows.flatMap(r=>Object.keys(r)))];
+  return `<table class="rtable"><thead><tr>${keys.map(k=>`<th>${esc(label(k))}</th>`).join('')}</tr></thead><tbody>${
+    rows.map(r=>`<tr>${keys.map(k=>cell(k,r[k])).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function renderResult(res){
+  const wrap=document.createElement('div');
+  let html;
+  if(Array.isArray(res)&&res.length&&res.every(r=>r&&typeof r==='object')) html=table(res);
+  else if(res&&typeof res==='object'&&!Array.isArray(res)) html=table([res]);
+  else if(Array.isArray(res)&&!res.length) html='<div class="res text">No results</div>';
+  else html=`<div class="res text">${esc(res)}</div>`;
+  wrap.innerHTML=html+(typeof res==='object'?`<details class="raw"><summary>Raw JSON</summary><pre>${esc(JSON.stringify(res,null,2))}</pre></details>`:'');
+  return wrap;
+}
+function stepsPanel(node){
+  let d=node.querySelector('.steps');
+  if(!d){
+    d=el(`<details class="steps" open><summary><span>What happened</span><span class="pill">0</span><a class="trace-link" target="phoenix" style="display:none">View trace in Phoenix ↗</a></summary></details>`);
+    d.querySelector('.trace-link').addEventListener('click',e=>e.stopPropagation());
+    node.querySelector('.steps-host').appendChild(d);
+  }
+  return d;
+}
+function setTrace(node,t){
+  const a=stepsPanel(node).querySelector('.trace-link');
+  a.href=t.url; a.style.display='inline'; a.title=`trace ${t.trace_id}`;
+}
+function argVal(v){
+  if(v==null) return '–';
+  if(Array.isArray(v)) return v.map(i=>i&&i.product?`${i.qty||1}× ${esc(i.product)}`:esc(typeof i==='object'?JSON.stringify(i):i)).join(', ');
+  if(typeof v==='object') return `<div class="args nested">${argRows(v)}</div>`;
+  return esc(v);
+}
+function argRows(o){return Object.entries(o).map(([k,v])=>`<div class="k">${esc(label(k))}</div><div class="v">${argVal(v)}</div>`).join('');}
+const KIND_CLASS={'MCP':'mcp','Python fn':'py','A2A':'a2a','in-process':'local','LLM':'llm','Voice':'voice'};
+function badge(t){return `<span class="kb kb-${KIND_CLASS[t]||'local'}">${esc(t)}</span>`;}
+function meta(span,ms,extra){
+  return `<span class="meta">${extra?esc(extra)+' · ':''}${ms!=null?ms.toLocaleString()+' ms · ':''}${span?`span <code>${esc(span)}</code>`:''}</span>`;
+}
+function addRow(node,html,key){
+  const d=stepsPanel(node);
+  const row=el(`<div class="step"${key?` data-key="${key}"`:''}>${html}</div>`);
+  d.appendChild(row);
+  d.querySelector('.pill').textContent=d.querySelectorAll('.step').length;
+  scroll(); return row;
+}
+const STAGE_ROWS={stt:['Speech to text','Voice'],sanitize:['Sanitizer','in-process'],judge:['Security Judge','A2A'],
+  guardrail:['Guardrail','in-process'],recall:['Mem0 recall','Python fn'],mask:['Data Masker','A2A'],
+  save:['Mem0 save','Python fn'],tts:['Text to speech','Voice']};
+function stageStart(node,e){
+  const r=STAGE_ROWS[e.key]; if(!r) return;
+  // Only one "running…" row per key at a time (a stage may be announced more than once).
+  const open=[...node.querySelectorAll(`.step[data-key="${e.key}"]`)].find(s=>s.querySelector('.spin'));
+  if(open) return;
+  addRow(node,`<div class="call"><span class="spin"></span>${badge(r[1])}<b>${esc(e.title||r[0])}</b><span class="state">running…</span></div>`,e.key);
+}
+function stageDone(node,e){
+  const row=[...node.querySelectorAll(`.step[data-key="${e.key}"]`)].find(s=>s.querySelector('.spin'))||addRow(node,'',e.key);
+  const ok=e.status==='passed';
+  row.classList.toggle('bad',!ok);
+  row.innerHTML=`<div class="call"><span class="ic ${ok?'ok':'no'}">${ok?'✓':'✕'}</span>${badge(e.kind)}<b>${esc(e.title)}</b><span class="state">${ok?'passed':'blocked'}</span></div>
+    <div class="what">${esc(e.detail)}</div>
+    ${e.memories&&e.memories.length?`<ul class="mems">${e.memories.map(m=>`<li><span class="score">${(m.score||0).toFixed(2)}</span>${esc(m.memory)}</li>`).join('')}</ul>`:''}
+    <div class="sub">${esc(e.runs||'')}${meta(e.span,e.ms,e.extra)}</div>`;
+}
+function addLLM(node,e){
+  const tok=e.tokens_in!=null?`${e.tokens_in.toLocaleString()} in / ${(e.tokens_out||0).toLocaleString()} out tokens`:'';
+  addRow(node,`<div class="call"><span class="ic ok">✓</span>${badge('LLM')}<b>${esc(e.model)}</b><span class="state">done</span></div>
+    <div class="what">${esc(e.detail)}</div>
+    <div class="sub">${esc(e.runs||'Support Agent model call')}${meta(e.span,e.ms,tok)}</div>`);
+}
+function sqlWithArgs(info,args){
+  const params=info.params||[];
+  let sql=esc(info.statement).replace(/\$(\d+)/g,(m,i)=>{const n=params[i-1];const v=args[n];
+    return `<mark title="${esc(n)}">${esc(JSON.stringify(v))}</mark>`;});
+  const legend=params.map((n,i)=>`$${i+1} = ${esc(n)}`).join(' · ');
+  return `<details class="sql"><summary>SQL the Toolbox ran <span class="legend">${legend}</span></summary><pre>${sql}</pre></details>`;
+}
+function addToolCall(node,c){
+  const info=c.info||{};
+  const has=Object.keys(c.args||{}).length;
+  const path=(info.path||[]).map(esc).join(' <span class="arr">→</span> ');
+  const access=info.access?`<span class="kb kb-${info.access==='WRITE'?'write':'read'}">${info.access}</span>`:'';
+  const row=addRow(node,`<div class="call"><span class="spin"></span>${badge(info.kind||'tool')}${access}<b>${esc(c.name)}</b><span class="state">running…</span></div>
+    ${path?`<div class="path">${path}</div>`:''}
+    ${has?`<div class="args">${argRows(c.args)}</div>`:''}
+    ${info.statement?sqlWithArgs(info,c.args||{}):''}
+    <div class="sub">${esc(info.runs||'')}${meta(c.span,null)}</div>`);
+  row.dataset.id=c.id;
+}
+function addToolResult(node,r){
+  const step=node.querySelector(`.step[data-id="${r.id}"]:not([data-done])`)||[...node.querySelectorAll('.step[data-id]')].reverse().find(s=>!s.dataset.done);
+  if(!step) return;
+  step.dataset.done=1;
+  const sp=step.querySelector('.spin'); if(sp) sp.outerHTML='<span class="ic ok">✓</span>';
+  step.querySelector('.state').textContent=r.ms!=null?`${(r.ms||0).toLocaleString()} ms`:'done';
+  const n=Array.isArray(r.result)?`returned ${r.result.length} row${r.result.length===1?'':'s'}`:r.result&&typeof r.result==='object'?'returned 1 row':'returned a result';
+  step.appendChild(el(`<div class="what">${n}</div>`));
+  if(r.result!=null) step.appendChild(renderResult(r.result));
+  scroll();
+}
+
+// The architecture tab (/architecture) listens on this channel and lights up the diagram.
+const archBus=new BroadcastChannel('cs-agent');
+const archEvent=e=>archBus.postMessage(e);
+
+// One renderer for every pipeline event, whichever transport delivered it (the NDJSON
+// fetch for typed turns, or the voice WebSocket). Event types match Module 4's web UI.
+function renderEvent(node,e){
+  archEvent(e);
+  const bubble=node.querySelector('.bubble');
+  if(e.type==='stage'){ setStatus(node,e.stage); stageStart(node,e); }
+  else if(e.type==='trace') setTrace(node,e);
+  else if(e.type==='step') stageDone(node,e);
+  else if(e.type==='llm') addLLM(node,e);
+  else if(e.type==='tool_call') addToolCall(node,e);
+  else if(e.type==='tool_result') addToolResult(node,e);
+  else if(e.type==='delta'){ bubble.innerHTML=md(e.text||''); scroll(); }
+  else if(e.type==='error') bubble.textContent=e.error||e.message||'Error';
+  else if(e.type==='final'){ if(e.blocked) node.classList.add('blocked'); bubble.innerHTML=md(e.response||''); scroll(); }
+}
+
+// ---- login / chips / send -----------------------------------------------------
+async function login(){
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  const err=document.getElementById('loginErr'); err.textContent='';
+  const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email,password})});
+  const d=await r.json();
+  if(!d.ok){err.textContent=d.error||'Login failed';return;}
+  USER=d.user_id;
+  who.textContent=`${d.full_name}${d.is_premium?' · premium':''}${d.model?' · '+d.model:''}`;
+  document.getElementById('login').remove();
+  document.getElementById('logout').style.display='inline-block';
+  footer.style.display='block';
+  col.appendChild(el(`<div class="msg assistant"><div class="role">Agent</div><div class="bubble">Hi ${esc(d.full_name)}! Tap the mic to talk, or type below. Ask about your orders — status, history, cancellations, or address changes.</div></div>`));
+  renderChips();
+  document.getElementById('input').focus();
+  window.dispatchEvent(new CustomEvent('cs:login',{detail:d}));
+}
+
+const SAMPLES=["Where is my last order?", "Show me all my orders", "Cancel my processing order", "I want to return order 1", "'; DROP TABLE users; --"];
+function renderChips(){
+  const wrap=el(`<div class="chips" id="chips"><div class="label">Try asking</div></div>`);
+  SAMPLES.forEach(q=>{
+    const c=el(`<button class="chip"></button>`); c.textContent=q;
+    c.onclick=()=>{ const i=document.getElementById('input'); i.value=q; send(); };
+    wrap.appendChild(c);
+  });
+  col.appendChild(wrap); scroll();
+}
+
+// Typed turn over HTTP: the server streams one JSON event per line.
+async function fetchChat(text){
+  document.getElementById('send').disabled=true;
+  addUser(text);
+  const node=addAssistant();
+  const bubble=node.querySelector('.bubble');
+  setStatus(node,'Sending');
+  try{
+    const r=await fetch('/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({user_id:USER,message:text})});
+    if(!r.ok){const d=await r.json().catch(()=>({}));bubble.textContent=d.error||'Error';}
+    else{
+      const reader=r.body.getReader(), dec=new TextDecoder(); let buf='';
+      archEvent({type:'start',message:text});
+      for(;;){
+        const {value,done}=await reader.read(); if(done) break;
+        buf+=dec.decode(value,{stream:true});
+        let i; while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i).trim(); buf=buf.slice(i+1); if(line) renderEvent(node,JSON.parse(line));}
+      }
+      if(buf.trim()) renderEvent(node,JSON.parse(buf));
+    }
+  }catch(e){bubble.textContent='Network error: '+e;}
+  document.getElementById('send').disabled=false; scroll();
+}
+
+// A voice script may take over typed sends (e.g. speech-to-speech routes typed text
+// through the same Live session). Default: the HTTP stream above.
+let sendImpl=fetchChat;
+function setSendImpl(fn){ sendImpl=fn; }
+async function send(){
+  const input=document.getElementById('input');
+  const text=input.value.trim(); if(!text||!USER) return;
+  const chips=document.getElementById('chips'); if(chips) chips.remove();
+  input.value=''; input.style.height='auto';
+  await sendImpl(text);
+  input.focus();
+}
+
+async function logout(){
+  window.dispatchEvent(new CustomEvent('cs:logout'));
+  try{ if(USER) await fetch('/api/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:USER})}); }
+  catch(e){}
+  location.reload();
+}
+document.getElementById('logout').onclick=logout;
+// Closing the tab / navigating away is a session end too — flush memory via a beacon
+// (guaranteed to send during page unload) so voice + typed turns get saved like Sign out.
+window.addEventListener('pagehide',()=>{
+  if(USER){ try{ navigator.sendBeacon('/api/logout', new Blob([JSON.stringify({user_id:USER})],{type:'application/json'})); }catch(e){} }
+});
+document.getElementById('loginBtn').onclick=login;
+document.getElementById('password').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+document.getElementById('send').onclick=send;
+const inp=document.getElementById('input');
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,140)+'px';});
+</script>
+<script src="/static/voice.js"></script>
+</body>
+</html>

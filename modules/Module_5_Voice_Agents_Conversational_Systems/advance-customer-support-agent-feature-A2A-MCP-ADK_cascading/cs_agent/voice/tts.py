@@ -34,7 +34,7 @@ def split_sentences(text: str, min_len: int = 30) -> list[str]:
             out.append(p)
     return [p for p in out if p]
 
-TTS_MODEL = os.getenv("VOICE_TTS_MODEL", "gemini-3.1-flash-tts-preview")
+TTS_MODEL = os.getenv("VOICE_TTS_MODEL", "gemini-3.8-flash-tts")
 TTS_VOICE = os.getenv("VOICE_TTS_VOICE", "Kore")
 TTS_SAMPLE_RATE = 24000  # Gemini TTS returns audio/l16 @ 24 kHz mono
 

@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 460" class="ax" role="img" aria-label="Customer support speech-to-speech voice agent architecture">
+<style>
+  .ax{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --ax-bg:var(--panel,#fff);--ax-line:var(--line,#d6dbe2);--ax-text:var(--text,#1a1d23);
+      --ax-muted:var(--muted,#6b7280);--ax-accent:var(--accent,#0f9aae)}
+  .ax-node rect{fill:var(--ax-bg);stroke:var(--ax-line);stroke-width:1.5;transition:all .25s}
+  .ax-node.svc rect.box{stroke-dasharray:6 4}
+  .ax-node.voice rect.box{stroke:#d98bb5}
+  .ax-title{font-size:13px;font-weight:600;fill:var(--ax-text)}
+  .ax-sub{font-size:10.5px;fill:var(--ax-muted)}
+  .ax-tag rect{fill:var(--ax-accent);stroke:none}
+  .ax-tag.voice rect{fill:#9d2b6b}
+  .ax-tag text{font-size:9.5px;font-weight:700;fill:#fff;letter-spacing:.6px}
+  .ax-chip rect{fill:var(--panel-2,#f1f3f6);stroke:var(--ax-line);stroke-width:1}
+  .ax-chip text{font-size:9.5px;fill:var(--ax-text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .ax-edge{fill:none;stroke:var(--ax-line);stroke-width:1.6;marker-end:url(#ax-arrow);transition:stroke .25s}
+  .ax-edge.alt{stroke-dasharray:3 4}
+  .ax-edge.wide{stroke-width:3}
+  .ax-edge-label{font-size:10.5px;fill:var(--ax-muted)}
+  .ax-trace{fill:none;stroke:var(--ax-line);stroke-width:1;stroke-dasharray:2 4}
+  .ax-lane{font-size:10px;font-weight:700;letter-spacing:1px;fill:var(--ax-muted)}
+  #ax-arrow path{fill:var(--ax-line)}
+  #ax-arrow-on path{fill:var(--ax-accent)}
+
+  .ax-node.active rect.box{stroke:var(--ax-accent);stroke-width:2.5;fill:#e7f7f9;filter:drop-shadow(0 0 8px rgba(15,154,174,.45))}
+  .ax-node.done rect.box{stroke:var(--ax-accent);stroke-width:1.8}
+  .ax-node.blocked rect.box{stroke:#d9534f;stroke-width:2.5;fill:#fdecea}
+  .ax-chip.active rect{fill:var(--ax-accent);stroke:var(--ax-accent)}
+  .ax-chip.active text{fill:#fff}
+  .ax-chip.done rect{stroke:var(--ax-accent)}
+  .ax-edge.active{stroke:var(--ax-accent);stroke-width:2.2;stroke-dasharray:7 5;marker-end:url(#ax-arrow-on);animation:ax-flow .6s linear infinite}
+  .ax-edge.wide.active{stroke-width:3.4}
+  .ax-edge.done{stroke:var(--ax-accent);marker-end:url(#ax-arrow-on)}
+  .ax-trace.active{stroke:var(--ax-accent)}
+  @keyframes ax-flow{to{stroke-dashoffset:-12}}
+</style>
+<defs>
+  <marker id="ax-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="ax-arrow-on" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+
+<text class="ax-lane" x="20" y="22">REAL-TIME SPEECH-TO-SPEECH · ONE FULL-DUPLEX LIVE SESSION</text>
+
+<!-- voice path: audio straight into the Live model, audio straight back -->
+<path id="e-user-agent" class="ax-edge wide" d="M190,80 H560"/>
+<text class="ax-edge-label" x="375" y="70" text-anchor="middle">voice: 16 kHz mic audio, streamed while the agent talks</text>
+<path id="e-return" class="ax-edge wide" d="M560,126 H190"/>
+<text class="ax-edge-label" x="375" y="146" text-anchor="middle">24 kHz agent audio + transcripts</text>
+
+<!-- typed path: sanitize + blocking judge, then the same Live session -->
+<path id="e-user-san" class="ax-edge alt" d="M105,150 V190 H280 V202"/>
+<path id="e-san-judge" class="ax-edge alt" d="M360,233 H400"/>
+<path id="e-judge-agent" class="ax-edge alt" d="M570,233 H615 V152"/>
+<text class="ax-edge-label" x="114" y="178">typed text only</text>
+
+<!-- post-hoc judge on the speech transcript -->
+<path id="e-agent-judge" class="ax-edge alt" d="M690,152 V190 H485 V202"/>
+<text class="ax-edge-label" x="598" y="184">transcript → post-hoc judge</text>
+
+<path id="e-agent-toolbox" class="ax-edge" d="M760,152 V278"/>
+<text class="ax-edge-label" x="768" y="236">MCP</text>
+<path id="e-toolbox-pg" class="ax-edge" d="M644,334 H604"/>
+<text class="ax-edge-label" x="624" y="326" text-anchor="middle">SQL</text>
+<path id="e-agent-mem0" class="ax-edge" d="M830,152 L935,278"/>
+<text class="ax-edge-label" x="892" y="222">search_memory</text>
+
+<g id="n-user" class="ax-node">
+  <rect class="box" x="20" y="56" width="170" height="94" rx="12"/>
+  <text class="ax-title" x="105" y="92" text-anchor="middle">User</text>
+  <text class="ax-sub" x="105" y="110" text-anchor="middle">mic + speaker · web UI · :8001</text>
+  <text class="ax-sub" x="105" y="126" text-anchor="middle">one WebSocket, both ways</text>
+</g>
+
+<g id="n-agent" class="ax-node voice">
+  <rect class="box" x="560" y="48" width="340" height="104" rx="12"/>
+  <g class="ax-tag voice"><rect x="810" y="40" width="82" height="16" rx="8"/><text x="851" y="51.5" text-anchor="middle">GEMINI LIVE</text></g>
+  <text class="ax-title" x="730" y="78" text-anchor="middle">Support Agent · speech to speech</text>
+  <text class="ax-sub" x="730" y="97" text-anchor="middle">Google ADK LlmAgent · runner.run_live() · BIDI streaming</text>
+  <text class="ax-sub" x="730" y="113" text-anchor="middle">gemini-3.1-flash-live-preview · voice Kore</text>
+  <text class="ax-sub" x="730" y="130" text-anchor="middle" textLength="320" lengthAdjust="spacingAndGlyphs">hears audio · calls tools inline · speaks (no STT / LLM / TTS hops)</text>
+</g>
+
+<g id="n-sanitize" class="ax-node">
+  <rect class="box" x="200" y="202" width="160" height="62" rx="12"/>
+  <text class="ax-title" x="280" y="228" text-anchor="middle">Sanitizer</text>
+  <text class="ax-sub" x="280" y="246" text-anchor="middle">regex blocker · typed text only</text>
+</g>
+
+<g id="n-judge" class="ax-node svc">
+  <rect class="box" x="400" y="202" width="170" height="62" rx="12"/>
+  <g class="ax-tag"><rect x="536" y="194" width="30" height="16" rx="8"/><text x="551" y="205.5" text-anchor="middle">A2A</text></g>
+  <text class="ax-title" x="485" y="226" text-anchor="middle">Security Judge</text>
+  <text class="ax-sub" x="485" y="242" text-anchor="middle">ADK agent · :11002</text>
+  <text class="ax-sub" x="485" y="256" text-anchor="middle">blocks typed · flags spoken</text>
+</g>
+
+<g id="n-pg" class="ax-node svc">
+  <rect class="box" x="454" y="298" width="150" height="72" rx="12"/>
+  <text class="ax-title" x="529" y="328" text-anchor="middle">PostgreSQL</text>
+  <text class="ax-sub" x="529" y="346" text-anchor="middle">users · orders · actions</text>
+</g>
+
+<g id="n-toolbox" class="ax-node svc">
+  <rect class="box" x="644" y="282" width="232" height="106" rx="12"/>
+  <text class="ax-title" x="760" y="304" text-anchor="middle">MCP Toolbox · :5001</text>
+  <g id="t-get-order-status" class="ax-chip"><rect x="650" y="314" width="108" height="22" rx="6"/><text x="704" y="329" text-anchor="middle">get-order-status</text></g>
+  <g id="t-find-customer-orders" class="ax-chip"><rect x="762" y="314" width="108" height="22" rx="6"/><text x="816" y="329" text-anchor="middle">find-orders</text></g>
+  <g id="t-update-order-status" class="ax-chip"><rect x="650" y="342" width="108" height="22" rx="6"/><text x="704" y="357" text-anchor="middle">update-status</text></g>
+  <g id="t-action-log" class="ax-chip"><rect x="762" y="342" width="108" height="22" rx="6"/><text x="816" y="357" text-anchor="middle">action-log</text></g>
+</g>
+
+<g id="n-mem0" class="ax-node svc">
+  <rect class="box" x="900" y="282" width="160" height="72" rx="12"/>
+  <text class="ax-title" x="980" y="312" text-anchor="middle">Mem0</text>
+  <text class="ax-sub" x="980" y="330" text-anchor="middle">recall as a tool · save on sign-out</text>
+</g>
+
+<path id="e-trace" class="ax-trace" d="M280,264 V406 M980,354 V406 M760,388 V406"/>
+<g id="n-phoenix" class="ax-node svc">
+  <rect class="box" x="20" y="406" width="1060" height="38" rx="10"/>
+  <text class="ax-title" x="40" y="430">Arize Phoenix · :6007</text>
+  <text class="ax-sub" x="196" y="430">one voice.turn span per turn with the transcript, reply, tools and cost · a span per guardrail and per tool call</text>
+</g>
+</svg>

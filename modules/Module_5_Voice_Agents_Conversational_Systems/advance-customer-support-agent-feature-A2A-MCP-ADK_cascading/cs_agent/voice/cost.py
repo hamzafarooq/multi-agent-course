@@ -39,7 +39,7 @@ PRICES = {
     # Text LLM = gemini-2.5-flash (the agent, plus the A2A Judge and Masker).
     "llm_in":  _price("VOICE_PRICE_LLM_IN",  0.30),
     "llm_out": _price("VOICE_PRICE_LLM_OUT", 2.50),
-    # TTS = gemini-3.1-flash-tts-preview. Text in ($1.00), audio out ($20.00) dominates.
+    # TTS = gemini-3.8-flash-tts. Text in ($1.00), audio out ($20.00) dominates.
     "tts_in":  _price("VOICE_PRICE_TTS_IN",  1.00),
     "tts_out": _price("VOICE_PRICE_TTS_OUT", 20.00),
 }

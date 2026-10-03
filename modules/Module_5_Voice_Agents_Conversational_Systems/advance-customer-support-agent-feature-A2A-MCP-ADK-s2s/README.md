@@ -69,6 +69,35 @@ full pre-agent security gate — see the note above.)
 
 ---
 
+## The web UI — "What happened" and the live architecture view
+
+`./run.sh voice` serves one page at **http://127.0.0.1:8001** for spoken and typed turns (same
+look and feel as the Module 4 support agent and the cascade app). Under every answer, a
+**What happened** panel lists each step with a type badge, its latency and its Phoenix span:
+
+- **Security Judge (post-hoc)** — for speech, the Judge runs *concurrently* on the transcript,
+  after the Live model has already heard the audio; the row says so, and a flagged turn gets a
+  separate warning (the reply cannot be un-spoken). For typed text, **Sanitizer** and a
+  *blocking* **Security Judge** run before the model sees it, and a block paints the reply red.
+- **Tool calls** — the MCP route, the arguments, the **SQL the Toolbox ran** with the parameters
+  substituted, and the rows it returned as a table. `search_memory` shows as a Python function
+  hitting Mem0.
+- **Gemini Live** — one row per turn: which tools it called, time to first audio, and the
+  audio/text token split in and out (what the cost estimate is built from).
+- **View trace in Phoenix ↗** — deep link to this turn's `voice.turn` trace (when `TELEMETRY=true`).
+
+**Architecture ↗** (top right, or **http://127.0.0.1:8001/architecture**) opens the diagram:
+one full-duplex Live session between the user and the agent, the dashed typed-text path through
+Sanitizer → Judge, the post-hoc Judge hanging off the transcript, and the MCP Toolbox, Postgres,
+Mem0 and Phoenix underneath. Keep it open next to the chat: it lights up live as a turn runs and
+logs every event. Compare it with the cascade's diagram to see the trade-off in one glance.
+
+The pipeline events (`stage`, `step`, `tool_call`, `tool_result`, `llm`, `trace`, `final`) are sent
+alongside the original protocol (`transcript`, `tool`, `timing`, `blocked`, `turn_complete`),
+which is unchanged, so `benchmarking_voice_agents/` keeps working.
+
+---
+
 ## Prerequisites
 
 | Tool | Version | Purpose |

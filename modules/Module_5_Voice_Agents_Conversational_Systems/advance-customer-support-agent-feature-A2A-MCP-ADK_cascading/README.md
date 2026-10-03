@@ -11,7 +11,7 @@ Phoenix observability. Runs entirely locally — no GCP credentials required.
 **Models used** (all Gemini; override via env):
 - **STT:** `gemini-3.1-flash-lite` (`VOICE_STT_MODEL`)
 - **Agent:** `gemini-2.5-flash`
-- **TTS:** `gemini-3.1-flash-tts-preview`, voice `Kore` (`VOICE_TTS_MODEL` / `VOICE_TTS_VOICE`)
+- **TTS:** `gemini-3.8-flash-tts`, voice `Kore` (`VOICE_TTS_MODEL` / `VOICE_TTS_VOICE`)
 - **Security Judge & Masker:** `gemini-2.5-flash`
 
 > **Cascade vs. speech-to-speech.** This is the cascade architecture. Its sibling project,
@@ -66,6 +66,37 @@ speech → STT → [ sanitize → Judge → agent → Masker ] → TTS → speec
 Each stage is separately owned, swappable, and observable, and the Judge gates the transcript
 *before* the agent ever sees it. (The sibling **s2s** project does the same task with native
 speech-to-speech instead — see the note above.)
+
+---
+
+## The web UI — "What happened" and the live architecture view
+
+`./run.sh web` serves one page at **http://127.0.0.1:8000** for both typed and spoken turns
+(same look and feel as the Module 4 support agent). Under every answer, a **What happened**
+panel lists each pipeline step as it runs, with a type badge (`in-process`, `A2A`, `MCP`,
+`Python fn`, `LLM`, `Voice`), its latency, and its Phoenix span name:
+
+- **Speech to text** — how many seconds of audio the STT model heard and what it transcribed
+  (voice turns only; typed turns skip it).
+- **Sanitizer** and **Security Judge** — passed or blocked, and why.
+- **Gemini** — one row per model call: what it decided (call a tool / write the answer) and the tokens.
+- **Tool calls** — the MCP route (Gemini → ADK → toolbox-core → MCP → Toolbox → Postgres), the
+  arguments, the **SQL the Toolbox actually ran** with the parameters substituted, and the rows
+  it returned as a table. `search_memory` shows as a Python function hitting Mem0.
+- **Data Masker** — whether any PII was changed.
+- **Text to speech** — characters spoken, seconds of audio produced, time to first audio.
+- **View trace in Phoenix ↗** — deep link to this turn's trace (when `TELEMETRY=true`).
+
+**Architecture ↗** (top right, or **http://127.0.0.1:8000/architecture**) opens the system
+diagram — User → STT → Sanitizer → Judge → Agent → Masker → TTS, with the MCP Toolbox,
+Postgres, Mem0 and Phoenix underneath. Keep it open next to the chat: it lights up each
+component as the turn moves through it (over a `BroadcastChannel`), and logs every event
+below. Typed turns take the dashed "skips STT and TTS" path.
+
+The same events drive the UI whichever way a turn arrives: `/api/chat/stream` sends them as
+newline-delimited JSON; the voice WebSocket sends them alongside its own protocol
+(`partial_transcript`, `response_text`, `timing`, `cost`, `turn_end` — unchanged, so
+`benchmarking_voice_agents/` keeps working).
 
 ---
 

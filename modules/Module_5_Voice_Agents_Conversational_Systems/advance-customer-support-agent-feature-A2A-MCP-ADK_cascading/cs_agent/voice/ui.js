@@ -1,13 +1,17 @@
 /* Voice client for the customer-support cascade.
  *
- * Injects a mic button into the existing chat UI (so web.py stays untouched),
- * then runs the browser half of the cascade:
+ * Adds the mic / hold buttons to the chat page (static/index.html) and runs the
+ * browser half of the cascade:
  *   mic @16kHz -> energy VAD (utterance endpointing) -> WS binary -> server
  *   server -> TTS PCM @24kHz chunks -> scheduled playback (queue)
  * Barge-in: if the user clearly speaks while the agent is talking, playback stops
  * client-side and an {"type":"interrupt"} is sent to cancel the turn.
  *
- * Reuses the page's own globals: USER, addUser, addAssistant, renderSteps, md, scroll.
+ * Every pipeline event the server sends (stage / step / llm / tool_call / tool_result /
+ * delta / final / trace) goes through the page's renderEvent(), so a spoken turn gets
+ * the same "What happened" panel as a typed one — plus "Speech to text" and "Text to
+ * speech" rows. Reuses the page's globals: USER, col, el, scroll, md, addAssistant,
+ * renderEvent, setStatus.
  */
 (function () {
   // ---- tunables (the Module 5 knobs) -------------------------------------
@@ -28,40 +32,26 @@
   let voiceOn = false, speaking = false, agentSpeaking = false, muted = false;
   let frames = [], preroll = [], silentFrames = 0, onsetCount = 0, bargeCount = 0;
   let playCursor = 0, activeSources = [], lastPlayStart = 0;
-  let node = null, calls = [];   // current assistant message + its tool calls
+  let node = null;               // current assistant message (holds the "What happened" rows)
   let userBubble = null;         // the growing "You" bubble for the combined query
 
   // ---- self-injected UI ---------------------------------------------------
   const inwrap = document.querySelector('.inwrap');
   if (!inwrap) return;
   const MIC_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle" aria-hidden="true"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>';
-  const micBtn = document.createElement('button');
-  micBtn.id = 'mic';
-  micBtn.innerHTML = MIC_SVG;
-  micBtn.title = 'Voice mode';
-  micBtn.style.cssText = 'background:#f1f3f6;color:#1a1d23;border:1px solid #e4e7ec;';
-  inwrap.insertBefore(micBtn, document.getElementById('send'));
-
-  // Mute / hold — like the mute button on a phone call. When held, the device's
-  // audio does not go forward (nothing is captured or sent). Hidden until voice is on.
   const holdBtn = document.createElement('button');
-  holdBtn.id = 'hold';
-  holdBtn.textContent = 'Hold';
-  holdBtn.title = 'Pause sending your voice (mute)';
-  holdBtn.style.cssText = 'background:#f1f3f6;color:#1a1d23;border:1px solid #e4e7ec;display:none;';
+  holdBtn.id = 'hold'; holdBtn.className = 'vbtn'; holdBtn.textContent = 'Hold';
+  holdBtn.title = 'Pause sending your voice (mute)'; holdBtn.style.display = 'none';
   inwrap.insertBefore(holdBtn, document.getElementById('send'));
+  const micBtn = document.createElement('button');
+  micBtn.id = 'mic'; micBtn.className = 'vbtn'; micBtn.innerHTML = MIC_SVG; micBtn.title = 'Talk (start/stop voice)';
+  inwrap.insertBefore(micBtn, document.getElementById('send'));
+  const status = document.getElementById('voiceStatus');
 
-  const status = document.createElement('div');
-  status.className = 'hint';
-  status.id = 'voiceStatus';
-  document.getElementById('footer').appendChild(status);
-
-  function setStatus(s) {
+  function setVoiceStatus(s) {
     status.textContent = s ? ('🎙 ' + s) : '';
-    micBtn.style.background = voiceOn ? '#0f9aae' : '#f1f3f6';
-    micBtn.style.color = voiceOn ? '#fff' : '#1a1d23';
+    micBtn.classList.toggle('live', voiceOn);
   }
-
   function now() { return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
 
   // ---- playback (agent speech) --------------------------------------------
@@ -83,9 +73,9 @@
     activeSources.push(src);
     src.onended = () => {
       activeSources = activeSources.filter(s => s !== src);
-      if (!activeSources.length) { agentSpeaking = false; if (voiceOn) setStatus('listening…'); }
+      if (!activeSources.length) { agentSpeaking = false; if (voiceOn) setVoiceStatus('listening…'); }
     };
-    setStatus('speaking…');
+    setVoiceStatus('speaking…');
   }
 
   function stopPlayback() {
@@ -125,7 +115,7 @@
       frames = preroll.slice();
       preroll = [];
       silentFrames = 0; onsetCount = 0;
-      setStatus('listening… (speech)');
+      setVoiceStatus('listening… (speech)');
       return;
     }
 
@@ -143,9 +133,9 @@
       frames = [];
       if (durMs >= MIN_UTTER_MS && ws && ws.readyState === 1) {
         ws.send(pcm.buffer);
-        setStatus('thinking…');
+        setVoiceStatus('transcribing…');
       } else if (voiceOn) {
-        setStatus(agentSpeaking ? 'speaking…' : 'listening…');
+        setVoiceStatus(agentSpeaking ? 'speaking…' : 'listening…');
       }
     }
   }
@@ -172,63 +162,84 @@
   // ---- server events -------------------------------------------------------
   function ensureUserBubble() {
     if (!userBubble) {
-      const m = el(`<div class="msg user"><div class="role">You</div><div class="bubble"></div></div>`);
+      const m = el(`<div class="msg user"><div class="role">You<span class="chan">voice</span></div><div class="bubble"></div></div>`);
       col.appendChild(m);
       userBubble = m.querySelector('.bubble');
     }
     return userBubble;
+  }
+  // The agent message for this turn. STT rows arrive before the query is even sent, so
+  // the message (and its "What happened" panel) is created on the first voice event.
+  function ensureNode() {
+    if (!node) {
+      ensureUserBubble();
+      node = addAssistant('voice');
+      setStatus(node, 'Listening');
+    }
+    return node;
   }
 
   function onMessage(ev) {
     if (ev.data instanceof ArrayBuffer) { playChunk(ev.data); return; }
     let d;
     try { d = JSON.parse(ev.data); } catch (e) { return; }
-    if (d.type === 'partial_transcript') {
-      // the combined query, growing as bursts are appended — update one bubble
-      ensureUserBubble().textContent = d.text;
-      setStatus('listening…');
-      scroll();
-    } else if (d.type === 'processing') {
-      calls = [];
-      if (!node) node = addAssistant();      // shows "thinking…"
-      setStatus('thinking…');
-    } else if (d.type === 'tool_call') {
-      calls.push({ name: d.name, args: d.args, result: null });
-      if (!node) node = addAssistant();
-      renderSteps(node.querySelector('.steps-host'), calls);   // show steps as they happen
-    } else if (d.type === 'response_text') {
-      // streamed: arrives repeatedly with growing text — update the same bubble.
-      if (!node) node = addAssistant();
-      renderSteps(node.querySelector('.steps-host'), d.tool_calls || calls);
-      node.querySelector('.bubble').innerHTML = md(d.text || '');
-      // Answer has started -> close the current "You" bubble so a mid-answer
-      // interruption starts a FRESH bubble at the bottom, not the old one above.
-      userBubble = null;
-      scroll();
-    } else if (d.type === 'blocked') {
-      if (!node) node = addAssistant();
-      node.classList.add('blocked');
-      node.querySelector('.bubble').textContent = d.response;
-      scroll();
-    } else if (d.type === 'timing') {
-      // latency metrics intentionally not rendered in the UI (event still consumed).
-    } else if (d.type === 'cost') {
-      // cost metrics intentionally not rendered in the UI (event still consumed).
-    } else if (d.type === 'error') {
-      if (!node) node = addAssistant();
-      node.querySelector('.bubble').textContent = 'Voice error: ' + d.message;
-      scroll();
-    } else if (d.type === 'turn_end') {
-      if (d.reason === 'interrupted') {
-        // still the same query being extended — drop the empty "thinking…" bubble,
-        // keep the growing user bubble so the next burst appends to it.
-        if (node && node.querySelector('.bubble .typing')) node.remove();
-        node = null;
-      } else {
-        // answered — next speech starts a fresh turn
-        userBubble = null; node = null; calls = [];
-      }
-      if (voiceOn && !agentSpeaking) setStatus('listening…');
+    switch (d.type) {
+      case 'partial_transcript':
+        // the combined query, growing as bursts are appended — update one bubble
+        ensureUserBubble().textContent = d.text;
+        setVoiceStatus('listening…');
+        scroll();
+        break;
+      case 'processing':
+        ensureNode();
+        setStatus(node, 'Running the pipeline');
+        setVoiceStatus('thinking…');
+        break;
+      case 'response_text':
+        // streamed: arrives repeatedly with growing text — update the same bubble.
+        ensureNode().querySelector('.bubble').innerHTML = md(d.text || '');
+        // Answer has started -> close the current "You" bubble so a mid-answer
+        // interruption starts a FRESH bubble at the bottom, not the old one above.
+        userBubble = null;
+        scroll();
+        break;
+      case 'blocked':
+        ensureNode().classList.add('blocked');
+        node.querySelector('.bubble').textContent = d.response;
+        scroll();
+        break;
+      case 'final':
+        // renderEvent() paints the reply; response_text / blocked above keep the
+        // benchmark protocol working. Both are sent, so just let renderEvent handle it.
+        renderEvent(ensureNode(), d);
+        break;
+      case 'timing':
+      case 'cost':
+        // latency / cost metrics are not rendered in the UI (events still consumed).
+        break;
+      case 'error':
+        ensureNode().querySelector('.bubble').textContent = 'Voice error: ' + (d.message || d.error);
+        scroll();
+        break;
+      case 'turn_end':
+        if (d.reason === 'interrupted') {
+          // Still the same query being extended: keep the message and its STT rows,
+          // drop the rows from the cancelled pipeline run, and go back to "listening".
+          if (node) {
+            node.querySelectorAll('.step:not([data-key="stt"])').forEach(s => s.remove());
+            const pill = node.querySelector('.pill'); if (pill) pill.textContent = node.querySelectorAll('.step').length;
+            node.querySelector('.bubble').innerHTML = '<span class="typing"><span class="spin"></span>Listening…</span>';
+          }
+        } else {
+          // answered — next speech starts a fresh turn
+          userBubble = null; node = null;
+        }
+        if (voiceOn && !agentSpeaking) setVoiceStatus('listening…');
+        break;
+      default:
+        // stage / step / llm / tool_call / tool_result / delta / trace
+        if (d.type === 'stage' && d.key === 'stt') ensureNode();
+        if (node) renderEvent(node, d);
     }
   }
 
@@ -249,8 +260,9 @@
     await startCapture();
     voiceOn = true;
     muted = false;
+    const chips = document.getElementById('chips'); if (chips) chips.remove();
     holdBtn.style.display = 'inline-block';
-    setStatus('listening…');
+    setVoiceStatus('listening…');
   }
 
   function stopVoice() {
@@ -262,9 +274,8 @@
     if (ws) { try { ws.close(); } catch (e) {} ws = null; }
     holdBtn.style.display = 'none';
     holdBtn.textContent = 'Hold';
-    holdBtn.style.background = '#f1f3f6';
-    holdBtn.style.color = '#1a1d23';
-    setStatus('');
+    holdBtn.classList.remove('on');
+    setVoiceStatus('');
   }
 
   function toggleHold() {
@@ -274,14 +285,12 @@
       // drop any half-captured utterance so it isn't resumed on unmute
       speaking = false; frames = []; preroll = []; onsetCount = 0;
       holdBtn.textContent = 'Resume';
-      holdBtn.style.background = '#e0a59f';
-      holdBtn.style.color = '#7a2d24';
-      setStatus('on hold (muted)');
+      holdBtn.classList.add('on');
+      setVoiceStatus('on hold (muted)');
     } else {
       holdBtn.textContent = 'Hold';
-      holdBtn.style.background = '#f1f3f6';
-      holdBtn.style.color = '#1a1d23';
-      setStatus(agentSpeaking ? 'speaking…' : 'listening…');
+      holdBtn.classList.remove('on');
+      setVoiceStatus(agentSpeaking ? 'speaking…' : 'listening…');
     }
   }
 
@@ -289,4 +298,5 @@
     stopVoice(); alert('Could not start voice: ' + e);
   })); };
   holdBtn.onclick = toggleHold;
+  window.addEventListener('cs:logout', () => { try { stopVoice(); } catch (e) {} });
 })();

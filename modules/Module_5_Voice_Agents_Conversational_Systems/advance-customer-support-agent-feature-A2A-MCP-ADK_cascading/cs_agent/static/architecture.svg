@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 430" class="ax" role="img" aria-label="Customer support cascade voice agent architecture">
+<style>
+  .ax{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --ax-bg:var(--panel,#fff);--ax-line:var(--line,#d6dbe2);--ax-text:var(--text,#1a1d23);
+      --ax-muted:var(--muted,#6b7280);--ax-accent:var(--accent,#0f9aae)}
+  .ax-node rect{fill:var(--ax-bg);stroke:var(--ax-line);stroke-width:1.5;transition:all .25s}
+  .ax-node.svc rect.box{stroke-dasharray:6 4}
+  .ax-node.voice rect.box{stroke:#d98bb5}
+  .ax-title{font-size:13px;font-weight:600;fill:var(--ax-text)}
+  .ax-sub{font-size:10.5px;fill:var(--ax-muted)}
+  .ax-tag rect{fill:var(--ax-accent);stroke:none}
+  .ax-tag.voice rect{fill:#9d2b6b}
+  .ax-tag text{font-size:9.5px;font-weight:700;fill:#fff;letter-spacing:.6px}
+  .ax-chip rect{fill:var(--panel-2,#f1f3f6);stroke:var(--ax-line);stroke-width:1}
+  .ax-chip text{font-size:9.5px;fill:var(--ax-text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .ax-edge{fill:none;stroke:var(--ax-line);stroke-width:1.6;marker-end:url(#ax-arrow);transition:stroke .25s}
+  .ax-edge.alt{stroke-dasharray:3 4}
+  .ax-edge-label{font-size:10.5px;fill:var(--ax-muted)}
+  .ax-trace{fill:none;stroke:var(--ax-line);stroke-width:1;stroke-dasharray:2 4}
+  .ax-lane{font-size:10px;font-weight:700;letter-spacing:1px;fill:var(--ax-muted)}
+  #ax-arrow path{fill:var(--ax-line)}
+  #ax-arrow-on path{fill:var(--ax-accent)}
+
+  .ax-node.active rect.box{stroke:var(--ax-accent);stroke-width:2.5;fill:#e7f7f9;filter:drop-shadow(0 0 8px rgba(15,154,174,.45))}
+  .ax-node.done rect.box{stroke:var(--ax-accent);stroke-width:1.8}
+  .ax-node.blocked rect.box{stroke:#d9534f;stroke-width:2.5;fill:#fdecea}
+  .ax-chip.active rect{fill:var(--ax-accent);stroke:var(--ax-accent)}
+  .ax-chip.active text{fill:#fff}
+  .ax-chip.done rect{stroke:var(--ax-accent)}
+  .ax-edge.active{stroke:var(--ax-accent);stroke-width:2.2;stroke-dasharray:7 5;marker-end:url(#ax-arrow-on);animation:ax-flow .6s linear infinite}
+  .ax-edge.done{stroke:var(--ax-accent);marker-end:url(#ax-arrow-on)}
+  .ax-trace.active{stroke:var(--ax-accent)}
+  @keyframes ax-flow{to{stroke-dashoffset:-12}}
+</style>
+<defs>
+  <marker id="ax-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="ax-arrow-on" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+
+<text class="ax-lane" x="20" y="48">CASCADE · SPEECH IN → TEXT PIPELINE → SPEECH OUT</text>
+<text class="ax-lane" x="470" y="250">TOOLS &amp; MEMORY</text>
+
+<path id="e-return" class="ax-edge" d="M1020,62 V30 H85 V58"/>
+<text class="ax-edge-label" x="552" y="24" text-anchor="middle">spoken reply (24 kHz PCM) · masked text</text>
+
+<path id="e-user-stt" class="ax-edge" d="M150,98 H172"/>
+<path id="e-stt-san" class="ax-edge" d="M302,98 H324"/>
+<path id="e-san-judge" class="ax-edge" d="M454,98 H476"/>
+<path id="e-judge-agent" class="ax-edge" d="M606,98 H628"/>
+<path id="e-agent-mask" class="ax-edge" d="M778,98 H800"/>
+<path id="e-mask-tts" class="ax-edge" d="M930,98 H952"/>
+<path id="e-user-san" class="ax-edge alt" d="M85,138 V168 H389 V140"/>
+<text class="ax-edge-label" x="237" y="182" text-anchor="middle">typed text skips STT and TTS</text>
+<path id="e-agent-toolbox" class="ax-edge" d="M703,138 V240"/>
+<text class="ax-edge-label" x="711" y="200">MCP</text>
+<path id="e-toolbox-pg" class="ax-edge" d="M587,296 H547"/>
+<text class="ax-edge-label" x="567" y="288" text-anchor="middle">SQL</text>
+<path id="e-agent-mem0" class="ax-edge" d="M760,138 L905,240"/>
+<text class="ax-edge-label" x="852" y="186">search_memory</text>
+
+<g id="n-user" class="ax-node">
+  <rect class="box" x="20" y="58" width="130" height="80" rx="12"/>
+  <text class="ax-title" x="85" y="92" text-anchor="middle">User</text>
+  <text class="ax-sub" x="85" y="110" text-anchor="middle">mic + web UI · :8000</text>
+</g>
+
+<g id="n-stt" class="ax-node voice">
+  <rect class="box" x="172" y="58" width="130" height="80" rx="12"/>
+  <g class="ax-tag voice"><rect x="256" y="50" width="40" height="16" rx="8"/><text x="276" y="61.5" text-anchor="middle">VOICE</text></g>
+  <text class="ax-title" x="237" y="88" text-anchor="middle">Speech to text</text>
+  <text class="ax-sub" x="237" y="106" text-anchor="middle">gemini-3.1-flash-lite</text>
+  <text class="ax-sub" x="237" y="121" text-anchor="middle">audio in · transcript out</text>
+</g>
+
+<g id="n-sanitize" class="ax-node">
+  <rect class="box" x="324" y="58" width="130" height="80" rx="12"/>
+  <text class="ax-title" x="389" y="88" text-anchor="middle">Sanitizer</text>
+  <text class="ax-sub" x="389" y="106" text-anchor="middle">regex blocker</text>
+  <text class="ax-sub" x="389" y="121" text-anchor="middle">in-process · layer 1</text>
+</g>
+
+<g id="n-judge" class="ax-node svc">
+  <rect class="box" x="476" y="58" width="130" height="80" rx="12"/>
+  <g class="ax-tag"><rect x="572" y="50" width="30" height="16" rx="8"/><text x="587" y="61.5" text-anchor="middle">A2A</text></g>
+  <text class="ax-title" x="541" y="88" text-anchor="middle">Security Judge</text>
+  <text class="ax-sub" x="541" y="106" text-anchor="middle">ADK agent · :10002</text>
+  <text class="ax-sub" x="541" y="121" text-anchor="middle">layer 2 · gates the transcript</text>
+</g>
+
+<g id="n-agent" class="ax-node">
+  <rect class="box" x="628" y="58" width="150" height="80" rx="12"/>
+  <text class="ax-title" x="703" y="88" text-anchor="middle">Support Agent</text>
+  <text class="ax-sub" x="703" y="106" text-anchor="middle">Google ADK LlmAgent</text>
+  <text class="ax-sub" x="703" y="121" text-anchor="middle">gemini-2.5-flash</text>
+</g>
+
+<g id="n-mask" class="ax-node svc">
+  <rect class="box" x="800" y="58" width="130" height="80" rx="12"/>
+  <g class="ax-tag"><rect x="896" y="50" width="30" height="16" rx="8"/><text x="911" y="61.5" text-anchor="middle">A2A</text></g>
+  <text class="ax-title" x="865" y="88" text-anchor="middle">Data Masker</text>
+  <text class="ax-sub" x="865" y="106" text-anchor="middle">ADK agent · :10003</text>
+  <text class="ax-sub" x="865" y="121" text-anchor="middle">layer 3 · PII scrub</text>
+</g>
+
+<g id="n-tts" class="ax-node voice">
+  <rect class="box" x="952" y="58" width="128" height="80" rx="12"/>
+  <g class="ax-tag voice"><rect x="1034" y="50" width="40" height="16" rx="8"/><text x="1054" y="61.5" text-anchor="middle">VOICE</text></g>
+  <text class="ax-title" x="1016" y="88" text-anchor="middle">Text to speech</text>
+  <text class="ax-sub" x="1016" y="106" text-anchor="middle">gemini-3.8-flash-tts</text>
+  <text class="ax-sub" x="1016" y="121" text-anchor="middle">streams 24 kHz audio</text>
+</g>
+
+<g id="n-pg" class="ax-node svc">
+  <rect class="box" x="397" y="260" width="150" height="72" rx="12"/>
+  <text class="ax-title" x="472" y="290" text-anchor="middle">PostgreSQL</text>
+  <text class="ax-sub" x="472" y="308" text-anchor="middle">users · orders · actions</text>
+</g>
+
+<g id="n-toolbox" class="ax-node svc">
+  <rect class="box" x="587" y="244" width="232" height="106" rx="12"/>
+  <text class="ax-title" x="703" y="266" text-anchor="middle">MCP Toolbox · :5000</text>
+  <g id="t-get-order-status" class="ax-chip"><rect x="593" y="276" width="108" height="22" rx="6"/><text x="647" y="291" text-anchor="middle">get-order-status</text></g>
+  <g id="t-find-customer-orders" class="ax-chip"><rect x="705" y="276" width="108" height="22" rx="6"/><text x="759" y="291" text-anchor="middle">find-orders</text></g>
+  <g id="t-update-order-status" class="ax-chip"><rect x="593" y="304" width="108" height="22" rx="6"/><text x="647" y="319" text-anchor="middle">update-status</text></g>
+  <g id="t-action-log" class="ax-chip"><rect x="705" y="304" width="108" height="22" rx="6"/><text x="759" y="319" text-anchor="middle">action-log</text></g>
+</g>
+
+<g id="n-mem0" class="ax-node svc">
+  <rect class="box" x="860" y="244" width="140" height="72" rx="12"/>
+  <text class="ax-title" x="930" y="274" text-anchor="middle">Mem0</text>
+  <text class="ax-sub" x="930" y="292" text-anchor="middle">recall as a tool · save on sign-out</text>
+</g>
+
+<path id="e-trace" class="ax-trace" d="M237,138 V376 M389,138 V376 M541,138 V376 M1016,138 V376 M930,316 V376"/>
+<g id="n-phoenix" class="ax-node svc">
+  <rect class="box" x="20" y="376" width="1060" height="38" rx="10"/>
+  <text class="ax-title" x="40" y="400">Arize Phoenix · :6006</text>
+  <text class="ax-sub" x="196" y="400">OpenTelemetry spans from every step: STT, each guardrail layer, the agent turn, each tool call, each Gemini call, TTS</text>
+</g>
+</svg>

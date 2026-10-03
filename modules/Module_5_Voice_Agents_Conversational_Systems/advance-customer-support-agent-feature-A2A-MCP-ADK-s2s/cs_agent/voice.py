@@ -201,7 +201,8 @@ async def _judge_transcript(text: str) -> bool:
             return True
 
 
-async def run_voice_session(websocket, runner, user_id: str, session_id: str, record=None) -> None:
+async def run_voice_session(websocket, runner, user_id: str, session_id: str, record=None,
+                            tool_info=None, trace_url=None) -> None:
     """Bridge a browser WebSocket to an ADK live session.
 
     Protocol with the browser client:
@@ -212,6 +213,11 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
         - {"type":"transcript","role":"user"|"agent","text":..,"final":bool}
         - {"type":"tool","phase":"call"|"result","name":..,"detail":..}
         - {"type":"blocked","text":..}         (transcript guardrail tripped)
+      Plus the pipeline events the web UI's "What happened" panel renders (same
+      vocabulary as the cascade / Module 4 web UI): stage, step (the sanitizer and the
+      Security Judge — blocking for typed text, post-hoc for speech), tool_call /
+      tool_result (with the tool catalogue entry and the unwrapped rows), llm (the Live
+      model's turn: tokens, time to first audio), trace (Phoenix link), final.
         - {"type":"flush"}                      (barge-in: clear playback buffer)
         - {"type":"turn_complete"}
         - {"type":"error","text":..}
@@ -235,7 +241,7 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
             "user_text": "", "agent_text": "", "tools": [],
             # tool calls awaiting their result, so we can emit a paired tool.<name> span
             # (Live delivers the call and the response in separate events)
-            "pending_tools": []}
+            "pending_tools": [], "n_tools": 0}
     session_totals: list[float] = []
     session_cost = {"usd": 0.0, "judge": 0.0}   # usd = S2S model; judge = est. guardrail
     bg: set = set()   # background guardrail tasks (kept referenced so they aren't GC'd)
@@ -248,6 +254,7 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
         turn["judge_mode"] = None; turn["guard_task"] = None
         turn["user_text"] = ""; turn["agent_text"] = ""; turn["tools"] = []
         turn["pending_tools"] = []
+        turn["n_tools"] = 0
 
     def _mark_agent_start() -> None:
         turn["agent_t0"] = time.monotonic()
@@ -260,9 +267,13 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
         """
         if not full:
             return
+        await websocket.send_json({"type": "stage", "key": "judge", "mode": "posthoc",
+                                   "title": "Security Judge (post-hoc)",
+                                   "stage": "A2A Security Judge on the transcript"})
         t0 = time.monotonic()
         ok = await _judge_transcript(full)
         turn["judge_secs"] = round(time.monotonic() - t0, 2)
+        await websocket.send_json(_judge_step(ok, full, t0, posthoc=True))
         turn["judge_cost"] = _estimate_judge_cost(full)
         turn["judge_mode"] = "concurrent"
         session_cost["judge"] += turn["judge_cost"]
@@ -270,7 +281,7 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
             logger.warning("Voice guardrail BLOCKED transcript: %r", full)
             try:
                 await websocket.send_json({
-                    "type": "blocked",
+                    "type": "blocked", "posthoc": True,
                     "text": "That request was flagged by the Security Judge.",
                 })
             except Exception:
@@ -313,6 +324,8 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
                     "type": "transcript", "role": "user",
                     "text": it.text, "mode": "final",
                 })
+                await websocket.send_json({"type": "stage", "key": "agent", "channel": "voice",
+                                           "stage": "Gemini Live is answering"})
                 # Guardrail runs concurrently so it never delays the agent's audio.
                 gt = asyncio.create_task(_guard(full))
                 turn["guard_task"] = gt
@@ -336,8 +349,11 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
             turn["tools"].append(fc.name)   # for the Phoenix voice.turn span
             # Remember the args so the matching response can emit a paired tool span.
             # (In cascade the call+result arrive together; on Live they're two events.)
+            turn["n_tools"] += 1
+            args = {k: _decode(v) for k, v in dict(fc.args or {}).items()}
             turn["pending_tools"].append(
-                {"id": getattr(fc, "id", None), "name": fc.name, "args": dict(fc.args or {})}
+                {"id": getattr(fc, "id", None), "name": fc.name, "args": dict(fc.args or {}),
+                 "n": turn["n_tools"], "t0": time.monotonic()}
             )
             await websocket.send_json({
                 "type": "tool", "phase": "call",
@@ -346,14 +362,24 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
                 # detail is kept for the UI, args lets the benchmark do exact matching.
                 "args": dict(fc.args or {}),
             })
+            await websocket.send_json({
+                "type": "tool_call", "id": turn["n_tools"], "name": fc.name,
+                "span": f"tool.{fc.name}", "args": args,
+                "info": tool_info(fc.name) if tool_info else {"kind": "tool"},
+            })
         for fr in (event.get_function_responses() or []):
             # Emit a tool.<name> span carrying the args + result, like cascade's
             # router.py. Live gives no auto tool spans, so we pair the earlier call
             # (by id, else FIFO by name) with this response. Never breaks the turn.
-            _emit_tool_span(turn["pending_tools"], fr)
+            call = _emit_tool_span(turn["pending_tools"], fr) or {}
             await websocket.send_json({
                 "type": "tool", "phase": "result",
                 "name": fr.name, "detail": _short(fr.response),
+            })
+            await websocket.send_json({
+                "type": "tool_result", "id": call.get("n"), "name": fr.name,
+                "ms": int((time.monotonic() - call["t0"]) * 1000) if call.get("t0") else None,
+                "result": _unwrap(fr.response),
             })
 
         # 4) Control signals + per-turn timing.
@@ -387,7 +413,9 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
                 # Emit a readable Phoenix span for the turn. The native Live stream gives
                 # ADK only an opaque `invoke_agent` span (input/output = "--"), so we add
                 # one that actually carries the transcript, reply, tools, and cost.
+                trace = None
                 with tracer.start_as_current_span("voice.turn") as _turn_span:
+                    trace = trace_url(_turn_span) if trace_url else None
                     _turn_span.set_attribute(ATTR.OPENINFERENCE_SPAN_KIND, "CHAIN")
                     _turn_span.set_attribute(ATTR.INPUT_VALUE, turn["user_text"] or "(no transcript)")
                     _turn_span.set_attribute(ATTR.OUTPUT_VALUE, turn["agent_text"] or "(audio only)")
@@ -404,6 +432,26 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
                 if record:
                     record(user_id, "user", turn["user_text"])
                     record(user_id, "assistant", turn["agent_text"])
+
+                # Rows for the web UI's "What happened" panel: the Live model's turn,
+                # the Phoenix trace, and the reply text.
+                if trace:
+                    await websocket.send_json({"type": "trace", "span": "voice.turn", **trace})
+                tools_used = ", ".join(dict.fromkeys(turn["tools"]))
+                ttfa_ms = int(turn["ttfa"] * 1000) if turn["ttfa"] is not None else None
+                await websocket.send_json({
+                    "type": "llm", "title": "Gemini Live", "model": VOICE_MODEL, "span": "voice.turn",
+                    "detail": (f"called {tools_used}, then spoke the answer" if tools_used else "spoke the answer")
+                              + (f" · first audio after {ttfa_ms:,} ms" if ttfa_ms is not None else ""),
+                    "ms": int(s2s * 1000),
+                    "tokens_in": (cost["in_text"] + cost["in_audio"]) if cost else None,
+                    "tokens_out": (cost["out_audio"] + cost["out_text"]) if cost else None,
+                    "runs": "native speech-to-speech — audio in, audio out, tools called inline"
+                            + (f" · {cost['in_audio']:,} audio + {cost['in_text']:,} text tokens in, "
+                               f"{cost['out_audio']:,} audio tokens out" if cost else ""),
+                })
+                await websocket.send_json({"type": "final", "blocked": False,
+                                           "response": turn["agent_text"] or "(audio only)"})
 
                 await websocket.send_json({
                     "type": "timing",
@@ -466,26 +514,47 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
                 # delays the reply — so the turn clock starts BEFORE it, and `total`
                 # correctly includes the judge. We report it as mode="blocking".
                 _mark_turn_start()
+                await websocket.send_json({"type": "stage", "key": "sanitize", "stage": "Sanitizing input"})
+                st0 = time.monotonic()
                 try:
                     clean = sanitize_input(obj["text"])
+                    reason = "length and character checks passed, no blocked patterns"
                 except ValueError as exc:
+                    reason = str(exc)
+                    clean = None
+                await websocket.send_json({
+                    "type": "step", "key": "sanitize", "title": "Sanitizer",
+                    "status": "passed" if clean is not None else "blocked", "detail": reason,
+                    "span": "security.sanitize", "ms": int((time.monotonic() - st0) * 1000),
+                    "kind": "in-process", "runs": "regex blocklist in cs_agent/security/sanitizer.py",
+                })
+                if clean is None:
                     await websocket.send_json({
-                        "type": "blocked", "text": f"Input rejected: {exc}",
+                        "type": "blocked", "text": f"Input rejected: {reason}",
                     })
+                    await websocket.send_json({"type": "final", "blocked": True, "stage": "sanitizer",
+                                               "response": f"Input rejected by sanitizer: {reason}"})
                     continue
+                await websocket.send_json({"type": "stage", "key": "judge", "stage": "A2A Security Judge"})
                 jt0 = time.monotonic()
                 ok = await _judge_transcript(clean)
                 turn["judge_secs"] = round(time.monotonic() - jt0, 2)
                 turn["judge_cost"] = _estimate_judge_cost(clean)
                 turn["judge_mode"] = "sequential"   # blocking -> counted in total
                 session_cost["judge"] += turn["judge_cost"]
+                await websocket.send_json(_judge_step(ok, clean, jt0, posthoc=False))
                 if not ok:
                     await websocket.send_json({
                         "type": "blocked",
                         "text": "That request was flagged by the Security Judge.",
                     })
+                    await websocket.send_json({"type": "final", "blocked": True, "stage": "judge",
+                                               "response": "Blocked by the A2A Security Judge "
+                                                           "(possible injection/unsafe input)."})
                     continue
                 _mark_agent_start()  # text: model starts AFTER the blocking judge
+                await websocket.send_json({"type": "stage", "key": "agent", "channel": "text",
+                                           "stage": "Gemini Live is answering"})
                 turn["user_text"] = clean   # typed input has no STT transcript; set it so
                                             # the turn's input is recorded to memory too
                 live_request_queue.send_content(
@@ -522,6 +591,45 @@ async def run_voice_session(websocket, runner, user_id: str, session_id: str, re
                   f"(model ${session_cost['usd']:.4f} + judge ${session_cost['judge']:.4f})")
 
 
+def _judge_step(ok: bool, text: str, t0: float, *, posthoc: bool) -> dict:
+    """The Security Judge as a "What happened" row — blocking (typed) or post-hoc (speech)."""
+    if posthoc:
+        detail = ("cleared the transcript" if ok else "flagged the transcript") + \
+                 " — ran concurrently, AFTER the Live model had already heard the audio (post-hoc; cannot block the reply)"
+    else:
+        detail = ("cleared: echoed the input back unmodified, its signal for safe" if ok
+                  else "returned BLOCKED — the Live model never saw this text")
+    return {
+        "type": "step", "key": "judge", "mode": "posthoc" if posthoc else "blocking",
+        "title": "Security Judge (post-hoc)" if posthoc else "Security Judge",
+        "status": "passed" if ok else "blocked", "detail": detail,
+        "span": "security.a2a_judge", "ms": int((time.monotonic() - t0) * 1000),
+        "kind": "A2A", "runs": f"ADK agent behind an A2A server at :{A2A_JUDGE_PORT}"
+                               + (" · not on the critical path" if posthoc else " · blocking, counted in total latency"),
+    }
+
+
+def _decode(value):
+    if isinstance(value, str) and value.lstrip()[:1] in ("{", "["):
+        try:
+            return json.loads(value)
+        except ValueError:
+            pass
+    return value
+
+
+def _unwrap(resp):
+    """Toolbox returns {"result": "<json string>"}; show the rows, not the envelope."""
+    if isinstance(resp, dict) and set(resp) == {"result"}:
+        resp = resp["result"]
+    if isinstance(resp, str):
+        try:
+            return json.loads(resp)
+        except ValueError:
+            return resp
+    return resp
+
+
 def _fmt_args(args) -> str:
     if not args:
         return ""
@@ -536,7 +644,7 @@ def _short(value, limit: int = 300) -> str:
     return s if len(s) <= limit else s[:limit] + "…"
 
 
-def _emit_tool_span(pending: list, fr) -> None:
+def _emit_tool_span(pending: list, fr) -> dict | None:
     """Emit a Phoenix `tool.<name>` span for a completed tool call, carrying the
     input args (paired from the earlier call event) and the result — the same TOOL
     span cascade's router.py produces inline.
@@ -545,6 +653,7 @@ def _emit_tool_span(pending: list, fr) -> None:
     entry from `pending` (by id when present, else FIFO by name). No-op when telemetry
     is off (the tracer is a stub); wrapped so it can never break a voice turn.
     """
+    call = None
     try:
         # Find the matching call: prefer id, else the first same-named pending call.
         args, idx = {}, None
@@ -556,7 +665,8 @@ def _emit_tool_span(pending: list, fr) -> None:
             if idx is None and call.get("name") == fr.name:
                 idx = i
         if idx is not None:
-            args = pending.pop(idx).get("args", {}) or {}
+            call = pending.pop(idx)
+            args = call.get("args", {}) or {}
 
         with tracer.start_as_current_span(f"tool.{fr.name}") as span:
             span.set_attribute(ATTR.OPENINFERENCE_SPAN_KIND, "TOOL")
@@ -566,3 +676,4 @@ def _emit_tool_span(pending: list, fr) -> None:
             span.set_attribute(ATTR.OUTPUT_VALUE, _short(fr.response, 2000))
     except Exception:  # noqa: BLE001 - telemetry must never break the turn
         pass
+    return call
