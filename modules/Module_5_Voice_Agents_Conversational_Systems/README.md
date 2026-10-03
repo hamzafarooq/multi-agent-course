@@ -60,43 +60,14 @@ conda env, Postgres, seed data, and `.env`), then run the `-s2s` variant, then c
 
 ## Assignment — A Production-Style Voice Reservation Agent for Hotels
 
-> **Project:** [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/)
-> — **Aurora Hotel**, a reservations voice agent. Runs fully offline in mock mode (no API key),
-> then switches to OpenAI or Groq with one `.env` line.
+**Project:** [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/) — **Aurora Hotel**, a cascade voice agent for room reservations. Runs offline in mock mode; no API key needed.
 
-The module's projects contrast two architectures; the assignment has you build and harden **one
-cascade end to end** for a real business workflow:
+- **4.1** Understand the voice agent architecture (STT → LLM → tools → TTS).
+- **4.2** Build the reservation workflow with structured tool calling.
+- **4.3** Handle front-desk transfer, off-topic redirects, and call endings.
+- **4.4** Analyze latency, observability, fallbacks, and production readiness.
 
-```
-caller audio → VAD/endpointing → STT → AgentRouter → LLM → RAG + tools → TTS
-```
-
-| Part | Goal | Where it lives |
-|:--|:--|:--|
-| **4.1 Understand the voice agent architecture** | Trace how audio flows through speech recognition, the LLM, tool calls, and TTS, and where each component fits in a production voice stack. | `pipeline/voice_loop.py`, `pipeline/providers.py`, `mocks/sip-ivr-call-flow.md` |
-| **4.2 Build the reservation workflow** | Check room availability, create mock reservations, and manage multi-turn conversations with structured tool calling. | `pipeline/agent.py` (`check_availability`, `create_booking`) |
-| **4.3 Handle real-world call scenarios** | Transfer complex requests to the front desk, redirect off-topic conversations back to reservations, and end calls naturally with appropriate fallbacks. | `transfer_to_human`, `end_call`, guardrails in `SYSTEM_PROMPT`, `knowledge/hotel_policies.md` |
-| **4.4 Think like a Forward Deployed Engineer** | Analyze model boundaries, operational fallbacks, latency, observability, and what must change before production. | `pipeline/telemetry.py`, `evals/`, `pipeline/scale_check.py`, `livekit/` |
-
-**Get started** (no API key needed):
-
-```bash
-cd FDE-01-assignments/Assignment_2_voice_agent/pipeline
-python3 smoke_test.py
-python3 -m unittest -v test_features.py
-PROVIDER=mock python3 voice_loop.py --text
-cd ../evals && python3 run_evals.py --suite all
-```
-
-Then follow the assignment's [`README.md`](../../FDE-01-assignments/Assignment_2_voice_agent/README.md)
-for the live provider and LiveKit setup, and its
-[`RUNBOOK.md`](../../FDE-01-assignments/Assignment_2_voice_agent/RUNBOOK.md) for the staged
-walkthrough (text agent → tools/RAG → voice → LiveKit → barge-in → telemetry → evals → scale → SIP).
-
-**Connecting it to this module:** Aurora is a cascade, so every Concept 2 trade-off applies —
-latency is additive across stages, and each stage is separately observable. For 4.4, use
-Concept 4 to argue whether a speech-to-speech version would be acceptable for a booking flow
-that mutates state, and use Concept 5's precision/recall framing to extend `evals/`.
+Start with the assignment's [`README.md`](../../FDE-01-assignments/Assignment_2_voice_agent/README.md) and [`RUNBOOK.md`](../../FDE-01-assignments/Assignment_2_voice_agent/RUNBOOK.md).
 
 ---
 
