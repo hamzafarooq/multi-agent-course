@@ -60,7 +60,7 @@ conda env, Postgres, seed data, and `.env`), then run the `-s2s` variant, then c
 
 ## Assignment (optional): A Production-Style Voice Reservation Agent for Hotels
 
-> **Optional.** Not required to complete the module. Focus on your Demo Day capstone first, and come back to this if you have time.
+> **Optional.** This is an optional project and is not required to complete the module. We recommend focusing on your Demo Day capstone first, and we encourage you to explore this project if you have time.
 
 **Project:** [`FDE-01-assignments/Assignment_2_voice_agent`](../../FDE-01-assignments/Assignment_2_voice_agent/): **Aurora Hotel**, a cascade voice agent for room reservations. Runs offline in mock mode; no API key needed.
 
