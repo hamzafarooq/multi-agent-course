@@ -1,0 +1,6 @@
+{
+  "4721": { "customer": "Sara Malik", "status": "packed", "ships": "tomorrow 9am", "carrier": "Parcelly Express", "address_editable": true },
+  "4722": { "customer": "Tom Reyes", "status": "in transit", "eta": "Thursday", "carrier": "Parcelly Ground", "address_editable": false },
+  "4723": { "customer": "Lena Park", "status": "delivered", "delivered_at": "Monday 14:12", "carrier": "Parcelly Express", "address_editable": false },
+  "4724": { "customer": "Omar Haddad", "status": "delayed", "reason": "weather at hub", "eta": "Friday", "carrier": "Parcelly Ground", "address_editable": true }
+}

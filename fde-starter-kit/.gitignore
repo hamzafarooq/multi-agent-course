@@ -1,0 +1,6 @@
+# Pre-work stays on the student's laptop: what they make here is never committed to the course.
+ME.md
+labs/m04-first-app/*
+!labs/m04-first-app/README.md
+.env
+.env.*
