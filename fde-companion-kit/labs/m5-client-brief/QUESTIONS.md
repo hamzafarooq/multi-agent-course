@@ -8,4 +8,4 @@ Read `BRIEF.md`, then write three questions you'd ask on a first discovery call,
 
 3.
 
-Bring these to Day 1.
+Bring these to class.
