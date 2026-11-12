@@ -46,13 +46,13 @@ The `/evals` page is **not** something you hand-write. Your project's eval skill
 Post the Vercel URL where your instructor tells you (the Maven assignment for the project, or the
 cohort channel). The URL is the submission; nothing else needs attaching.
 
-| Project | Due |
-|---|---|
-| Ledger (procurement audit planner) | announced in class |
-| Herald (search & RAG) | announced in class |
-| Chorus (multi-agent, builds on Herald) | announced in class |
-| Capstone (a problem of your choosing) | announced in class |
-| VOXA (voice agent, workshop project) | announced in class |
+| Project | Modules | Due |
+|---|---|---|
+| Ledger (procurement audit planner) | 1–2 | announced in class |
+| Herald (search & RAG) | 3–4 | announced in class |
+| Chorus (multi-agent, builds on Herald) | 5 | announced in class |
+| Capstone (a problem of your choosing) | 6 | demoed live on Demo Day, URL posted before the session |
+| VOXA (voice agent, workshop project) | Workshop | announced in class |
 
 Your app must be **up when it is graded**. Graders run the eval against your URL during the
 grading window, so a sleeping or broken deploy scores what it shows.

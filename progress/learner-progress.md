@@ -20,6 +20,7 @@
 | 05 — Multi-agent Systems with MCP, A2A, and Orchestration | not started | |
 | 06 — Deployment & Scaling | not started | |
 | Workshop — Voice AI Agents (VOXA) | not started | |
+| Demo Day — Capstone | not started | |
 
 Status values: not started · in progress · completed · needs review
 

@@ -35,8 +35,9 @@ instead of `CLAUDE.md` inherit the same behavior.
   (six modules + a Voice AI Agents workshop) maps onto them as listed in `CLAUDE.md` § Course
   modules. `Module_1_…` holds Alex, the Perplexity-style reference app, and the LUMINA spec as a
   worked example.
-- Projects for 2026-04: Ledger, Herald, Chorus and a Capstone (specs land in their module folders),
-  plus VOXA for the voice workshop.
+- Projects for 2026-04: Ledger (Modules 1–2), Herald (3–4), Chorus (5) and a Capstone (6), with
+  specs landing in their module folders, plus VOXA for the voice workshop. The course closes with
+  Demo Day, where the Capstone is demoed (`modules/Module_7_Demo_Day/`).
 - `Starter_Projects/`: nine small, ungraded apps to practice on.
 - `FDE-01-assignments/`: earlier cohorts' graded projects; A2 is still the VOXA spec and
   `Bonus_AI_Infra_K8s/` backs Module 6. Each has its own `AGENTS.md` with build non-negotiables.

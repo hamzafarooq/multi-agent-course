@@ -17,9 +17,9 @@
 
 [**FDE Bootcamp on Maven**](https://maven.com/boring-bot/ai-system-design) · [**Companion**](https://fde-companion-pro.vercel.app) · [**Curriculum**](#course-curriculum) · [**The four projects**](#the-four-projects) · [**What you'll build**](#what-youll-build) · [**Learn with Claude**](#learn-with-claude-ai-tutor)
 
-<img width="1000" alt="Forward Deployed Engineering Bootcamp, cohort 2026-04 course outline: six modules, the Voice AI Agents workshop, and four projects" src="assets/course-outline-2026-04.svg" />
+<img width="1000" alt="Forward Deployed Engineering Bootcamp, cohort 2026-04 course outline: six modules, the Voice AI Agents workshop, Demo Day, and four projects" src="assets/course-outline-2026-04.png" />
 
-**Cohort 2026-04 · starts Nov 14, 2026 · 7 live sessions · 4 projects · 1 specialization**
+**Cohort 2026-04 · starts Nov 14, 2026 · 7 live sessions · 4 projects · 1 specialization · closing with Demo Day**
 
 </div>
 
@@ -27,7 +27,7 @@
 
 Welcome to the official course repository for the **Forward Deployed Engineering Bootcamp** ([★ 4.9 from 87 ratings on Maven](https://maven.com/boring-bot/ai-system-design)): all the code, notebooks, exercises, and project specs used throughout the course.
 
-Six modules teach the concepts; four projects make you ship them. A dedicated **Voice AI Agents** workshop adds a specialization, and **telemetry, observability, and evaluations** run underneath every project from the first one on.
+Six modules teach the concepts; four projects make you ship them. A dedicated **Voice AI Agents** workshop adds a specialization, **telemetry, observability, and evaluations** run underneath every project from the first one on, and the course closes with **Demo Day**, where you demo your Capstone live. The **[FDE Companion](https://fde-companion-pro.vercel.app)** goes alongside every module.
 
 > **Branches are cohort archives.** `main` is always the course as it is being taught now. Every
 > past cohort is frozen on its own branch and never moves again: [`2026-03`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-03),
@@ -77,26 +77,33 @@ Modern AI builders need more than model skills.
 5. [Module 5: Multi-agent Systems with MCP, A2A, and Orchestration](#module-5-multi-agent-systems-with-mcp-a2a-and-orchestration)
 6. [Module 6: Deployment & Scaling](#module-6-deployment--scaling)
 7. [Specialization workshop: Voice AI Agents](#specialization-workshop-voice-ai-agents)
+8. [Demo Day: showcase your Capstone](#demo-day-showcase-your-capstone)
 
-**Also on this page:** [Before day one: the FDE Companion](#before-day-one-the-fde-companion) · [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects) · [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback) · [Start here](START_HERE.md) · [How to submit](SUBMISSION.md)
+**Also on this page:** [The FDE Companion](#the-fde-companion-before-day-one-and-throughout) · [The four projects](#the-four-projects) · [How to use this repo](#how-to-use-this-repo) · [What you'll build](#what-youll-build) · [Sprint Zero](#full-stack-projects) · [Starter Projects](#starter-projects) · [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback) · [Start here](START_HERE.md) · [How to submit](SUBMISSION.md)
 
 ### 🗺️ Course at a glance
 
 | # | Module | The big idea | Project |
 |---|--------|--------------|---------|
-| 1️⃣ | **Welcome to the World of FDEs** | What FDEs do, leading without authority, communication, landing the role | Set up your workbench with the [FDE Companion](#before-day-one-the-fde-companion) |
-| 2️⃣ | **Agent Loop, Harness & System Design** | How agents reason and act, what a harness does, and evals and observability from day one | 📒 **Ledger** kicks off |
-| 3️⃣ | **Building Your Own Harness, ReAct Agents, MCP & ADK** | From Claude Code to your own harness, and the system design trade-offs | 📒 **Ledger**: skills, sub-agents, human gate |
-| 4️⃣ | **Memory & Multimodal Agentic RAG** | Memory, and retrieval that reasons across text and video, measured against golden datasets | 📣 **Herald**: search & RAG |
+| 1️⃣ | **Welcome to the World of FDEs** | What FDEs do, leading without authority, communication, landing the role | 📒 **Ledger** kicks off |
+| 2️⃣ | **Agent Loop, Harness & System Design** | How agents reason and act, what a harness does, and evals and observability from day one | 📒 **Ledger**: skills, sub-agents, human gate |
+| 3️⃣ | **Building Your Own Harness, ReAct Agents, MCP & ADK** | From Claude Code to your own harness, and the system design trade-offs | 📣 **Herald** kicks off |
+| 4️⃣ | **Memory & Multimodal Agentic RAG** | Memory, and retrieval that reasons across text and video, measured against golden datasets | 📣 **Herald**: RAG, video RAG, golden datasets |
 | 5️⃣ | **Multi-agent Systems with MCP, A2A, and Orchestration** | Coordinate agents, tools, and outside systems so multi-step workflows stay reliable | 🎼 **Chorus**: builds on Herald |
-| 6️⃣ | **Deployment & Scaling** | Take agentic systems to production, scale them, keep them observable | 🏆 **Capstone**: a problem of your choosing |
-| 🎙️ | **Voice AI Agents** (specialization workshop, 3–4h live) | Build an open-source voice agent end to end | **VOXA** |
+| 6️⃣ | **Deployment & Scaling** | Take agentic systems to production, scale them, keep them observable | 🏆 **Capstone** kicks off: a problem of your choosing |
+| 🎙️ | **Voice AI Agents** (specialization workshop, 3–4h live) | Build an open-source voice agent end to end | 🎙️ **VOXA** |
+| 🚀 | **Demo Day** | Show it, measure it, defend it | 🏆 **Capstone**, demoed live |
 
 ---
 
-## Before day one: the FDE Companion
+## The FDE Companion: before day one and throughout
 
-The **[FDE Companion](https://fde-companion-pro.vercel.app)** is the reading that goes with the bootcamp: short videos, readings, and step-by-step checklists for each module. Set up your work environment so you arrive ready to build. Its hands-on steps run in [`fde-companion-kit/`](fde-companion-kit/README.md): open that folder in VS Code and type `/companion`, and Claude Code checks your setup and tells you what's next.
+The **[FDE Companion](https://fde-companion-pro.vercel.app)** is the reading that goes with the bootcamp, used for the whole course: short videos, readings, and step-by-step checklists for every module.
+
+- **Before day one,** do everything that's open (about two hours) and set up your work environment, so you arrive ready to build.
+- **During the course,** come back to the module you're in. New topics appear as the course reaches them, and the modules marked *coming soon* fill in. Each module below links its companion page.
+
+Its hands-on steps run in [`fde-companion-kit/`](fde-companion-kit/README.md): open that folder in VS Code and type `/companion`, and Claude Code checks your setup and tells you what's next.
 
 > The companion site numbers its modules 0–5; this README follows the syllabus, 1–6. Companion Module 0 is Module 1 here, and so on.
 
@@ -106,13 +113,13 @@ The **[FDE Companion](https://fde-companion-pro.vercel.app)** is the reading tha
 
 Concepts are taught in the modules; the projects are where you ship. Each is a real product built end to end and graded against a **measurable rubric plus a short video demo, not vibes**. Each project spec lands in its module folder as the course reaches it.
 
-| # | Project | You build | Spec |
-|---|---|---|---|
-| 1 | 📒 **Ledger**: Procurement Audit Planner | An agent team built from skills and sub-agents, with a human gate before anything consequential happens | spec coming |
-| 2 | 📣 **Herald**: Search & RAG | Internet search and deep research, RAG and video RAG, measured against golden datasets | spec coming |
-| 3 | 🎼 **Chorus**: builds on Herald | Herald grown into a multi-agent system: MCP + ADK, A2A, and orchestration | spec coming |
-| 4 | 🏆 **Capstone**: a problem of your choosing | Your own problem statement, built and deployed | spec coming |
-| 🎙️ | **VOXA** (workshop project): open-source voice agent | A streaming STT → LLM → TTS voice agent that holds a real-time conversation | [Voice Agent spec](FDE-01-assignments/Assignment_2_voice_agent/) |
+| # | Project | Modules | You build | Spec |
+|---|---|---|---|---|
+| 1 | 📒 **Ledger**: Procurement Audit Planner | 1–2 | An agent team built from skills and sub-agents, with a human gate before anything consequential happens | spec coming |
+| 2 | 📣 **Herald**: Search & RAG | 3–4 | Internet search and deep research, RAG and video RAG, measured against golden datasets | spec coming |
+| 3 | 🎼 **Chorus**: builds on Herald | 5 | Herald grown into a multi-agent system: MCP + ADK, A2A, and orchestration | spec coming |
+| 4 | 🏆 **Capstone**: a problem of your choosing | 6 → Demo Day | Your own problem statement, built, deployed, and demoed live on Demo Day | spec coming |
+| 🎙️ | **VOXA** (workshop project): open-source voice agent | Workshop | A streaming STT → LLM → TTS voice agent that holds a real-time conversation | [Voice Agent spec](FDE-01-assignments/Assignment_2_voice_agent/) |
 
 **Telemetry, observability, and evaluations run throughout every project.** Every project ships an `eval/` folder with a `rubric.json` and an `eval.py` that scores your running deployment, captures evidence, and produces a **Product Evaluation** report you submit with a 60–90s demo. [See a sample scorecard →](FDE-01-assignments/Assignment_1_Live_Translate/README.md#sample-scorecard)
 
@@ -186,7 +193,7 @@ To go deeper on building LLM applications, see the book
 
 ## Course Curriculum
 
-> Six modules across six weeks, plus a dedicated Voice AI Agents workshop: seven live sessions in all. Every module ends with something you built yourself, and telemetry, observability, and evaluations run underneath every project.
+> Six modules across six weeks, plus a dedicated Voice AI Agents workshop: seven live sessions in all, closing with Demo Day. Every module ends with something you built yourself, and telemetry, observability, and evaluations run underneath every project.
 >
 > **Where the material lives.** This cohort's modules reuse material from folders named for the previous cohort. Each module below lists the folders that hold its material.
 
@@ -200,6 +207,8 @@ What forward deployed engineers do, leading without authority, communication, la
 - [FDE Companion](https://fde-companion-pro.vercel.app), Module 0 (what an FDE does, your FDE workbench, how LLMs work), with its hands-on steps in [`fde-companion-kit/`](fde-companion-kit/README.md)
 - Optional reading on leading without authority: [Leading AI Systems Across Teams](modules/Module_6_Leading_AI_Systems_Across_Teams/README.md)
 
+**🚀 Project kickoff: Ledger.** A procurement audit planner built by an agent team: skills, sub-agents, a human gate. It runs across Modules 1–2; its spec lands in the module folder as the course reaches it.
+
 ---
 
 ### Module 2: Agent Loop, Harness & System Design
@@ -208,12 +217,14 @@ How agents reason and act, what a harness does, AI system design, and evals and 
 
 **Key topics:** the agent loop · ReAct (Reasoning + Acting) · agent vs. workflow vs. chatbot · the harness (tools, context, permissions, memory) · components & responsibilities · scale up vs. scale out · evals and observability from day one
 
+📖 **Companion:** [Module 1](https://fde-companion-pro.vercel.app/m1/)
+
 **Material in this repo:** [`modules/Module_1_Agent_Foundations_Harness_System_Design/`](modules/Module_1_Agent_Foundations_Harness_System_Design/README.md) · [harness principles](modules/Module_1_Agent_Foundations_Harness_System_Design/reference/harness-principles.md)
 
 **🔎 Reference app: Alex.** A finished Perplexity-style assistant you can clone and take apart. Four levels (LLM → chatbot → tool-using agent → RAG assistant), a debug panel that shows the exact API request behind every answer, and a keyword-vs-semantic Search Lab. Hosted at https://lumina-perplexity-clone.vercel.app (password shared in class).
 [Open Alex →](modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/README.md)
 
-**🚀 Project kickoff: Ledger.** A procurement audit planner built by an agent team. Its spec lands in the module folder as the course reaches it.
+**📒 Project: Ledger** (continues). Skills, sub-agents, a human gate, and an agent team.
 
 ---
 
@@ -223,6 +234,8 @@ From Claude Code to your own harness: ReAct agents, skills and sub-agents, MCP a
 
 **Key topics:** design trade-offs · ReAct agents · skills & sub-agents · isolated context windows · the orchestrator pattern · defining subagents in `.claude/agents/` · MCP (tools) · ADK (Google's agent framework)
 
+📖 **Companion:** [Module 2](https://fde-companion-pro.vercel.app/m2/)
+
 **Material in this repo:**
 - [`modules/Module_2_Skills_Subagents_Product_Architecture/`](modules/Module_2_Skills_Subagents_Product_Architecture/README.md): skills, subagents, and the orchestrator pattern
 - [ReAct agent + agentic RAG](modules/Module_4_Multi_Agent_Systems_Orchestration/Rag_react/) · [how skills work under the hood](modules/Module_4_Multi_Agent_Systems_Orchestration/how_skills_work_under_the_hood.ipynb) · [agent + subagent orchestrator starter](modules/Module_4_Multi_Agent_Systems_Orchestration/agent_subagent_orchestrator_starter.ipynb)
@@ -230,7 +243,7 @@ From Claude Code to your own harness: ReAct agents, skills and sub-agents, MCP a
 
 **📦 Featured project: [Sprint Zero](#full-stack-projects).** A multi-agent system that turns a product URL and three answers into six spec docs and a working full-stack app: the orchestrator + subagents pattern, end to end.
 
-**📒 Project: Ledger.** Skills, sub-agents, a human gate, and an agent team.
+**🚀 Project kickoff: Herald.** Search & RAG: internet search and deep research, growing into RAG and video RAG in Module 4.
 
 ---
 
@@ -239,6 +252,8 @@ From Claude Code to your own harness: ReAct agents, skills and sub-agents, MCP a
 Give agents memory, and retrieval that reasons across text and video, measured against golden datasets. Treat retrieval as a tool the agent *decides* to use, add a semantic cache for real latency/cost wins, contrast vector RAG with Knowledge Graphs, and push retrieval down to the exact *moment* in a video.
 
 **Key topics:** memory · naive vs. agentic RAG · query routing & multi-hop retrieval · hybrid retrieval & RRF fusion · cross-encoder re-ranking · semantic caching · Knowledge Graphs · video RAG · golden datasets and the eval pyramid · guardrails (Llama Guard)
+
+📖 **Companion:** [Module 3](https://fde-companion-pro.vercel.app/m3/) (coming soon)
 
 **Material in this repo:** [`modules/Module_3_Production_Agentic_RAG_AI_Systems/`](modules/Module_3_Production_Agentic_RAG_AI_Systems/README.md). [Module at a glance](modules/Module_3_Production_Agentic_RAG_AI_Systems/README.md#module-3-at-a-glance): a one-screen map of its five folders.
 
@@ -266,7 +281,7 @@ streamlit run app.py
 **📏 Featured notebook: AI Evaluation Metrics.** A plain-English tour of the metrics used across every layer of an AI system: LLM quality & reasoning, RAG retrieval & generation, and full agent/multi-agent evaluation. No API keys, no model downloads, just the standard library doing the arithmetic so you can watch the numbers move.
 [View documentation →](modules/Module_3_Production_Agentic_RAG_AI_Systems/Evaluation_and_Guardrails/README.md) · [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/modules/Module_3_Production_Agentic_RAG_AI_Systems/Evaluation_and_Guardrails/AI_Eval_Metrics.ipynb)
 
-**📣 Project: Herald.** Search & RAG: internet search, deep research, RAG + video RAG, measured against golden datasets.
+**📣 Project: Herald** (continues). RAG + video RAG, measured against golden datasets.
 
 ---
 
@@ -275,6 +290,8 @@ streamlit run app.py
 Coordinate agents, tools, and outside systems so multi-step workflows stay reliable under real load. When many agents beat one, and the more common case where they don't.
 
 **Key topics:** one agent vs. many · topologies (orchestrator-worker, hierarchical, swarm, handoff) · **MCP** (tools), **A2A** (agent-to-agent), **ADK** (Google's framework) · shared state, memory & message passing · tracing and debugging multi-agent runs
+
+📖 **Companion:** [Module 4](https://fde-companion-pro.vercel.app/m4/) (coming soon)
 
 **Material in this repo:** [`modules/Module_4_Multi_Agent_Systems_Orchestration/`](modules/Module_4_Multi_Agent_Systems_Orchestration/README.md): how MCP, A2A, and ADK compose into one running system.
 
@@ -288,7 +305,7 @@ cp .env.example .env      # add Google Cloud + Mem0 keys
 python -m cs_agent.a2a.run_servers   # start the A2A servers, then run the CLI
 ```
 
-**🎼 Project: Chorus.** Builds on Herald: MCP + ADK, A2A, and orchestration.
+**🚀 Project: Chorus.** Builds on Herald: MCP + ADK, A2A, and orchestration.
 
 ---
 
@@ -298,11 +315,13 @@ Take agentic systems to production: deploy them, scale them, and keep them obser
 
 **Key topics:** deployment · scaling · production · observability under real traffic
 
+📖 **Companion:** [Module 5](https://fde-companion-pro.vercel.app/m5/)
+
 **Material in this repo:**
 - [AI Infra on Kubernetes](FDE-01-assignments/Bonus_AI_Infra_K8s/README.md): self-hosted model serving (vLLM on GKE) with manifests, a demo, and evals
 - [FDE Companion](https://fde-companion-pro.vercel.app), topic 5.1 *Why demos break in production*, with its client brief in [`fde-companion-kit/labs/m5-client-brief/`](fde-companion-kit/labs/m5-client-brief/)
 
-**🏆 Project: Capstone.** A problem of your choosing: your own problem statement, built and deployed.
+**🚀 Project kickoff: Capstone.** A problem of your choosing: your own problem statement, built and deployed, then demoed live on [Demo Day](#demo-day-showcase-your-capstone).
 
 ---
 
@@ -312,6 +331,8 @@ A dedicated 3–4 hour live workshop where you build an open-source voice agent 
 
 **Key topics:** the voice stack (STT → LLM → TTS) · turn-taking & end-of-turn detection · latency budgeting, streaming & barge-in · tool calling inside a voice loop · cascade vs. speech-to-speech architectures · benchmarking voice agents on cost, latency, and capability
 
+📖 **Companion:** Voice AI Agents workshop (coming soon)
+
 **Material in this repo:** [`modules/Module_5_Voice_Agents_Conversational_Systems/`](modules/Module_5_Voice_Agents_Conversational_Systems/README.md)
 
 **🎙️ Workshop project: VOXA.** An open-source voice agent: streaming STT → LLM → TTS with a knowledge router, evals, and telemetry, holding a real-time conversation.
@@ -319,9 +340,17 @@ A dedicated 3–4 hour live workshop where you build an open-source voice agent 
 
 ---
 
+### Demo Day: showcase your Capstone
+
+**Showcase · Evaluate · Feedback · Next steps.** The course closes with Demo Day. You demo your **Capstone** live: a real problem of your choosing, deployed and doing real work. It is graded on the rubric, not the pitch: scored by its eval, critiqued on its trajectory, and defended on the numbers you declared before you built it.
+
+[Demo Day brief →](modules/Module_7_Demo_Day/README.md)
+
+---
+
 ## What You'll Build
 
-This course goes beyond theory. Across six weeks and the workshop you'll ship real, portfolio-ready artifacts:
+This course goes beyond theory. Across six weeks, the workshop, and Demo Day you'll ship real, portfolio-ready artifacts:
 
 | 🛠️ Artifact | What it proves |
 |------------|----------------|
@@ -333,7 +362,7 @@ This course goes beyond theory. Across six weeks and the workshop you'll ship re
 | 🛎️ **Multi-agent support system** (MCP · A2A · ADK) | You can wire the protocol layer end to end and secure it |
 | ✅ **Evaluation + telemetry, in every project** | You ship with measurable quality and observability |
 | 🎙️ **VOXA**: real-time voice agent | You can budget latency and survive barge-in |
-| 🏆 **Capstone**: your problem, deployed | You can take a real problem from statement to production |
+| 🏆 **Capstone**: your problem, deployed and demoed live on Demo Day | You can take a real problem from statement to production, and defend it on the numbers |
 
 ---
 
@@ -430,7 +459,7 @@ That last box is the whole system.
 
 **Instructor:** [Hamza Farooq](https://www.linkedin.com/in/hamzafarooq/): CEO & Founder, [Traversaal.ai](https://traversaal.ai) · Ex-Google & Walmart Labs · Adjunct Professor, UCLA & UMN
 
-A hands-on, build-every-week bootcamp for engineers who already write Python and have touched LLM APIs. Six modules and a Voice AI Agents workshop across seven live sessions, with the [FDE Companion](https://fde-companion-pro.vercel.app) alongside; you leave with four shipped projects, a specialization, and the **judgment** that separates engineers who ship agents from engineers who follow tutorials.
+A hands-on, build-every-week bootcamp for engineers who already write Python and have touched LLM APIs. Six modules and a Voice AI Agents workshop across seven live sessions, closing with Demo Day, with the [FDE Companion](https://fde-companion-pro.vercel.app) alongside; you leave with four shipped projects, a specialization, and the **judgment** that separates engineers who ship agents from engineers who follow tutorials.
 
 ---
 

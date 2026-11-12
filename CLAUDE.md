@@ -40,7 +40,9 @@ archive onto current `main` and destroy the snapshot.
 
 The course is the **Forward Deployed Engineering Bootcamp** (cohort 2026-04, starts Nov 14,
 2026) — six weeks: six teaching modules plus a Voice AI Agents specialization workshop, seven live
-sessions in all. Four projects run alongside: **Ledger** (procurement audit planner: skills,
+sessions in all, then Demo Day. The companion site is used before day one and throughout the
+course. Four projects run alongside, each paired with modules — Ledger (Modules 1–2), Herald
+(3–4), Chorus (5), Capstone (6, demoed on Demo Day): **Ledger** (procurement audit planner: skills,
 sub-agents, human gate, agent team), **Herald** (search & RAG: internet search, deep research,
 RAG + video RAG, golden datasets), **Chorus** (builds on Herald: MCP + ADK, A2A, orchestration)
 and a **Capstone** on a problem the learner chooses. The workshop project is **VOXA** (spec:
@@ -53,25 +55,26 @@ this map — not the folder number — to find the material:
 
 1. **Welcome to the World of FDEs** — the FDE role, leading without authority, communication,
    landing the role. No module folder: teach from the companion's Module 0 and `fde-companion-kit/`;
-   `Module_6_Leading_AI_Systems_Across_Teams` is optional reading on leadership.
+   `Module_6_Leading_AI_Systems_Across_Teams` is optional reading on leadership. Project kickoff: Ledger.
 2. **Agent Loop, Harness & System Design** — the agent loop, the harness, AI system design, evals
    and observability from day one. Folder: `Module_1_Agent_Foundations_Harness_System_Design`
-   (Alex reference app; the LUMINA spec as a worked example). Project kickoff: Ledger.
+   (Alex reference app; the LUMINA spec as a worked example). Project: Ledger (continues).
 3. **Building Your Own Harness, ReAct Agents, MCP & ADK** — from Claude Code to your own harness,
    design trade-offs, skills and subagents. Folders: `Module_2_Skills_Subagents_Product_Architecture`
    (incl. Sprint Zero), plus `Module_4_Multi_Agent_Systems_Orchestration/Rag_react/`, its two
-   notebooks, and the root `MCP/` folder.
+   notebooks, and the root `MCP/` folder. Project kickoff: Herald.
 4. **Memory & Multimodal Agentic RAG** — memory, agentic RAG across text and video, golden datasets.
    Folder: `Module_3_Production_Agentic_RAG_AI_Systems` (incl. Moment_RAG and Evaluation_and_Guardrails).
-   Project: Herald.
+   Project: Herald (continues).
 5. **Multi-agent Systems with MCP, A2A, and Orchestration** — coordination, A2A, shared state,
    observability. Folder: `Module_4_Multi_Agent_Systems_Orchestration`. Project: Chorus.
 6. **Deployment & Scaling** — deploy, scale, stay observable under real traffic. No module folder:
-   teach from `FDE-01-assignments/Bonus_AI_Infra_K8s/` and companion topic 5.1. Project: Capstone.
+   teach from `FDE-01-assignments/Bonus_AI_Infra_K8s/` and companion topic 5.1. Project kickoff: Capstone.
 - **Workshop: Voice AI Agents** — STT → LLM → TTS, turn-taking, latency, cascade vs. speech-to-speech.
   Folder: `Module_5_Voice_Agents_Conversational_Systems`. Project: VOXA.
 
-`Module_7_Demo_Day` (EPYHIA) belongs to the 2026-03 cohort and is not part of this syllabus.
+- **Demo Day** — the closing session: showcase, evaluate, feedback, next steps. The Capstone is
+  demoed live and graded against its rubric. Folder: `Module_7_Demo_Day` (a README brief).
 
 
 **Module folder structure.** Each module lives under `modules/Module_N_Name/`. The five
