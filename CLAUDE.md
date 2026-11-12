@@ -30,8 +30,7 @@ file fully before responding to anything course-related.
 ## Branches
 
 `main` is the cohort being taught. Past cohorts are frozen on their own branches and must never
-be advanced: `2026-01`, `2026-02`, and `2026-03` (an early snapshot of the 2026-03 cohort).
-`2026-04` carries the current cohort's updates on their way to `main`. Teach
+be advanced: `2026-01`, `2026-02`, and `2026-03` (an early snapshot of the 2026-03 cohort). Teach
 and edit from `main` only. If a local frozen branch is checked out, check its upstream before any
 pull: some were created tracking `origin/main`, so a bare `git pull` there would fast-forward the
 archive onto current `main` and destroy the snapshot.
@@ -40,14 +39,16 @@ archive onto current `main` and destroy the snapshot.
 
 The course is the **Forward Deployed Engineering Bootcamp** (cohort 2026-04, starts Nov 14,
 2026) — six weeks: six teaching modules plus a Voice AI Agents specialization workshop, seven live
-sessions in all, then Demo Day. The companion site is used before day one and throughout the
-course. Four projects run alongside, each paired with modules — Ledger (Modules 1–2), Herald
-(3–4), Chorus (5), Capstone (6, demoed on Demo Day): **Ledger** (procurement audit planner: skills,
-sub-agents, human gate, agent team), **Herald** (search & RAG: internet search, deep research,
-RAG + video RAG, golden datasets), **Chorus** (builds on Herald: MCP + ADK, A2A, orchestration)
-and a **Capstone** on a problem the learner chooses. The workshop project is **VOXA** (spec:
-`FDE-01-assignments/Assignment_2_voice_agent/`). Telemetry, observability and evaluations run
-through every project. The companion site is https://fde-companion-pro.vercel.app (it numbers
+sessions in all, then Demo Day. Four projects run alongside:
+
+- **Ledger** (Modules 1–2) — procurement audit planner: skills, sub-agents, human gate, agent team.
+- **Herald** (Modules 3–4) — search & RAG: internet search, deep research, RAG + video RAG, golden datasets.
+- **Chorus** (Module 5) — builds on Herald: MCP + ADK, A2A, orchestration.
+- **Capstone** (Module 6) — a problem the learner chooses, built, deployed and demoed on Demo Day.
+- **VOXA** (workshop) — open-source voice agent; spec in `FDE-01-assignments/Assignment_2_voice_agent/`.
+
+Telemetry, observability and evaluations run through every project. The companion site,
+https://fde-companion-pro.vercel.app, is used before day one and throughout the course (it numbers
 modules 0–5; this list uses the syllabus's 1–6).
 
 **Module folders still carry the 2026-03 names.** When the learner names a module by number, use
@@ -72,7 +73,6 @@ this map — not the folder number — to find the material:
    teach from `FDE-01-assignments/Bonus_AI_Infra_K8s/` and companion topic 5.1. Project kickoff: Capstone.
 - **Workshop: Voice AI Agents** — STT → LLM → TTS, turn-taking, latency, cascade vs. speech-to-speech.
   Folder: `Module_5_Voice_Agents_Conversational_Systems`. Project: VOXA.
-
 - **Demo Day** — the closing session: showcase, evaluate, feedback, next steps. The Capstone is
   demoed live and graded against its rubric. Folder: `Module_7_Demo_Day` (a README brief).
 

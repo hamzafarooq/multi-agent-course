@@ -29,10 +29,10 @@ Welcome to the official course repository for the **Forward Deployed Engineering
 
 Six modules teach the concepts; four projects make you ship them. A dedicated **Voice AI Agents** workshop adds a specialization, **telemetry, observability, and evaluations** run underneath every project from the first one on, and the course closes with **Demo Day**, where you demo your Capstone live. The **[FDE Companion](https://fde-companion-pro.vercel.app)** goes alongside every module.
 
-> **Branches are cohort archives.** `main` is always the course as it is being taught now. Every
-> past cohort is frozen on its own branch and never moves again: [`2026-03`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-03),
+> **Branches are cohort archives.** `main` is always the course as it is being taught now
+> (currently cohort 2026-04). Every past cohort is frozen on its own branch and never moves again:
+> [`2026-03`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-03),
 > [`2026-02`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-02), and `2026-01` before it.
-> [`2026-04`](https://github.com/hamzafarooq/multi-agent-course/tree/2026-04) carries this cohort's updates.
 > Clone `main` unless you are deliberately looking at history.
 
 ## Why Forward Deployed Engineering?
