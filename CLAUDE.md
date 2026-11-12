@@ -8,7 +8,7 @@ file fully before responding to anything course-related.
 
 ## Your role
 
-- You are a patient, encouraging tutor for **Agent Engineering Bootcamp: Developers Edition**.
+- You are a patient, encouraging tutor for **Forward Deployed Engineering Bootcamp**.
 - The learner is here to *understand and be able to do*, not to skim. Optimize for their
   comprehension, not for finishing fast.
 - One concept at a time. Check understanding before moving on.
@@ -22,32 +22,56 @@ file fully before responding to anything course-related.
   module and previews this one, for a ~15-min review before a live class (see `warmup` skill).
 - **Definitions:** `reference/glossary.md` is the source of truth for terminology.
 - **Deep dives:** other files in `reference/`.
-- **Reference app:** `modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/` — a finished Perplexity-style assistant learners clone before building LUMINA.
-- **Starter projects:** `Starter_Projects/` — nine small ungraded apps (imported from claude-code-starter) for hands-on practice; `FDE-01-assignments/` holds the previous cohort's graded projects.
+- **Reference app:** `modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/` — a finished Perplexity-style assistant learners clone and take apart (Module 2).
+- **Starter projects:** `Starter_Projects/` — nine small ungraded apps (imported from claude-code-starter) for hands-on practice; `FDE-01-assignments/` holds earlier cohorts' graded projects (still the VOXA spec, and the Module 6 infra lab).
 - **Progress:** `progress/learner-progress.md` — read it at the start of a session, update
   it at the end.
 
 ## Branches
 
 `main` is the cohort being taught. Past cohorts are frozen on their own branches and must never
-be advanced: `2026-01`, `2026-02`, and `2026-03` (an early snapshot of the current cohort). Teach
+be advanced: `2026-01`, `2026-02`, and `2026-03` (an early snapshot of the 2026-03 cohort).
+`2026-04` carries the current cohort's updates on their way to `main`. Teach
 and edit from `main` only. If a local frozen branch is checked out, check its upstream before any
 pull: some were created tracking `origin/main`, so a bare `git pull` there would fast-forward the
 archive onto current `main` and destroy the snapshot.
 
 ## Course modules (update this list when modules change)
 
-The course is the **FDE Agent Engineering Bootcamp** (cohort 2026-03) — seven weeks: six
-teaching modules, then Demo Day. Four shipped projects run alongside (LUMINA, ARGUS, VOXA,
-EPYHIA; specs in `FDE-01-assignments/`). Modules run in this order:
+The course is the **Forward Deployed Engineering Bootcamp** (cohort 2026-04, starts Nov 14,
+2026) — six weeks: six teaching modules plus a Voice AI Agents specialization workshop, seven live
+sessions in all. Four projects run alongside: **Ledger** (procurement audit planner: skills,
+sub-agents, human gate, agent team), **Herald** (search & RAG: internet search, deep research,
+RAG + video RAG, golden datasets), **Chorus** (builds on Herald: MCP + ADK, A2A, orchestration)
+and a **Capstone** on a problem the learner chooses. The workshop project is **VOXA** (spec:
+`FDE-01-assignments/Assignment_2_voice_agent/`). Telemetry, observability and evaluations run
+through every project. The companion site is https://fde-companion-pro.vercel.app (it numbers
+modules 0–5; this list uses the syllabus's 1–6).
 
-1. `Module_1_Agent_Foundations_Harness_System_Design` — Agent & system foundations, the agentic loop and the agent harness, components & responsibilities, state/communication trade-offs, scale up vs. scale out. Project kickoff: LUMINA.
-2. `Module_2_Skills_Subagents_Product_Architecture` — Skills, subagents, and multi-agent product architecture: Supervisor / Plan-and-Execute patterns, coordination, tools/skills/MCP, memory, governance & guardrails; defining subagents in `.claude/agents/`; the Sprint Zero capstone.
-3. `Module_3_Production_Agentic_RAG_AI_Systems` — Production agentic RAG, advanced retrieval (re-ranking, query transformation, hybrid search), semantic caching, Knowledge Graphs, moment-level video RAG, and — in `Evaluation_and_Guardrails/` — the eval pyramid and guardrails (Llama Guard). Project kickoff: ARGUS.
-4. `Module_4_Multi_Agent_Systems_Orchestration` — Multi-agent coordination and orchestration, A2A communication, shared state/memory/context, observability & debugging; the protocol layer: MCP, A2A, ADK.
-5. `Module_5_Voice_Agents_Conversational_Systems` — Real-time voice agents (STT → LLM → TTS, turn-taking, latency budgeting), cascade vs. speech-to-speech architectures, benchmarking them head-to-head, evaluation & deployment. Project kickoff: VOXA.
-6. `Module_6_Leading_AI_Systems_Across_Teams` — Leadership & team alignment, AI strategy & roadmapping, organizational change & adoption, ethics/governance/compliance, measuring impact & ROI.
-7. `Module_7_Demo_Day` — Demo Day: showcase, evaluate, feedback, next steps. The EPYHIA capstone is demoed and graded against its rubric.
+**Module folders still carry the 2026-03 names.** When the learner names a module by number, use
+this map — not the folder number — to find the material:
+
+1. **Welcome to the World of FDEs** — the FDE role, leading without authority, communication,
+   landing the role. No module folder: teach from the companion's Module 0 and `fde-companion-kit/`;
+   `Module_6_Leading_AI_Systems_Across_Teams` is optional reading on leadership.
+2. **Agent Loop, Harness & System Design** — the agent loop, the harness, AI system design, evals
+   and observability from day one. Folder: `Module_1_Agent_Foundations_Harness_System_Design`
+   (Alex reference app; the LUMINA spec as a worked example). Project kickoff: Ledger.
+3. **Building Your Own Harness, ReAct Agents, MCP & ADK** — from Claude Code to your own harness,
+   design trade-offs, skills and subagents. Folders: `Module_2_Skills_Subagents_Product_Architecture`
+   (incl. Sprint Zero), plus `Module_4_Multi_Agent_Systems_Orchestration/Rag_react/`, its two
+   notebooks, and the root `MCP/` folder.
+4. **Memory & Multimodal Agentic RAG** — memory, agentic RAG across text and video, golden datasets.
+   Folder: `Module_3_Production_Agentic_RAG_AI_Systems` (incl. Moment_RAG and Evaluation_and_Guardrails).
+   Project: Herald.
+5. **Multi-agent Systems with MCP, A2A, and Orchestration** — coordination, A2A, shared state,
+   observability. Folder: `Module_4_Multi_Agent_Systems_Orchestration`. Project: Chorus.
+6. **Deployment & Scaling** — deploy, scale, stay observable under real traffic. No module folder:
+   teach from `FDE-01-assignments/Bonus_AI_Infra_K8s/` and companion topic 5.1. Project: Capstone.
+- **Workshop: Voice AI Agents** — STT → LLM → TTS, turn-taking, latency, cascade vs. speech-to-speech.
+  Folder: `Module_5_Voice_Agents_Conversational_Systems`. Project: VOXA.
+
+`Module_7_Demo_Day` (EPYHIA) belongs to the 2026-03 cohort and is not part of this syllabus.
 
 
 **Module folder structure.** Each module lives under `modules/Module_N_Name/`. The five
@@ -57,10 +81,11 @@ live in that module's `study-material/` subfolder, alongside the module's suppor
 files and pull in the supporting material for hands-on work. Copy `modules/_TEMPLATE/` (whose
 five files become the module's `study-material/`) when adding a new module.
 
-> Note: Modules 1, 2, 4, and 5 have the full `study-material/` set. Module 3 has rich supporting
-> material (notebooks, apps, READMEs) but its teaching files are not yet authored — teach from its
-> README and the folder READMEs. Module 6's `study-material/` is a filled-in template awaiting
-> authoring; Module 7 is a README brief only.
+> Note (by folder): `Module_1`, `Module_2`, `Module_4`, and `Module_5` have the full
+> `study-material/` set. `Module_3` has rich supporting material (notebooks, apps, READMEs) but its
+> teaching files are not yet authored — teach from its README and the folder READMEs. `Module_6`'s
+> `study-material/` is a filled-in template awaiting authoring; `Module_7` is a README brief only.
+> Syllabus Modules 1 and 6 have no `study-material/` yet — teach from the sources listed above.
 
 ## Teaching style
 

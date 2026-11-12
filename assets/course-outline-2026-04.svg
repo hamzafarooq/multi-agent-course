@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="536" viewBox="0 0 1000 536" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Forward Deployed Engineering Bootcamp, cohort 2026-04: course outline</title>
+<desc id="d">Six modules plus a Voice AI Agents specialization workshop, and four projects: Ledger, Herald, Chorus and a Capstone, with telemetry, observability and evaluations throughout.</desc>
+<rect width="1000" height="536" rx="16" fill="#FFFFFF"/>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94A3B8"/></marker></defs>
+<text x="500" y="30" text-anchor="middle" font-size="17" font-weight="700" fill="#0F172A">Forward Deployed Engineering Bootcamp · Cohort 2026-04</text>
+<rect x="13" y="46" width="134" height="236" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="30" y="58" width="100" height="24" rx="12" fill="#6E40C9"/>
+<text x="80.0" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="0.6">MODULE 1</text>
+<text x="80.0" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Welcome to the</text>
+<text x="80.0" y="129" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">World of FDEs</text>
+<line x1="60.0" y1="174" x2="100.0" y2="174" stroke="#6E40C9" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="23" y="190" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#6E40C9" stroke-opacity="0.45"/>
+<text x="80.0" y="205" text-anchor="middle" font-size="11" fill="#334155">FDE role</text>
+<rect x="23" y="218" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#6E40C9" stroke-opacity="0.45"/>
+<text x="80.0" y="233" text-anchor="middle" font-size="11" fill="#334155">Leadership</text>
+<rect x="23" y="246" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#6E40C9" stroke-opacity="0.45"/>
+<text x="80.0" y="261" text-anchor="middle" font-size="11" fill="#334155">Landing a role</text>
+<rect x="153" y="46" width="134" height="236" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="170" y="58" width="100" height="24" rx="12" fill="#2563EB"/>
+<text x="220.0" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="0.6">MODULE 2</text>
+<text x="220.0" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Agent Loop,</text>
+<text x="220.0" y="129" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Harness &amp;</text>
+<text x="220.0" y="146" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">System Design</text>
+<line x1="200.0" y1="174" x2="240.0" y2="174" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="163" y="190" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#2563EB" stroke-opacity="0.45"/>
+<text x="220.0" y="205" text-anchor="middle" font-size="11" fill="#334155">Agent loop</text>
+<rect x="163" y="218" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#2563EB" stroke-opacity="0.45"/>
+<text x="220.0" y="233" text-anchor="middle" font-size="11" fill="#334155">System design</text>
+<rect x="163" y="246" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#2563EB" stroke-opacity="0.45"/>
+<text x="220.0" y="261" text-anchor="middle" font-size="11" fill="#334155">Evals</text>
+<rect x="293" y="46" width="134" height="236" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="310" y="58" width="100" height="24" rx="12" fill="#0E9F6E"/>
+<text x="360.0" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="0.6">MODULE 3</text>
+<text x="360.0" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Building Your Own</text>
+<text x="360.0" y="129" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Harness, ReAct</text>
+<text x="360.0" y="146" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Agents, MCP &amp; ADK</text>
+<line x1="340.0" y1="174" x2="380.0" y2="174" stroke="#0E9F6E" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="303" y="190" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#0E9F6E" stroke-opacity="0.45"/>
+<text x="360.0" y="205" text-anchor="middle" font-size="11" fill="#334155">Design trade-offs</text>
+<rect x="303" y="218" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#0E9F6E" stroke-opacity="0.45"/>
+<text x="360.0" y="233" text-anchor="middle" font-size="11" fill="#334155">ReAct</text>
+<rect x="303" y="246" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#0E9F6E" stroke-opacity="0.45"/>
+<text x="360.0" y="261" text-anchor="middle" font-size="11" fill="#334155">MCP · ADK</text>
+<rect x="433" y="46" width="134" height="236" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="450" y="58" width="100" height="24" rx="12" fill="#EA580C"/>
+<text x="500.0" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="0.6">MODULE 4</text>
+<text x="500.0" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Memory &amp;</text>
+<text x="500.0" y="129" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Multimodal</text>
+<text x="500.0" y="146" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Agentic RAG</text>
+<line x1="480.0" y1="174" x2="520.0" y2="174" stroke="#EA580C" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="443" y="190" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#EA580C" stroke-opacity="0.45"/>
+<text x="500.0" y="205" text-anchor="middle" font-size="11" fill="#334155">Memory</text>
+<rect x="443" y="218" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#EA580C" stroke-opacity="0.45"/>
+<text x="500.0" y="233" text-anchor="middle" font-size="11" fill="#334155">Video RAG</text>
+<rect x="443" y="246" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#EA580C" stroke-opacity="0.45"/>
+<text x="500.0" y="261" text-anchor="middle" font-size="11" fill="#334155">Golden datasets</text>
+<rect x="573" y="46" width="134" height="236" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="590" y="58" width="100" height="24" rx="12" fill="#0F766E"/>
+<text x="640.0" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="0.6">MODULE 5</text>
+<text x="640.0" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Multi-agent Systems</text>
+<text x="640.0" y="129" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">with MCP, A2A &amp;</text>
+<text x="640.0" y="146" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Orchestration</text>
+<line x1="620.0" y1="174" x2="660.0" y2="174" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="583" y="190" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#0F766E" stroke-opacity="0.45"/>
+<text x="640.0" y="205" text-anchor="middle" font-size="11" fill="#334155">A2A</text>
+<rect x="583" y="218" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#0F766E" stroke-opacity="0.45"/>
+<text x="640.0" y="233" text-anchor="middle" font-size="11" fill="#334155">Orchestration</text>
+<rect x="583" y="246" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#0F766E" stroke-opacity="0.45"/>
+<text x="640.0" y="261" text-anchor="middle" font-size="11" fill="#334155">Multi-agent</text>
+<rect x="713" y="46" width="134" height="236" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="730" y="58" width="100" height="24" rx="12" fill="#DB2777"/>
+<text x="780.0" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="0.6">MODULE 6</text>
+<text x="780.0" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Deployment &amp;</text>
+<text x="780.0" y="129" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Scaling</text>
+<line x1="760.0" y1="174" x2="800.0" y2="174" stroke="#DB2777" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="723" y="190" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#DB2777" stroke-opacity="0.45"/>
+<text x="780.0" y="205" text-anchor="middle" font-size="11" fill="#334155">Deployment</text>
+<rect x="723" y="218" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#DB2777" stroke-opacity="0.45"/>
+<text x="780.0" y="233" text-anchor="middle" font-size="11" fill="#334155">Scaling</text>
+<rect x="723" y="246" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#DB2777" stroke-opacity="0.45"/>
+<text x="780.0" y="261" text-anchor="middle" font-size="11" fill="#334155">Production</text>
+<rect x="853" y="46" width="134" height="236" rx="12" fill="#F8FAFC" stroke="#E2E8F0" stroke-dasharray="5 4"/>
+<rect x="870" y="58" width="100" height="24" rx="12" fill="#7C3AED"/>
+<text x="920.0" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="0.6">WORKSHOP</text>
+<text x="920.0" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Voice AI Agents</text>
+<text x="920.0" y="129" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">Specialization</text>
+<text x="920.0" y="146" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0F172A">3–4h live</text>
+<line x1="900.0" y1="174" x2="940.0" y2="174" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="863" y="190" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#7C3AED" stroke-opacity="0.45"/>
+<text x="920.0" y="205" text-anchor="middle" font-size="11" fill="#334155">Open-source</text>
+<rect x="863" y="218" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#7C3AED" stroke-opacity="0.45"/>
+<text x="920.0" y="233" text-anchor="middle" font-size="11" fill="#334155">STT → LLM → TTS</text>
+<rect x="863" y="246" width="114" height="22" rx="11" fill="#FFFFFF" stroke="#7C3AED" stroke-opacity="0.45"/>
+<text x="920.0" y="261" text-anchor="middle" font-size="11" fill="#334155">Project: VOXA</text>
+<text x="14" y="312" font-size="13" font-weight="700" fill="#475569" letter-spacing="0.4">FOUR PROJECTS ACROSS THE COURSE</text>
+<rect x="14" y="324" width="228" height="150" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="14" y="324" width="5" height="150" rx="2.5" fill="#2563EB"/>
+<text x="32" y="348" font-size="10.5" font-weight="700" fill="#2563EB" letter-spacing="0.6">PROJECT 1</text>
+<text x="32" y="374" font-size="21" font-weight="800" fill="#0F172A">Ledger</text>
+<text x="32" y="394" font-size="12.5" font-weight="600" fill="#334155">Procurement Audit Planner</text>
+<circle cx="36" cy="416" r="2.5" fill="#2563EB"/>
+<text x="46" y="420" font-size="11.5" fill="#475569">Skills · Sub-agents</text>
+<circle cx="36" cy="434" r="2.5" fill="#2563EB"/>
+<text x="46" y="438" font-size="11.5" fill="#475569">Human gate</text>
+<circle cx="36" cy="452" r="2.5" fill="#2563EB"/>
+<text x="46" y="456" font-size="11.5" fill="#475569">Agent team</text>
+<line x1="244" y1="399.0" x2="260" y2="399.0" stroke="#94A3B8" stroke-width="2" marker-end="url(#arr)"/>
+<rect x="262" y="324" width="228" height="150" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="262" y="324" width="5" height="150" rx="2.5" fill="#0E9F6E"/>
+<text x="280" y="348" font-size="10.5" font-weight="700" fill="#0E9F6E" letter-spacing="0.6">PROJECT 2</text>
+<text x="280" y="374" font-size="21" font-weight="800" fill="#0F172A">Herald</text>
+<text x="280" y="394" font-size="12.5" font-weight="600" fill="#334155">Search &amp; RAG</text>
+<circle cx="284" cy="416" r="2.5" fill="#0E9F6E"/>
+<text x="294" y="420" font-size="11.5" fill="#475569">Internet search · Deep research</text>
+<circle cx="284" cy="434" r="2.5" fill="#0E9F6E"/>
+<text x="294" y="438" font-size="11.5" fill="#475569">RAG + Video RAG</text>
+<circle cx="284" cy="452" r="2.5" fill="#0E9F6E"/>
+<text x="294" y="456" font-size="11.5" fill="#475569">Golden datasets</text>
+<line x1="492" y1="399.0" x2="508" y2="399.0" stroke="#94A3B8" stroke-width="2" marker-end="url(#arr)"/>
+<rect x="510" y="324" width="228" height="150" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="510" y="324" width="5" height="150" rx="2.5" fill="#EA580C"/>
+<text x="528" y="348" font-size="10.5" font-weight="700" fill="#EA580C" letter-spacing="0.6">PROJECT 3</text>
+<text x="528" y="374" font-size="21" font-weight="800" fill="#0F172A">Chorus</text>
+<text x="528" y="394" font-size="12.5" font-weight="600" fill="#334155">Builds on Herald</text>
+<circle cx="532" cy="416" r="2.5" fill="#EA580C"/>
+<text x="542" y="420" font-size="11.5" fill="#475569">Herald + MCP + ADK</text>
+<circle cx="532" cy="434" r="2.5" fill="#EA580C"/>
+<text x="542" y="438" font-size="11.5" fill="#475569">A2A</text>
+<circle cx="532" cy="452" r="2.5" fill="#EA580C"/>
+<text x="542" y="456" font-size="11.5" fill="#475569">Orchestration</text>
+<line x1="740" y1="399.0" x2="756" y2="399.0" stroke="#94A3B8" stroke-width="2" marker-end="url(#arr)"/>
+<rect x="758" y="324" width="228" height="150" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+<rect x="758" y="324" width="5" height="150" rx="2.5" fill="#6E40C9"/>
+<text x="776" y="348" font-size="10.5" font-weight="700" fill="#6E40C9" letter-spacing="0.6">PROJECT 4</text>
+<text x="776" y="374" font-size="21" font-weight="800" fill="#0F172A">Capstone</text>
+<text x="776" y="394" font-size="12.5" font-weight="600" fill="#334155">Problem of your choosing</text>
+<circle cx="780" cy="416" r="2.5" fill="#6E40C9"/>
+<text x="790" y="420" font-size="11.5" fill="#475569">Your problem statement</text>
+<circle cx="780" cy="434" r="2.5" fill="#6E40C9"/>
+<text x="790" y="438" font-size="11.5" fill="#475569">Built and deployed</text>
+<rect x="14" y="488" width="972" height="34" rx="10" fill="#0F172A"/>
+<text x="500" y="510" text-anchor="middle" font-size="13" font-weight="600" fill="#FFFFFF">Telemetry, Observability &amp; Evaluations  ·  throughout every project</text>
+</svg>

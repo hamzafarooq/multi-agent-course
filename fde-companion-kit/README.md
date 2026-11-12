@@ -2,7 +2,7 @@
 
 Your workspace for the FDE Bootcamp companion. Open this folder in VS Code and Claude Code becomes your tutor: you ask in plain words, and it does the work and explains what it did. You won't need a terminal.
 
-The videos, reading and step-by-step checklists are on the companion site: **https://fde-bootcamp-companion.vercel.app**. It follows the bootcamp's six modules. Before day one, do everything that's open (about two hours); new topics appear as the course goes on.
+The videos, reading and step-by-step checklists are on the companion site: **https://fde-companion-pro.vercel.app**. It follows the bootcamp's six modules. Before day one, do everything that's open (about two hours); new topics appear as the course goes on.
 
 ## What you need
 
