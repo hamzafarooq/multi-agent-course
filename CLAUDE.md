@@ -48,7 +48,7 @@ sessions in all, then Demo Day. Four projects run alongside:
 - **VOXA** (workshop) — open-source voice agent; spec in `FDE-01-assignments/Assignment_2_voice_agent/`.
 
 Telemetry, observability and evaluations run through every project. The companion site,
-https://fde-companion-pro.vercel.app, is used before day one and throughout the course (it numbers
+https://companion.traversaal.ai, is used before day one and throughout the course (it numbers
 modules 0–5; this list uses the syllabus's 1–6).
 
 **Module folders still carry the 2026-03 names.** When the learner names a module by number, use

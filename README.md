@@ -11,11 +11,11 @@
 &nbsp;
 ![Projects](https://img.shields.io/badge/4%20projects-%2B%201%20specialization-6E40C9?style=for-the-badge)
 &nbsp;
-[![FDE Companion](https://img.shields.io/badge/FDE-Companion-0F766E?style=for-the-badge)](https://fde-companion-pro.vercel.app)
+[![FDE Companion](https://img.shields.io/badge/FDE-Companion-0F766E?style=for-the-badge)](https://companion.traversaal.ai)
 &nbsp;
 [![Built with Claude](https://img.shields.io/badge/Built%20with-Claude%20Code-D97757?style=for-the-badge&logo=anthropic&logoColor=white)](https://claude.com/claude-code)
 
-[**FDE Bootcamp on Maven**](https://maven.com/boring-bot/ai-system-design) · [**Companion**](https://fde-companion-pro.vercel.app) · [**Curriculum**](#course-curriculum) · [**The four projects**](#the-four-projects) · [**What you'll build**](#what-youll-build) · [**Learn with Claude**](#learn-with-claude-ai-tutor)
+[**FDE Bootcamp on Maven**](https://maven.com/boring-bot/ai-system-design) · [**Companion**](https://companion.traversaal.ai) · [**Curriculum**](#course-curriculum) · [**The four projects**](#the-four-projects) · [**What you'll build**](#what-youll-build) · [**Learn with Claude**](#learn-with-claude-ai-tutor)
 
 <img width="1000" alt="Forward Deployed Engineering Bootcamp, cohort 2026-04 course outline: six modules, the Voice AI Agents workshop, Demo Day, and four projects" src="assets/course-outline-2026-04.png" />
 
@@ -27,7 +27,7 @@
 
 Welcome to the official course repository for the **Forward Deployed Engineering Bootcamp** ([★ 4.9 from 87 ratings on Maven](https://maven.com/boring-bot/ai-system-design)): all the code, notebooks, exercises, and project specs used throughout the course.
 
-Six modules teach the concepts; four projects make you ship them. A dedicated **Voice AI Agents** workshop adds a specialization, **telemetry, observability, and evaluations** run underneath every project from the first one on, and the course closes with **Demo Day**, where you demo your Capstone live. The **[FDE Companion](https://fde-companion-pro.vercel.app)** goes alongside every module.
+Six modules teach the concepts; four projects make you ship them. A dedicated **Voice AI Agents** workshop adds a specialization, **telemetry, observability, and evaluations** run underneath every project from the first one on, and the course closes with **Demo Day**, where you demo your Capstone live. The **[FDE Companion](https://companion.traversaal.ai)** goes alongside every module.
 
 > **Branches are cohort archives.** `main` is always the course as it is being taught now
 > (currently cohort 2026-04). Every past cohort is frozen on its own branch and never moves again:
@@ -98,7 +98,7 @@ Modern AI builders need more than model skills.
 
 ## The FDE Companion: before day one and throughout
 
-The **[FDE Companion](https://fde-companion-pro.vercel.app)** is the reading that goes with the bootcamp, used for the whole course: short videos, readings, and step-by-step checklists for every module.
+The **[FDE Companion](https://companion.traversaal.ai)** is the reading that goes with the bootcamp, used for the whole course: short videos, readings, and step-by-step checklists for every module.
 
 - **Before day one,** do everything that's open (about two hours) and set up your work environment, so you arrive ready to build.
 - **During the course,** come back to the module you're in. New topics appear as the course reaches them, and the modules marked *coming soon* fill in. Each module below links its companion page.
@@ -204,7 +204,7 @@ What forward deployed engineers do, leading without authority, communication, la
 **Key topics:** the FDE role · leadership · landing a role
 
 **Material in this repo:**
-- [FDE Companion](https://fde-companion-pro.vercel.app), Module 0 (what an FDE does, your FDE workbench, how LLMs work), with its hands-on steps in [`fde-companion-kit/`](fde-companion-kit/README.md)
+- [FDE Companion](https://companion.traversaal.ai), Module 0 (what an FDE does, your FDE workbench, how LLMs work), with its hands-on steps in [`fde-companion-kit/`](fde-companion-kit/README.md)
 - Optional reading on leading without authority: [Leading AI Systems Across Teams](modules/Module_6_Leading_AI_Systems_Across_Teams/README.md)
 
 **🚀 Project kickoff: Ledger.** A procurement audit planner built by an agent team: skills, sub-agents, a human gate. It runs across Modules 1–2; its spec lands in the module folder as the course reaches it.
@@ -217,7 +217,7 @@ How agents reason and act, what a harness does, AI system design, and evals and 
 
 **Key topics:** the agent loop · ReAct (Reasoning + Acting) · agent vs. workflow vs. chatbot · the harness (tools, context, permissions, memory) · components & responsibilities · scale up vs. scale out · evals and observability from day one
 
-📖 **Companion:** [Module 1](https://fde-companion-pro.vercel.app/m1/)
+📖 **Companion:** [Module 1](https://companion.traversaal.ai/m1/)
 
 **Material in this repo:** [`modules/Module_1_Agent_Foundations_Harness_System_Design/`](modules/Module_1_Agent_Foundations_Harness_System_Design/README.md) · [harness principles](modules/Module_1_Agent_Foundations_Harness_System_Design/reference/harness-principles.md)
 
@@ -234,7 +234,7 @@ From Claude Code to your own harness: ReAct agents, skills and sub-agents, MCP a
 
 **Key topics:** design trade-offs · ReAct agents · skills & sub-agents · isolated context windows · the orchestrator pattern · defining subagents in `.claude/agents/` · MCP (tools) · ADK (Google's agent framework)
 
-📖 **Companion:** [Module 2](https://fde-companion-pro.vercel.app/m2/)
+📖 **Companion:** [Module 2](https://companion.traversaal.ai/m2/)
 
 **Material in this repo:**
 - [`modules/Module_2_Skills_Subagents_Product_Architecture/`](modules/Module_2_Skills_Subagents_Product_Architecture/README.md): skills, subagents, and the orchestrator pattern
@@ -253,7 +253,7 @@ Give agents memory, and retrieval that reasons across text and video, measured a
 
 **Key topics:** memory · naive vs. agentic RAG · query routing & multi-hop retrieval · hybrid retrieval & RRF fusion · cross-encoder re-ranking · semantic caching · Knowledge Graphs · video RAG · golden datasets and the eval pyramid · guardrails (Llama Guard)
 
-📖 **Companion:** [Module 3](https://fde-companion-pro.vercel.app/m3/) (coming soon)
+📖 **Companion:** [Module 3](https://companion.traversaal.ai/m3/) (coming soon)
 
 **Material in this repo:** [`modules/Module_3_Production_Agentic_RAG_AI_Systems/`](modules/Module_3_Production_Agentic_RAG_AI_Systems/README.md). [Module at a glance](modules/Module_3_Production_Agentic_RAG_AI_Systems/README.md#module-3-at-a-glance): a one-screen map of its five folders.
 
@@ -291,7 +291,7 @@ Coordinate agents, tools, and outside systems so multi-step workflows stay relia
 
 **Key topics:** one agent vs. many · topologies (orchestrator-worker, hierarchical, swarm, handoff) · **MCP** (tools), **A2A** (agent-to-agent), **ADK** (Google's framework) · shared state, memory & message passing · tracing and debugging multi-agent runs
 
-📖 **Companion:** [Module 4](https://fde-companion-pro.vercel.app/m4/) (coming soon)
+📖 **Companion:** [Module 4](https://companion.traversaal.ai/m4/) (coming soon)
 
 **Material in this repo:** [`modules/Module_4_Multi_Agent_Systems_Orchestration/`](modules/Module_4_Multi_Agent_Systems_Orchestration/README.md): how MCP, A2A, and ADK compose into one running system.
 
@@ -315,11 +315,11 @@ Take agentic systems to production: deploy them, scale them, and keep them obser
 
 **Key topics:** deployment · scaling · production · observability under real traffic
 
-📖 **Companion:** [Module 5](https://fde-companion-pro.vercel.app/m5/)
+📖 **Companion:** [Module 5](https://companion.traversaal.ai/m5/)
 
 **Material in this repo:**
 - [AI Infra on Kubernetes](FDE-01-assignments/Bonus_AI_Infra_K8s/README.md): self-hosted model serving (vLLM on GKE) with manifests, a demo, and evals
-- [FDE Companion](https://fde-companion-pro.vercel.app), topic 5.1 *Why demos break in production*, with its client brief in [`fde-companion-kit/labs/m5-client-brief/`](fde-companion-kit/labs/m5-client-brief/)
+- [FDE Companion](https://companion.traversaal.ai), topic 5.1 *Why demos break in production*, with its client brief in [`fde-companion-kit/labs/m5-client-brief/`](fde-companion-kit/labs/m5-client-brief/)
 
 **🚀 Project kickoff: Capstone.** A problem of your choosing: your own problem statement, built and deployed, then demoed live on [Demo Day](#demo-day-showcase-your-capstone).
 
@@ -459,7 +459,7 @@ That last box is the whole system.
 
 **Instructor:** [Hamza Farooq](https://www.linkedin.com/in/hamzafarooq/): CEO & Founder, [Traversaal.ai](https://traversaal.ai) · Ex-Google & Walmart Labs · Adjunct Professor, UCLA & UMN
 
-A hands-on, build-every-week bootcamp for engineers who already write Python and have touched LLM APIs. Six modules and a Voice AI Agents workshop across seven live sessions, closing with Demo Day, with the [FDE Companion](https://fde-companion-pro.vercel.app) alongside; you leave with four shipped projects, a specialization, and the **judgment** that separates engineers who ship agents from engineers who follow tutorials.
+A hands-on, build-every-week bootcamp for engineers who already write Python and have touched LLM APIs. Six modules and a Voice AI Agents workshop across seven live sessions, closing with Demo Day, with the [FDE Companion](https://companion.traversaal.ai) alongside; you leave with four shipped projects, a specialization, and the **judgment** that separates engineers who ship agents from engineers who follow tutorials.
 
 ---
 

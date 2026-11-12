@@ -23,7 +23,7 @@ description: Start or resume the FDE companion. Checks the student's setup (Git,
      Started the companion: <today's date>
      ```
 
-   - Tell them they're done with topic **0.2 Your FDE workbench**: tick the last step on the site, and move on to **0.3 How LLMs work** at https://fde-companion-pro.vercel.app/m0/how-llms-work/.
+   - Tell them they're done with topic **0.2 Your FDE workbench**: tick the last step on the site, and move on to **0.3 How LLMs work** at https://companion.traversaal.ai/m0/how-llms-work/.
 
 3. **Coming back** (`ME.md` exists): greet them by name. Progress lives on the site, not here, so ask which topic they're on (like 1.2). Then give the next hands-on step for that topic, from the table in `CLAUDE.md`, and offer to start it. If the topic has nothing to do here, say so and point them to the next one that does.
 
