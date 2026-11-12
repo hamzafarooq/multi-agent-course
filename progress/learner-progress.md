@@ -13,13 +13,14 @@
 
 | Module | Status | Notes / weak spots |
 |--------|--------|--------------------|
-| 01 — Agent Foundations, Agent Harness & System Design | not started | |
-| 02 — Skills & Subagents: Product Architecture & Coordination | not started | |
-| 03 — Production Agentic RAG & AI Systems | not started | |
-| 04 — Multi-Agent Systems & Orchestration | not started | |
-| 05 — Real-Time Voice Agents & Conversational Systems | not started | |
-| 06 — Leading AI Systems Across Teams | not started | |
-| 07 — Demo Day (EPYHIA) | not started | |
+| 01 — Welcome to the World of FDEs | not started | |
+| 02 — Agent Loop, Harness & System Design | not started | |
+| 03 — Building Your Own Harness, ReAct Agents, MCP & ADK | not started | |
+| 04 — Memory & Multimodal Agentic RAG | not started | |
+| 05 — Multi-agent Systems with MCP, A2A, and Orchestration | not started | |
+| 06 — Deployment & Scaling | not started | |
+| Workshop — Voice AI Agents (VOXA) | not started | |
+| Demo Day — Capstone | not started | |
 
 Status values: not started · in progress · completed · needs review
 

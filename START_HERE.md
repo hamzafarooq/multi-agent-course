@@ -1,9 +1,9 @@
 # Start here
 
-Read this once, before your first assignment. It applies to LUMINA, ARGUS, VOXA and EPYHIA
-alike, and it answers the three questions everyone hits in week one: *which of these files do
-I actually read, what am I supposed to decide for myself, and how do I start the build with
-Claude Code?*
+Read this once, before your first assignment. It applies to every project in the course (Ledger,
+Herald, Chorus, the Capstone and VOXA) alike, and it answers the three questions everyone hits
+in week one: *which of these files do I actually read, what am I supposed to decide for myself,
+and how do I start the build with Claude Code?*
 
 Every project in this course ships the same set of files. They look redundant. They aren't —
 each one exists because a different reader needs it, and two of those readers are not you.

@@ -31,11 +31,17 @@ instead of `CLAUDE.md` inherit the same behavior.
 
 ## Where things are
 
-- `modules/`: seven modules in teaching order; Module 1 also holds the LUMINA PRD and Alex, the
-  Perplexity-style reference app.
+- `modules/`: module material. Folder names still carry the 2026-03 titles; the 2026-04 syllabus
+  (six modules + a Voice AI Agents workshop) maps onto them as listed in `CLAUDE.md` § Course
+  modules. `Module_1_…` holds Alex, the Perplexity-style reference app, and the LUMINA spec as a
+  worked example.
+- Projects for 2026-04: Ledger (Modules 1–2), Herald (3–4), Chorus (5) and a Capstone (6), with
+  specs landing in their module folders, plus VOXA for the voice workshop. The course closes with
+  Demo Day, where the Capstone is demoed (`modules/Module_7_Demo_Day/`).
 - `Starter_Projects/`: nine small, ungraded apps to practice on.
-- `FDE-01-assignments/`: the previous cohort's graded projects; A2, A3, A4 are still the specs
-  for VOXA, ARGUS, and EPYHIA. Each has its own `AGENTS.md` with build non-negotiables.
+- `FDE-01-assignments/`: earlier cohorts' graded projects; A2 is still the VOXA spec and
+  `Bonus_AI_Infra_K8s/` backs Module 6. Each has its own `AGENTS.md` with build non-negotiables.
+- `fde-companion-kit/`: hands-on steps for the companion site, https://companion.traversaal.ai.
 - `.claude/skills/`: the tutor skills (`teach-module`, `quiz-me`, `explain-eli5`,
   `build-along`, `warmup`). If your harness cannot load them, read the `SKILL.md` in each folder
   and follow it by hand.

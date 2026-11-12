@@ -6,6 +6,9 @@
 > Assignment 4 (EPYHIA) for **Demo Day**. Assignment 1 (Live Translate) is superseded by
 > **LUMINA**, whose PRD lives in
 > [`modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/`](../modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md).
+> **In the 2026-04 course** (projects Ledger, Herald, Chorus and a Capstone), these are reference
+> material: Assignment 2 is still the spec for the **VOXA** voice workshop, and
+> [`Bonus_AI_Infra_K8s/`](Bonus_AI_Infra_K8s/README.md) backs Module 6 (Deployment & Scaling).
 > New-cohort assignments ship inside their module folders.
 > Smaller, ungraded apps to practice on live in [`Starter_Projects/`](../Starter_Projects/README.md).
 

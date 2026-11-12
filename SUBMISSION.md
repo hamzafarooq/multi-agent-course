@@ -46,12 +46,13 @@ The `/evals` page is **not** something you hand-write. Your project's eval skill
 Post the Vercel URL where your instructor tells you (the Maven assignment for the project, or the
 cohort channel). The URL is the submission; nothing else needs attaching.
 
-| Project | Starts | Due |
+| Project | Modules | Due |
 |---|---|---|
-| LUMINA (Perplexity-style AI search) | Week 1 | before the Week 3 live session |
-| ARGUS (multimodal RAG) | Week 3 | before the Week 5 live session |
-| VOXA (voice agent) | Week 5 | before the Week 7 live session |
-| EPYHIA (end-to-end AI agency) | Week 7 | demoed live on Demo Day, URL posted before the session |
+| Ledger (procurement audit planner) | 1–2 | announced in class |
+| Herald (search & RAG) | 3–4 | announced in class |
+| Chorus (multi-agent, builds on Herald) | 5 | announced in class |
+| Capstone (a problem of your choosing) | 6 | demoed live on Demo Day, URL posted before the session |
+| VOXA (voice agent, workshop project) | Workshop | announced in class |
 
 Your app must be **up when it is graded**. Graders run the eval against your URL during the
 grading window, so a sleeping or broken deploy scores what it shows.
@@ -97,9 +98,9 @@ fix first.
 ## Per-project specifics
 
 Each assignment's README has a **Submit** section with the project-specific flow the video must
-show and the eval skill to run: [LUMINA](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/README.md#submit) ·
-[ARGUS](FDE-01-assignments/Assignment_3_Moment_Search_Scaled/README.md) · [VOXA](FDE-01-assignments/Assignment_2_voice_agent/README.md) ·
-[EPYHIA](FDE-01-assignments/Assignment_4_Final_Epyhia/README.md). Where an older README says
+show and the eval skill to run: [VOXA](FDE-01-assignments/Assignment_2_voice_agent/README.md) today;
+Ledger, Herald, Chorus and the Capstone as their specs land in their module folders. For a finished
+example of the flow, see the previous cohort's [LUMINA](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/README.md#submit). Where an older README says
 "submit `PRODUCT_EVAL.md` plus a video" or asks you to push a repo, read it as: that content now
 lives at `/evals` on your deployed app, and the code stays yours.
 
