@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ledger/history.schema.json",
+  "title": "outputs/history.json — written by the findings-analyst (TODO #3)",
+  "description": "Past audit coverage, opinions, open actions, risk themes and the council's own risk-scoring method, from data/committee/*.pdf only. It RECORDS; it never scores. Enforced by scripts/verify_history.py: every object anywhere in the tree that has a `source` must have an integer `pdf_page`, and every `quote` must be found on that page. build_register.py reads scoring_method and cites items by `id` (audits, risk_themes, discrepancies) or by `item` (gaps).",
+  "type": "object",
+  "required": ["generated_at", "source_documents", "gaps", "audits", "opinion_basis", "agreed_actions", "planned_audits",
+               "audit_approach", "risk_themes", "scoring_method", "discrepancies"],
+  "properties": {
+    "generated_at": {"type": "string"},
+    "source_documents": {
+      "type": "array",
+      "items": {"type": "object", "required": ["file", "title", "pages"], "properties": {"file": {"type": "string"}, "pages": {"type": "integer"}}}
+    },
+    "gaps": {
+      "description": "What the papers do not contain that the plan would need (e.g. the Strategic Risk Register is exempt and not public). Cited as [history:<item>].",
+      "type": "array",
+      "items": {"type": "object", "required": ["item", "status", "consequence"]}
+    },
+    "audits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourced",
+        "required": ["id", "source", "pdf_page", "quote", "audit_title", "opinion", "procurement_relevance"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^AUD-\\d+$"},
+          "audit_title": {"type": "string"},
+          "opinion": {"type": ["string", "null"], "description": "As printed, e.g. Limited Assurance. build_register.py treats limited / weak / unsatisfactory / no assurance as adverse (repeat-finding uplift)."},
+          "implementation_opinion": {"type": ["string", "null"]},
+          "procurement_relevance": {"type": "string"}
+        }
+      }
+    },
+    "opinion_basis": {"type": "object"},
+    "agreed_actions": {"type": "array"},
+    "planned_audits": {"type": "array"},
+    "audit_approach": {"type": "object"},
+    "risk_themes": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/sourced", "required": ["id"], "properties": {"id": {"type": "string", "pattern": "^RT-\\d+$"}}}
+    },
+    "discrepancies": {
+      "description": "Places where the papers disagree. Recorded, never resolved.",
+      "type": "array",
+      "items": {"type": "object", "required": ["id"], "properties": {"id": {"type": "string", "pattern": "^D-\\d+$"}}}
+    },
+    "scoring_method": {
+      "type": "object",
+      "required": ["usable"],
+      "properties": {
+        "usable": {"type": "boolean", "description": "false when the Risk Management Strategy holds no complete method; say why rather than invent one."},
+        "likelihood_scale": {"type": "array", "items": {"type": "object", "required": ["score", "label"], "properties": {"score": {"type": "integer", "minimum": 1, "maximum": 5}}}},
+        "impact_scale": {"type": "array", "items": {"type": "object", "required": ["score", "label"], "properties": {"score": {"type": "integer", "minimum": 1, "maximum": 5}}}},
+        "combination": {
+          "type": "object",
+          "required": ["matrix_cells"],
+          "properties": {
+            "matrix_cells": {
+              "description": "One row per impact score: the score and label for each likelihood.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["impact", "likelihood", "scores", "labels"],
+                "properties": {
+                  "impact": {"type": "integer"},
+                  "likelihood": {"type": "array", "items": {"type": "integer"}},
+                  "scores": {"type": "array", "items": {"type": "integer"}},
+                  "labels": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            }
+          }
+        },
+        "bands": {
+          "type": "array",
+          "items": {"type": "object", "required": ["level", "score_low", "score_high"],
+                    "properties": {"level": {"type": "string"}, "score_low": {"type": ["integer", "null"]}, "score_high": {"type": ["integer", "null"]}}}
+        },
+        "corporate_register_threshold": {"type": "object"}
+      },
+      "if": {"properties": {"usable": {"const": true}}},
+      "then": {"required": ["likelihood_scale", "impact_scale", "combination", "bands"]}
+    }
+  },
+  "$defs": {
+    "sourced": {
+      "type": "object",
+      "properties": {
+        "source": {"type": "string", "description": "File name inside data/committee/."},
+        "pdf_page": {"type": "integer", "minimum": 1},
+        "quote": {"type": "string", "minLength": 12}
+      }
+    }
+  }
+}

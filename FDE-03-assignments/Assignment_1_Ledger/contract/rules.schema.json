@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ledger/rules.schema.json",
+  "title": "outputs/rules.json — written by the extract-rules skill (TODO #1)",
+  "description": "Every testable rule in data/contract-rules.pdf, with a verbatim quote. Enforced by .claude/skills/extract-rules/verify_quotes.py, which is stricter than this schema: quotes must be found on their stated page, rule_ids must run CPR-01, CPR-02, ... in document order.",
+  "type": "object",
+  "required": ["source", "parameters", "notes", "rules", "excluded"],
+  "properties": {
+    "source": {
+      "type": "object",
+      "required": ["file", "title", "pages", "extracted_on", "extraction_tool"],
+      "properties": {
+        "file": {"const": "data/contract-rules.pdf"},
+        "title": {"type": "string"},
+        "version": {"type": ["string", "null"]},
+        "pages": {"type": "integer", "minimum": 1},
+        "extracted_on": {"type": "string", "format": "date"},
+        "extraction_tool": {"type": "string"}
+      }
+    },
+    "parameters": {
+      "description": "Named external figures the PDF refers to but does not state (e.g. the statutory threshold). value is ALWAYS null at extraction: only the auditor supplies it, with a source.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value", "description"],
+        "properties": {
+          "value": {"type": ["number", "null"]},
+          "description": {"type": "string"},
+          "defined_by": {"type": "string"},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "notes": {"type": "array", "items": {"type": "string"}, "description": "Document-level observations (contradictions, blanks), each citing clauses."},
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "clause", "page", "type", "scope", "condition", "threshold_low", "threshold_low_inclusive",
+                     "threshold_high", "threshold_high_inclusive", "required_action", "approver", "evidence_source", "verbatim_quote"],
+        "properties": {
+          "rule_id": {"type": "string", "pattern": "^CPR-\\d{2,}$"},
+          "clause": {"type": "string", "description": "As printed: \"6.16\", or \"App B row B1\" for table rows."},
+          "page": {"type": "integer", "minimum": 1, "description": "1-based PDF page where the quote appears."},
+          "type": {"enum": ["threshold", "required-action", "approver", "anti-avoidance"]},
+          "scope": {"enum": ["goods-services", "works-concession-light-touch", "all"]},
+          "condition": {"type": "string"},
+          "threshold_low": {"type": ["integer", "null"], "description": "GBP integer as printed; null when open-ended or given by a _ref."},
+          "threshold_low_inclusive": {"type": ["boolean", "null"]},
+          "threshold_high": {"type": ["integer", "null"]},
+          "threshold_high_inclusive": {"type": ["boolean", "null"]},
+          "threshold_low_ref": {"type": ["string", "null"], "description": "A key of `parameters`, used instead of a number."},
+          "threshold_high_ref": {"type": ["string", "null"]},
+          "required_action": {"type": ["string", "null"]},
+          "approver": {"type": ["string", "null"]},
+          "evidence_source": {"enum": ["spend-data", "contracts-register", "council-records"]},
+          "verbatim_quote": {"type": "string", "minLength": 20, "description": "Copied exactly from the PDF text; verified word for word."}
+        }
+      }
+    },
+    "excluded": {
+      "description": "Every clause or table row that is NOT a testable rule, with a reason. Nothing may be silently skipped.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["clause", "page", "reason"],
+        "properties": {
+          "clause": {"type": "string"},
+          "page": {"type": "integer"},
+          "reason": {"type": "string", "minLength": 8}
+        }
+      }
+    }
+  }
+}

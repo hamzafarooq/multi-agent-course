@@ -1,0 +1,16 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Generated locally; the viewer build (Vercel) reads the committed copies listed in TECHNICAL.md
+viewer/dist/
+reports/*
+!reports/report.json
+
+# Claude Code local state
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db

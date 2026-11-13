@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ledger/analytics.schema.json",
+  "title": "outputs/analytics.json — written by the spend-analyst's scripts (TODO #2)",
+  "description": "Named, reproducible risk indicators computed by Python from the spend workbooks and contracts.csv. Every number here was printed by a script; the model never computes one. Full flagged lists go to outputs/analytics-full/ (see contract/files.md). The risk-assessor and planner cite values here by JSON path, e.g. [metric:$.tests.duplicates.different_time.groups], so keep paths stable and leaves scalar.",
+  "type": "object",
+  "required": ["generated_at", "scripts", "population", "thresholds", "skipped", "contracts", "matching", "tests"],
+  "properties": {
+    "generated_at": {"type": "string"},
+    "scripts": {"type": "array", "items": {"type": "string"}, "minItems": 1, "description": "The scripts that produced this file, e.g. [\"scripts/clean.py\", \"scripts/analyse.py\"]."},
+    "population": {
+      "type": "object",
+      "required": ["files", "rows_raw", "rows_after_exclusions", "date_min", "date_max", "months_covered", "annualisation_factor", "total_gbp", "excluded", "tags", "limitations"],
+      "properties": {
+        "files": {"type": "array", "items": {"type": "string"}},
+        "rows_raw": {"type": "integer"},
+        "rows_after_exclusions": {"type": "integer"},
+        "date_min": {"type": "string"},
+        "date_max": {"type": "string"},
+        "months_covered": {"type": "integer"},
+        "annualisation_factor": {"type": "number"},
+        "total_gbp": {"type": "number"},
+        "excluded": {
+          "type": "object",
+          "description": "One entry per exclusion category: rows, £ and a one-line reason.",
+          "additionalProperties": {"type": "object", "required": ["rows", "gbp", "reason"]}
+        },
+        "tags": {
+          "type": "object",
+          "description": "One entry per tag (general_procurement, care_or_education_placement, grant, agency_staff, premises_non_procurement).",
+          "required": ["general_procurement"],
+          "additionalProperties": {"type": "object", "required": ["rows", "gbp"]}
+        },
+        "limitations": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "thresholds": {
+      "type": "array",
+      "description": "Derived from rules.json, never typed. One entry per distinct threshold.",
+      "items": {
+        "type": "object",
+        "required": ["value", "inclusive", "competition_triggering", "rule_ids"],
+        "properties": {
+          "value": {"type": "number"},
+          "inclusive": {"type": "boolean"},
+          "competition_triggering": {"type": "boolean"},
+          "rule_ids": {"type": "array", "items": {"type": "string", "pattern": "^CPR-\\d+$"}, "minItems": 1}
+        }
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "description": "Every test or tier not run, with why (e.g. a parameter in rules.json is null). Skipping is honest; guessing is a failure.",
+      "items": {"type": "object", "required": ["test", "reason"]}
+    },
+    "contracts": {"type": "object", "required": ["contracts_present"], "description": "What was loaded from contracts.csv, the filters applied, warnings (e.g. the export cap) and the caveat that a missing notice is not evidence of off-contract spend."},
+    "matching": {"type": "object", "description": "Supplier-matching counts per class (exact, near_ratio, near_contain, none)."},
+    "tests": {
+      "type": "object",
+      "required": ["threshold_clustering", "split_purchases", "high_value_suppliers", "duplicates", "off_contract", "expired_notice_spend", "spend_vs_award"],
+      "additionalProperties": {"$ref": "#/$defs/test"}
+    }
+  },
+  "$defs": {
+    "test": {
+      "description": "A test either ran (parameters + rule_ids + counts, £ totals, a top 20 and the analytics-full file it wrote) or was skipped with a reason.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["skipped", "reason"],
+          "properties": {"skipped": {"const": true}, "reason": {"type": "string"}}
+        },
+        {
+          "type": "object",
+          "required": ["parameters", "rule_ids"],
+          "properties": {
+            "skipped": {"const": false},
+            "parameters": {"type": "object"},
+            "rule_ids": {"type": "array", "items": {"type": "string", "pattern": "^CPR-\\d+$"}}
+          },
+          "anyOf": [{"required": ["file"]}, {"required": ["files"]}]
+        }
+      ]
+    }
+  }
+}

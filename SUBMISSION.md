@@ -98,8 +98,9 @@ fix first.
 ## Per-project specifics
 
 Each assignment's README has a **Submit** section with the project-specific flow the video must
-show and the eval skill to run: [VOXA](FDE-01-assignments/Assignment_2_voice_agent/README.md) today;
-Ledger, Herald, Chorus and the Capstone as their specs land in their module folders. For a finished
+show and the eval skill to run: [Ledger](FDE-03-assignments/Assignment_1_Ledger/README.md#how-you-submit) (eval skill
+`/fde-ledger-eval`) and [VOXA](FDE-01-assignments/Assignment_2_voice_agent/README.md) today;
+Herald, Chorus and the Capstone as their specs land. For a finished
 example of the flow, see the previous cohort's [LUMINA](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/README.md#submit). Where an older README says
 "submit `PRODUCT_EVAL.md` plus a video" or asks you to push a repo, read it as: that content now
 lives at `/evals` on your deployed app, and the code stays yours.

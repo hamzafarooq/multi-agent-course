@@ -1,0 +1,40 @@
+{
+  "$comment": "LEDGER. Declared BEFORE the first run. Asserted by arithmetic: quality/check.mjs applies `budget` and `trajectory` to every exported agent run in runs/ (python eval/export_runs.py writes them), and eval/build_report.py applies `perAgent`. A threshold set after seeing the score is not a threshold.",
+  "project": "LEDGER",
+  "quality": { "rules": true, "budget": true },
+
+  "$budget_comment": "ONE envelope for every agent run (quality/check.mjs cannot tell a planner from a qa-reviewer), so these are the widest a legitimate run may get: the planner's. `maxTokensPerRun` is the PEAK context of the run (the largest single request), because that is what a context window limits; Claude Code transcripts do not carry a bill, so there is no cost cap. The tighter per-agent envelopes are in `perAgent`, enforced by eval/build_report.py.",
+  "budget": {
+    "maxTokensPerRun": 320000,
+    "maxToolCalls": 90,
+    "maxWallClockSec": 2700
+  },
+
+  "$perAgent_comment": "Per agent: about one and a half times what the reference build used (eval/README.md shows its numbers). Over budget is not a crash, it is a smell: an agent that re-reads data, retries a failing command, or loads a whole dataset into context. harness_hygiene loses points for any agent over its envelope.",
+  "perAgent": {
+    "spend-analyst":    { "maxMinutes": 15, "maxToolCalls": 30, "maxPeakTokens": 150000 },
+    "findings-analyst": { "maxMinutes": 15, "maxToolCalls": 30, "maxPeakTokens": 150000 },
+    "risk-assessor":    { "maxMinutes": 15, "maxToolCalls": 40, "maxPeakTokens": 240000 },
+    "planner":          { "maxMinutes": 40, "maxToolCalls": 90, "maxPeakTokens": 320000 },
+    "challenger":       { "maxMinutes": 25, "maxToolCalls": 90, "maxPeakTokens": 320000 },
+    "qa-reviewer":      { "maxMinutes": 25, "maxToolCalls": 40, "maxPeakTokens": 150000 }
+  },
+
+  "$trajectory_comment": "mustCallTools and mustNotCallTools are empty because they differ by agent (the challenger must not run Bash; the spend-analyst must) and this file cannot say 'only for the challenger'. eval/team/run_eval.py checks each teammate's tools against its own definition, and that is scored under teamwork. maxConsecutiveSameTool is 12, not 3: an analyst legitimately runs several Bash commands in a row; twelve identical calls in a row is a loop.",
+  "trajectory": {
+    "mustCallTools": [],
+    "mustNotCallTools": [],
+    "maxConsecutiveSameTool": 12,
+    "mustTerminate": true
+  },
+
+  "eval": {
+    "goldSetPath": "eval/skill/answer-key.csv",
+    "minFound": 0.90,
+    "minNotInvented": 0.90,
+    "minFieldsRight": 0.85,
+    "minGoldenThread": 1.0,
+    "minPlantedCaught": 1.0,
+    "minChecksPassed": 1.0
+  }
+}

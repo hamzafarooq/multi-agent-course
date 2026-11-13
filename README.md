@@ -115,7 +115,7 @@ Concepts are taught in the modules; the projects are where you ship. Each is a r
 
 | # | Project | Modules | You build | Spec |
 |---|---|---|---|---|
-| 1 | 📒 **Ledger**: Procurement Audit Planner | 1–2 | An agent team built from skills and sub-agents, with a human gate before anything consequential happens | spec coming |
+| 1 | 📒 **Ledger**: Procurement Audit Planner | 1–2 | An agent team built from skills and sub-agents, with a human gate before anything consequential happens | [Ledger spec](FDE-03-assignments/Assignment_1_Ledger/) |
 | 2 | 📣 **Herald**: Search & RAG | 3–4 | Internet search and deep research, RAG and video RAG, measured against golden datasets | spec coming |
 | 3 | 🎼 **Chorus**: builds on Herald | 5 | Herald grown into a multi-agent system: MCP + ADK, A2A, and orchestration | spec coming |
 | 4 | 🏆 **Capstone**: a problem of your choosing | 6 → Demo Day | Your own problem statement, built, deployed, and demoed live on Demo Day | spec coming |
@@ -207,7 +207,7 @@ What forward deployed engineers do, leading without authority, communication, la
 - [FDE Companion](https://companion.traversaal.ai), Module 0 (what an FDE does, your FDE workbench, how LLMs work), with its hands-on steps in [`fde-companion-kit/`](fde-companion-kit/README.md)
 - Optional reading on leading without authority: [Leading AI Systems Across Teams](modules/Module_6_Leading_AI_Systems_Across_Teams/README.md)
 
-**🚀 Project kickoff: Ledger.** A procurement audit planner built by an agent team: skills, sub-agents, a human gate. It runs across Modules 1–2; its spec lands in the module folder as the course reaches it.
+**🚀 Project kickoff: Ledger.** A procurement audit planner built by an agent team: skills, sub-agents, a human gate. It runs across Modules 1–2. Spec: [`FDE-03-assignments/Assignment_1_Ledger/`](FDE-03-assignments/Assignment_1_Ledger/).
 
 ---
 

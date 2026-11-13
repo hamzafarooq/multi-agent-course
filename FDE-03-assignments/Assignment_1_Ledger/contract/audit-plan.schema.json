@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ledger/audit-plan.schema.json",
+  "title": "outputs/audit-plan.json — written by the planner teammate (TODOs #8, #9)",
+  "description": "The planner's JUDGMENTS only. .claude/skills/audit-program/build_pack.py checks the gate and the scope, resolves citations and {{$.path}} placeholders, DRAWS every sample from the recipe, verifies each sampled payment exists, checks every rule is accounted for, and renders planning-memo.md, risk-control-matrix.md, audit-program.md, samples/T-*.csv and pack-figures.json. Never copy row IDs, supplier names or figures into this file.",
+  "type": "object",
+  "required": ["generated_at", "memo", "risks", "rules_not_tested"],
+  "properties": {
+    "generated_at": {"type": "string"},
+    "memo": {
+      "type": "object",
+      "required": ["purpose", "background", "approach", "limitations"],
+      "additionalProperties": {"type": "array", "items": {"type": "string"}}
+    },
+    "risks": {
+      "description": "Exactly the risks the auditor approved and left in scope: no more, no fewer.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "objective", "controls", "tests"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^R-\\d+$"},
+          "objective": {"type": "string"},
+          "controls": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "control", "cites"],
+              "properties": {
+                "id": {"type": "string", "pattern": "^C-\\d+\\.\\d+$"},
+                "control": {"type": "string"},
+                "cites": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^(rule|metric|history):"}, "contains": {"pattern": "^rule:"}},
+                "owner": {"type": "string"}
+              }
+            }
+          },
+          "tests": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "control", "step", "evidence", "cites", "sample", "pbc"],
+              "properties": {
+                "id": {"type": "string", "pattern": "^T-\\d+\\.\\d+$"},
+                "control": {"type": "string", "pattern": "^C-\\d+\\.\\d+$"},
+                "step": {"type": "string"},
+                "evidence": {"type": "string"},
+                "cites": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^(rule|metric|history):"}, "contains": {"pattern": "^rule:"}},
+                "sample": {"$ref": "#/$defs/sample"},
+                "pbc": {"type": "array", "items": {"type": "string"}, "description": "Documents the client must provide for this test."}
+              }
+            }
+          }
+        }
+      }
+    },
+    "rules_not_tested": {
+      "description": "Every rule no risk, control or test cites, grouped under an honest reason.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reason", "rule_ids"],
+        "properties": {"reason": {"type": "string", "minLength": 8}, "rule_ids": {"type": "array", "items": {"type": "string", "pattern": "^CPR-\\d+$"}}}
+      }
+    }
+  },
+  "$defs": {
+    "sample": {
+      "description": "A RECIPE, not a list. The builder draws it. kind=rows: file has a row_id column. kind=groups: file has a row_ids list column (ids_column). kind=suppliers: supplier-level file; the builder pulls that supplier's payments from spend-clean.csv, largest first, per_group_n of them. kind=none: a document or enquiry test.",
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {"enum": ["rows", "groups", "suppliers", "none"]},
+        "source": {"type": "string", "description": "A file name inside outputs/analytics-full/."},
+        "where": {"type": "object", "description": "column: value or [values] (equality)."},
+        "where_min": {"type": "object"},
+        "where_max": {"type": "object"},
+        "where_not_match": {"type": "object", "description": "column: regex to exclude."},
+        "order_by": {"type": "string"},
+        "descending": {"type": "boolean"},
+        "n": {"type": "integer", "minimum": 1},
+        "per_group_n": {"type": "integer", "minimum": 0},
+        "key": {"type": "string"},
+        "ids_column": {"type": "string"},
+        "distinct_by": {"type": "string"},
+        "exclude_drawn_in": {"type": "array", "items": {"type": "string", "pattern": "^T-\\d+\\.\\d+$"}},
+        "note": {"type": "string"}
+      },
+      "if": {"properties": {"kind": {"const": "none"}}},
+      "then": {"required": ["note"]},
+      "else": {"required": ["source", "n"]}
+    }
+  }
+}

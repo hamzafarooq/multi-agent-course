@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "node viewer/collect.mjs",
+  "outputDirectory": "viewer/dist",
+  "installCommand": "echo no install needed",
+  "framework": null,
+  "cleanUrls": true,
+  "headers": [
+    { "source": "/(evals/report.json|data/(.*))", "headers": [{ "key": "Cache-Control", "value": "no-store" }, { "key": "Access-Control-Allow-Origin", "value": "*" }] }
+  ]
+}
