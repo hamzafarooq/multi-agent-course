@@ -1,0 +1,134 @@
+{
+  "_comment": "Measurable rubric for Assignment 1: LEDGER. `automated` rows are scored by eval/build_report.py from reports/system.json, and re-scored by the grader from your deployed /data with eval/grade_url.py (except what only your local transcripts can show: `teamwork`, and items 4-5 of `harness_hygiene`, which are self-reported and checked against your trajectories and video); `manual` rows by a person reading /evals and watching the video. Partial credit is arithmetic, stated in `scoring`. Each row names the quality-kit rule ids (quality/rules.json) it rests on. Total = 100.",
+  "assignment": "Assignment 1: LEDGER",
+  "total_points": 100,
+  "automated": [
+    {
+      "id": "rules_extracted",
+      "label": "Skill: the rules are right",
+      "points": 15,
+      "rules": ["E1", "E2"],
+      "check": "eval/skill/score_skill.py over the saved fresh-session runs of /extract-rules against eval/skill/answer-key.csv: weakest run found >= 0.90, not invented >= 0.90, fields right >= 0.85, and verify_quotes.py passes on every run",
+      "scoring": "0 if any run's quotes fail verification or precision < 0.90. Otherwise 15 when found >= 0.90 and fields >= 0.85 in the weakest run; 10 when found >= 0.80; 5 below. Capped at 10 with fewer than 3 runs."
+    },
+    {
+      "id": "analytics_reproducible",
+      "label": "Sub-agent: the numbers are code's, not the model's",
+      "points": 10,
+      "rules": ["E2"],
+      "check": "outputs/analytics.json validates against contract/analytics.schema.json; analytics-full/selfcheck.json re-derives one flagged item for every test that ran and all match; every threshold in analytics.json is a threshold in rules.json and cites rule_ids that exist",
+      "scoring": "3 schema + 4 self-check + 3 thresholds traced to rules.json"
+    },
+    {
+      "id": "history_sourced",
+      "label": "Sub-agent: history is sourced to the page",
+      "points": 5,
+      "rules": ["E2"],
+      "check": "outputs/history.json validates against contract/history.schema.json and scripts/verify_history.py finds every quote on its stated page",
+      "scoring": "2 schema + 3 verifier"
+    },
+    {
+      "id": "register_traceable",
+      "label": "Sub-agent + skill: every rating cites evidence",
+      "points": 10,
+      "rules": ["E2"],
+      "check": "outputs/risk-ratings.json validates; build_register.py rebuilds the register with no failures; the committed risk-register.md is identical to that fresh build (never edited by hand)",
+      "scoring": "2 schema + 5 builder passes + 3 matches a fresh build"
+    },
+    {
+      "id": "human_gate_enforced",
+      "label": "The human gate holds",
+      "points": 10,
+      "rules": ["P1"],
+      "check": "build_pack.py --gate passes: every risk has a decision and the register is a revision that applied them; at least one amend or reject carries a comment (that the pack plans exactly the approved risks is scored under pack_checks_pass, by the trace check)",
+      "scoring": "6 gate passes + 2 register is a revision + 2 at least one amend/reject with a reason"
+    },
+    {
+      "id": "pack_checks_pass",
+      "label": "Agent team: the pack passes QA",
+      "points": 10,
+      "rules": ["E2"],
+      "check": "scripts/checks/run_checks.py on the final pack: quotes, numbers, trace (your TODO #12) and samples all PASS, and build_pack.py rebuilds the pack with no failures",
+      "scoring": "2.5 per QA check that passes; 0 if build_pack.py reports failures"
+    },
+    {
+      "id": "planted_errors_caught",
+      "label": "Your checks catch planted errors",
+      "points": 10,
+      "rules": ["E2"],
+      "check": "eval/planted/plant_errors.py: the untouched pack passes every check, and each of seven planted mistakes is caught by the check meant to catch it; golden thread: every sampled payment traces to a verified quote and an approved risk",
+      "scoring": "0 unless the untouched pack passes; then 8 x caught/7 rounded down, + 2 when the golden thread is 100%"
+    },
+    {
+      "id": "teamwork",
+      "label": "Agent team: it worked as a team (self-reported)",
+      "points": 5,
+      "rules": ["A2", "A3", "R2"],
+      "check": "eval/team/run_eval.py teamwork from the run transcripts: every challenge answered, none open, each teammate wrote only its own file, the challenger read no raw data (critical); round limits, tools within each definition, a new pack after each response round, all three reported DONE (minor)",
+      "scoring": "5 when every check passes; 3 when only minor checks fail; 0 when a critical check fails or no team transcript exists"
+    },
+    {
+      "id": "harness_hygiene",
+      "label": "Harness hygiene: least privilege, budgets, no leftovers",
+      "points": 5,
+      "rules": ["C1", "B1", "B2", "A3"],
+      "check": "1 each: every agent declares a tools list, and the challenger's tools are a subset of Read, Write, Glob, Grep; agent teams enabled in .claude/settings.json; no `TODO (YOU)` left in .claude/, CLAUDE.md or scripts/checks/; quality/check.mjs passes its per-run rules (A1-A3, B1, B2) over runs/; every agent run within its perAgent envelope in expectations.json",
+      "scoring": "1 point per item"
+    }
+  ],
+  "manual": [
+    {
+      "id": "design",
+      "label": "DESIGN.md: the harness, in your words",
+      "points": 5,
+      "rules": ["P2"],
+      "check": "the five headings answered specifically for this harness: which components exist and why each is a skill, a sub-agent or a teammate; what each is the ONLY one allowed to do (tools, files); how they communicate (files, messages, the gate); which state is authoritative (outputs/) and which is not (agent memory); three trade-offs, one you are unsure of. Generic text scores 0-2"
+    },
+    {
+      "id": "trajectories",
+      "label": "Two trajectories, read end to end",
+      "points": 5,
+      "rules": ["P1"],
+      "check": "/evals shows every step of one successful and one failing agent run (from runs/), each with what it taught you and what you changed in a skill or agent file because of it. A failing run you did not learn from scores 2"
+    },
+    {
+      "id": "auditor_judgment",
+      "label": "You were the human in the loop",
+      "points": 5,
+      "rules": ["P1", "E3"],
+      "check": "the gate decisions in auditor-comments.md are reasoned from the register's evidence (each amend or reject says what and why), the sign-off in review.md is consistent with the QA verdict and the challenges marked for the auditor, and nothing was signed off BLOCKED. Judged by a person, never a model"
+    },
+    {
+      "id": "video_demo",
+      "label": "Video demo (60-90 s)",
+      "points": 5,
+      "rules": [],
+      "check": "shows /extract-rules finishing with its quote check passing; one sub-agent running; you recording a gate decision; the team messaging (PACK READY, a CHALLENGE and its RESPONSE); the QA verdict; then / and /evals on the deployed URL"
+    }
+  ],
+  "stretch_bonus": [
+    {
+      "id": "new_rule_with_precedent",
+      "points": 5,
+      "check": "a new rule submitted to the cohort quality/rules.json: one executable sentence, a real incident from YOUR Ledger run as precedent (date, what broke, what it cost), a self-check question"
+    },
+    {
+      "id": "skill_consistency",
+      "points": 5,
+      "check": "three fresh-session runs of /extract-rules each reach found >= 0.95 and rule sets agree >= 0.90 across runs (reports/system.json skill.consistency)"
+    },
+    {
+      "id": "hook_guardrail",
+      "points": 5,
+      "check": "a Claude Code hook in .claude/settings.json that blocks a write to data/ or a hand edit of a builder-rendered file (risk-register.md, the three pack documents), shown firing in one transcript"
+    }
+  ],
+  "red_lines": [
+    "every number on /evals is reproduced by eval/grade_url.py from the published /data; a number it cannot reproduce is fabricated, and fabricated numbers are an automatic fail",
+    "provided files unmodified: data/, contract/, eval/, quality/, viewer/, benchmark/, the verifiers and builders in .claude/skills/, and scripts/checks/ except check_trace.py. Self-reported through eval/integrity.json; the grader re-runs everything with its own copies, so an edit gains nothing and a reported change is a fail",
+    "no builder-rendered file edited by hand: risk-register.md and the three pack documents equal a fresh build (eval/run_all.py gates Register and Pack (rendered)); in auditor-comments.md only Decision, Comment, Reviewer and Date are yours",
+    "indicators, not accusations: no risk statement, challenge or memo line names a supplier, officer or service as doing wrong (eval/run_all.py gate Language lists accusatory wording for a person to read; the person decides)",
+    "no supplier name published on the deployed site (viewer/collect.mjs pseudonymises them; do not bypass it)",
+    "DESIGN.md, the gate decisions and the trajectory notes are written by you, not generated"
+  ]
+}

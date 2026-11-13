@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ledger audit pack</title>
+  <meta name="description" content="An audit planning pack produced by a Claude Code harness: rules, analytics, history, risk register, the auditor's gate, the plan, the team's challenges and the QA review.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-row">
+      <div>
+        <div class="eyebrow">Ledger · procurement audit planner</div>
+        <h1 id="title">Audit planning pack</h1>
+        <p class="sub" id="who">Risk indicators to investigate. Nothing here asserts wrongdoing by the council, a service, an officer or a supplier.</p>
+      </div>
+      <nav class="top-links"><a href="/" aria-current="page">Pack</a><a href="/evals">Evaluation</a></nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <ol class="pipeline" id="pipeline" aria-label="Pipeline progress"></ol>
+    <main id="panels"><p class="muted">Loading…</p></main>
+    <footer class="foot">
+      Supplier names are pseudonymised (<code>SUP-…</code>). Every file shown here is published under
+      <a href="/data/manifest.json"><code>/data</code></a> so the evaluation can be re-run against it.
+    </footer>
+  </div>
+
+  <script src="vendor/marked.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ledger/risk-ratings.schema.json",
+  "title": "outputs/risk-ratings.json — written by the risk-assessor (TODOs #4, #5)",
+  "description": "The risk-assessor's JUDGMENTS only. .claude/skills/risk-assessment/build_register.py resolves every citation, fills every {{$.path}} placeholder from analytics.json, computes every score and band from history.json, and renders risk-register.md and the auditor-comments.md decision template. A risk whose likelihood or impact justification has no resolvable citation is dropped, by design.",
+  "type": "object",
+  "required": ["generated_at", "scale", "risks", "excluded", "limitations"],
+  "properties": {
+    "generated_at": {"type": "string"},
+    "scale": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": {"enum": ["council", "fallback"], "description": "council = history.json scoring_method (when usable); fallback = 1–5 Very low…Very high, stated in the register header."},
+        "register_threshold_note": {"type": "string"}
+      }
+    },
+    "revision": {
+      "description": "Required on every re-run after the auditor has recorded decisions. Lists every amend and reject applied so far; the number rises by one each revision.",
+      "type": "object",
+      "required": ["number", "changed"],
+      "properties": {
+        "number": {"type": "integer", "minimum": 1},
+        "changed": {"type": "object", "additionalProperties": {"enum": ["amended", "rejected"]}}
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "theme", "statement", "likelihood", "impact", "repeat_finding", "evidence", "proposed_focus", "recommend_in_scope"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^R-\\d+$"},
+          "title": {"type": "string"},
+          "theme": {"type": "string"},
+          "statement": {"type": "string", "description": "Indicator language. No supplier, officer or department named; no figures."},
+          "likelihood": {"$ref": "#/$defs/rating"},
+          "impact": {
+            "allOf": [{"$ref": "#/$defs/rating"}],
+            "required": ["column"],
+            "properties": {"column": {"enum": ["financial", "compliance", "reputation"]}}
+          },
+          "repeat_finding": {
+            "type": "object",
+            "required": ["applied"],
+            "properties": {
+              "applied": {"type": "boolean"},
+              "history_id": {"type": ["string", "null"], "description": "Must point to an audit with an adverse opinion when applied is true."},
+              "note": {"type": ["string", "null"]}
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "object", "required": ["cite"], "properties": {"cite": {"type": "string", "pattern": "^(rule|metric|history):"}, "label": {"type": "string"}}}
+          },
+          "proposed_focus": {"type": "string"},
+          "sample_source": {"type": "string", "description": "The analytics-full file the planner should sample from."},
+          "recommend_in_scope": {"type": "boolean"},
+          "auditor_override": {"type": "boolean", "description": "Only on a risk the auditor amended."}
+        }
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "items": {"type": "object", "required": ["title", "reason"], "properties": {"id": {"type": "string"}}}
+    },
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "rating": {
+      "type": "object",
+      "required": ["score", "justification"],
+      "properties": {
+        "score": {"type": "integer", "minimum": 1, "maximum": 5},
+        "justification": {
+          "type": "string",
+          "description": "One sentence with at least one citation: [rule:CPR-13] [metric:$.tests.split_purchases.per_threshold[0].headline_general_procurement.windows] [history:AUD-05]. Any figure is a {{$.path}} placeholder, never typed.",
+          "pattern": "\\[(rule|metric|history):"
+        }
+      }
+    }
+  }
+}

@@ -23,6 +23,7 @@ file fully before responding to anything course-related.
 - **Definitions:** `reference/glossary.md` is the source of truth for terminology.
 - **Deep dives:** other files in `reference/`.
 - **Reference app:** `modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/` — a finished Perplexity-style assistant learners clone and take apart (Module 2).
+- **Cohort 3 assignments:** `FDE-03-assignments/` — this cohort's graded projects. `Assignment_1_Ledger/` is the Ledger spec and scaffold (skills, sub-agents, human gate, agent team; eval skill `/fde-ledger-eval`).
 - **Starter projects:** `Starter_Projects/` — nine small ungraded apps (imported from claude-code-starter) for hands-on practice; `FDE-01-assignments/` holds earlier cohorts' graded projects (still the VOXA spec, and the Module 6 infra lab).
 - **Progress:** `progress/learner-progress.md` — read it at the start of a session, update
   it at the end.
@@ -41,7 +42,7 @@ The course is the **Forward Deployed Engineering Bootcamp** (cohort 2026-04, sta
 2026) — six weeks: six teaching modules plus a Voice AI Agents specialization workshop, seven live
 sessions in all, then Demo Day. Four projects run alongside:
 
-- **Ledger** (Modules 1–2) — procurement audit planner: skills, sub-agents, human gate, agent team.
+- **Ledger** (Modules 1–2) — procurement audit planner: skills, sub-agents, human gate, agent team. Spec in `FDE-03-assignments/Assignment_1_Ledger/`.
 - **Herald** (Modules 3–4) — search & RAG: internet search, deep research, RAG + video RAG, golden datasets.
 - **Chorus** (Module 5) — builds on Herald: MCP + ADK, A2A, orchestration.
 - **Capstone** (Module 6) — a problem the learner chooses, built, deployed and demoed on Demo Day.

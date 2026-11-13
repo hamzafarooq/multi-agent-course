@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ledger evaluation</title>
+  <meta name="description" content="The evaluation of a Ledger harness, from a real run: rubric, bars, pipeline checks, planted errors, design and trajectories.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-row">
+      <div>
+        <div class="eyebrow">Ledger · product evaluation</div>
+        <h1 id="title">Evaluation</h1>
+        <p class="sub" id="sub">Every number on this page came from a run. The grader re-runs the checks against this deployment's <a href="/data/manifest.json">/data</a>.</p>
+      </div>
+      <nav class="top-links"><a href="/">Pack</a><a href="/evals" aria-current="page">Evaluation</a></nav>
+    </div>
+  </header>
+  <div class="wrap">
+    <main id="report"><p class="muted">Loading /evals/report.json…</p></main>
+    <footer class="foot">Machine-readable: <a href="/evals/report.json"><code>/evals/report.json</code></a></footer>
+  </div>
+  <script src="vendor/marked.min.js"></script>
+  <script src="evals.js"></script>
+</body>
+</html>

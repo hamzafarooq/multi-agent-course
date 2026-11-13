@@ -1,0 +1,33 @@
+{
+  "_comment": "LEDGER. The bars the whole system is held to, declared BEFORE your first run. eval/build_report.py compares the numbers from your run (reports/system.json) against these and nothing else. Do not loosen a bar to pass: a threshold set after seeing the score is not a threshold, and the grader re-runs every check against your deployed /data with these same numbers.",
+  "target": "the audit planning pack produced by your harness in outputs/, as published at /data on your deployment",
+  "sla": {
+    "skill_min_found": 0.90,
+    "skill_min_not_invented": 0.90,
+    "skill_min_fields_right": 0.85,
+    "skill_min_runs": 3,
+    "min_pipeline_checks_passed_ratio": 1.0,
+    "min_golden_thread_ratio": 1.0,
+    "min_planted_errors_caught": 7,
+    "max_open_challenges": 0,
+    "min_auditor_decisions_amend_or_reject": 1
+  },
+  "_sla_notes": {
+    "skill_min_found": "Recall against the 30-clause answer key (eval/skill/answer-key.csv), in the WEAKEST of your runs. An auditor who is handed a rule list that silently drops one testable rule in ten plans an audit with a hole in it. The reference build reached 0.82-0.86: this bar is meant to make you improve the skill, not copy it.",
+    "skill_min_not_invented": "Precision: of the key clauses the skill turned into rules, the share that really are rules. Inventing obligations is worse than missing them: it sends fieldwork after controls that do not exist.",
+    "skill_min_fields_right": "Thresholds, approver and action match the key. A threshold off by a band moves every downstream test.",
+    "skill_min_runs": "Fresh-session repeats of /extract-rules (eval/skill/run_eval.py --runs 3). One good run can be luck; consistency across runs is reported alongside.",
+    "min_pipeline_checks_passed_ratio": "Every gate in reports/system.json passes: contract schemas, quotes, analytics self-check, history quotes, register build, approval gate, pack build, and the four QA checks. One failure means the pack cannot be trusted, so the bar is all of them.",
+    "min_golden_thread_ratio": "Every sampled payment traces back through test, control and rule to a verified quote in the PDF and an approved risk. A sample that does not trace is a payment pulled for no reason the auditor can defend.",
+    "min_planted_errors_caught": "Seven known mistakes are planted in a copy of your pack (eval/planted/plant_errors.py); your checks must catch all seven while passing the untouched pack. Three of the seven are only caught by your check_trace.py (TODO #12).",
+    "max_open_challenges": "Every challenge the challenger raised is resolved, declined with a reason, or passed to the auditor. An open challenge is an argument the team walked away from.",
+    "min_auditor_decisions_amend_or_reject": "At the human gate you amend or reject at least one risk, with a reason. A gate where the human approved everything unread is not a gate; the reasons are graded by a person (auditor_judgment)."
+  },
+  "cost_model": {
+    "_comment": "No API keys and no provider bill: the harness runs inside Claude Code on your plan. The cost that matters is agent time and context. Measured from the run transcripts by eval/run_all.py (reports/system.json -> cost); per-agent caps live in expectations.json.",
+    "runtime": "Claude Code (subscription plan); agent teams enabled via CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1",
+    "reference_agent_minutes_total": 75,
+    "reference_peak_context_tokens_max": 263358,
+    "budget_agent_minutes_total": 150
+  }
+}
