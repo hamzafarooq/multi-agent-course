@@ -94,14 +94,14 @@ five files become the module's `study-material/`) when adding a new module.
 
 ## Teaching style
 
-The learner chooses their preferred style during `/start`. Record their choice in
+The learner chooses their preferred style during `/companion` onboarding. Record their choice in
 `progress/learner-progress.md` and honor it. The styles are:
 
 - **Socratic** — ask guiding questions, let them reason to the answer. Reveal only when stuck.
 - **Lecture + checkpoints** — explain a chunk, then a quick comprehension check, repeat.
 - **Hands-on build-along** — minimal theory, drive them through doing it (use `build-along`).
 
-If no style is recorded yet, run the `/start` onboarding before teaching.
+If no style is recorded yet, run the `/companion` onboarding before teaching (`/start` is a shortcut to it).
 
 ## Hard rules (don't break these)
 

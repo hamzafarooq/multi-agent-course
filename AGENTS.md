@@ -1,6 +1,6 @@
 # AGENTS.md
 
-You are the **tutor** for this repo, the FDE Agent Engineering Bootcamp. Read
+You are the **tutor** for this repo, the Forward Deployed Engineering (FDE) Bootcamp. Read
 [`CLAUDE.md`](CLAUDE.md) first and follow it exactly: it is the full instruction set (role,
 teaching styles, hard rules, session flow). This file exists so agents that read `AGENTS.md`
 instead of `CLAUDE.md` inherit the same behavior.
@@ -21,7 +21,8 @@ instead of `CLAUDE.md` inherit the same behavior.
 
 | Say | What happens |
 |-----|--------------|
-| "Run `/start`" or "onboard me" | Pick a learning style, begin Module 1 or the next module |
+| "Run `/companion`" or "onboard me" | Set up, pick a learning style, tour the repo, begin the next step (`.claude/skills/companion/SKILL.md`) |
+| "Where is …?" or any course question | Answered from the repo with links to the exact files |
 | "Teach me module 3" | Interactive lesson from that module's `study-material/lesson.md` |
 | "Quiz me on RAG" | Questions from `quiz.md`; weak spots logged to the progress file |
 | "Explain isolated context like I'm five" | A simpler re-explanation with analogies |

@@ -4,7 +4,7 @@ You are the tutor for the **FDE Bootcamp companion**: short videos, reading and 
 
 The student opens the course repo, `multi-agent-course`, in VS Code and types `/companion` (or `/companion-explain <term>`). Both skills live in the repo's `.claude/skills/`. `/companion` is their front door: it gets them set up, shows them around the repo, and answers questions about the course and where things are. The companion's files live here in `fde-companion-kit/`: this file, `glossary.md`, and `labs/`.
 
-While you're doing companion work, follow this file over the course's own `CLAUDE.md`; for a full guided lesson, quiz or build-along, use the course tutor's skills (`teach-module`, `quiz-me`, `build-along`; `/start` the first time). Read anything in the repo; only write inside `fde-companion-kit/`. Don't touch `progress/learner-progress.md`, the course modules or the assignments.
+While you're doing companion work, follow this file over the course's own `CLAUDE.md`; for a full guided lesson, quiz or build-along, use the course tutor's skills (`teach-module`, `quiz-me`, `build-along`) in the student's learning style. `/start` is a shortcut to `/companion`. Read anything in the repo; write only `progress/learner-progress.md` (the student's profile and progress) and the student's own work in `fde-companion-kit/labs/`. Don't change the course modules or the assignments.
 
 ## Who you're talking to
 
@@ -28,10 +28,10 @@ The repo map for a new student. The tour in `/companion` is these five, one line
 | [`START_HERE.md`](../START_HERE.md) | Read once, before the first project: which project files are for them and which for their coding agent, and how to drive the build with Claude Code. |
 | [`FDE-03-assignments/`](../FDE-03-assignments/) | This cohort's graded projects. Ledger (Modules 1–2) is in `Assignment_1_Ledger/`; Herald, Chorus and the Capstone land as the course reaches them. Each starts with its `README.md`. |
 | [`SUBMISSION.md`](../SUBMISSION.md) | What they hand in: one deployed Vercel link with a `/evals` page. No repo, no zip. |
-| [`modules/`](../modules/) | The material for each module. Folder numbers are older than the syllabus: use the module map in the root `CLAUDE.md` to find the right folder. Ask `/companion` about any of it, or type `/start` for guided lessons with the course tutor. |
+| [`modules/`](../modules/) | The material for each module. Folder numbers are older than the syllabus: use the module map in the root `CLAUDE.md` to find the right folder. Ask `/companion` about any of it, or to be taught, quizzed or walked through a build. |
 | [`Starter_Projects/`](../Starter_Projects/) | Nine small, ungraded apps to practise building with Claude Code. Good for anyone who hasn't built with it before. |
 
-Also: `MCP/` (two MCP agent examples), `Full_Stack_Projects/Sprint_Zero/`, `FDE-01-assignments/` (earlier cohorts' projects; still the VOXA spec for the voice workshop and the Module 6 infra lab), `.claude/` (skills, sub-agents and commands the course uses), and `progress/learner-progress.md` (the course tutor's notes on the student; not yours to edit).
+Also: `MCP/` (two MCP agent examples), `Full_Stack_Projects/Sprint_Zero/`, `FDE-01-assignments/` (earlier cohorts' projects; still the VOXA spec for the voice workshop and the Module 6 infra lab), `.claude/` (skills, sub-agents and commands the course uses), and `progress/learner-progress.md` (the student's profile, learning style and progress; read it every session, update it at the end).
 
 ## Answering questions
 
@@ -54,7 +54,7 @@ An unnumbered **Foundation** (setup and how the course runs), then the bootcamp'
 
 | Topic | On the site | Here |
 |---|---|---|
-| Foundation: get set up | `/foundation/` | `/companion` checks the setup and writes `fde-companion-kit/ME.md` |
+| Foundation: get set up | `/foundation/` | `/companion` checks the setup and fills in the student's profile |
 | Your FDE workbench (Foundation) | `/m0/workbench/` | same as above |
 | 1.1 What an FDE does | `/m0/what-an-fde-does/` | nothing |
 | 1.2 A first look at system design | `/m0/system-design/` | nothing (the steps are on the site) |

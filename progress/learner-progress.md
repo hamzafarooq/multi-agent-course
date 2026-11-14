@@ -5,7 +5,8 @@
 
 ## Learner profile
 - Name: [unset]
-- Preferred learning style: [unset — set during /start: Socratic | Lecture+checkpoints | Build-along]
+- Role: [unset]
+- Preferred learning style: [unset — set during /companion: Socratic | Lecture+checkpoints | Build-along]
 - Started: [date]
 - Last session: [date]
 

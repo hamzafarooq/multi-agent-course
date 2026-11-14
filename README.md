@@ -129,7 +129,7 @@ Concepts are taught in the modules; the projects are where you ship. Each is a r
 
 1. **Read the outline above**, then the [course at a glance](#quick-links) table: six modules, a voice workshop, and four shipped projects.
 2. **Open one module folder.** Module material lives at `modules/Module_N_Name/` and follows the same shape: a `README.md` that says what the module covers and what's inside, a `study-material/` folder with `lesson.md`, `key-concepts.md`, `exercises.md`, `quiz.md`, and `recap-and-preview.md`, and the notebooks, apps, and specs next to them. The folder names still carry the previous cohort's titles; the [curriculum](#course-curriculum) below maps each module of this cohort to the folders that hold its material. A good first stop is [Alex](modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/README.md), a finished reference app you can clone and take apart.
-3. **Let an agent walk you through it.** Open the repo in Claude Code and type `/start`, or point any other coding agent at [`AGENTS.md`](AGENTS.md). Either way you get a tutor that teaches one concept at a time and tracks you in `progress/learner-progress.md`. See [Learn with Claude](#learn-with-claude-ai-tutor).
+3. **Let an agent walk you through it.** Open the repo in Claude Code and type `/companion`, or point any other coding agent at [`AGENTS.md`](AGENTS.md). Either way you get a tutor that teaches one concept at a time and tracks you in `progress/learner-progress.md`. See [Learn with Claude](#learn-with-claude-ai-tutor).
 4. **Read one project spec end to end** before touching code. The [LUMINA PRD](modules/Module_1_Agent_Foundations_Harness_System_Design/Assignment_1_Lumina/PRD.md) from the previous cohort shows the shape every project follows: a fixed API contract, a provided UI that is the acceptance test, an SLA you prove with a benchmark, and a rubric. This is a *reading* course first.
 5. **Know how work gets judged** and how to give feedback that helps: [The quality bar](#the-quality-bar-how-work-is-judged-and-how-to-give-feedback). And how you submit: a Vercel link to your deployed app with an `/evals` sub page that proves itself. See [`SUBMISSION.md`](SUBMISSION.md).
 
@@ -143,11 +143,11 @@ Concepts are taught in the modules; the projects are where you ship. Each is a r
 
 This repo is also set up to be **read and used with [Claude](https://claude.com/claude-code)** as a personal tutor. Drop the folder into Claude Code (or upload it to Claude.ai) and Claude reads `CLAUDE.md` to act as a patient, interactive guide through the course, teaching one concept at a time, checking your understanding, and tracking your progress in `progress/learner-progress.md`.
 
-**Get started:** open the folder in Claude Code and type `/start`, or paste *"Read CLAUDE.md and run the `/start` onboarding"* into Claude.ai. Claude will greet you, ask how you like to learn, and begin Module 1. Using Codex, Cursor, or another coding agent? [`AGENTS.md`](AGENTS.md) at the repo root carries the same tutor instructions.
+**Get started:** open the folder in Claude Code and type `/companion`, or paste *"Read CLAUDE.md and `.claude/skills/companion/SKILL.md`, and follow the companion onboarding"* into Claude.ai. Claude checks your setup, asks how you like to learn, shows you around the repo, and answers any question about the course, a module or a project. Using Codex, Cursor, or another coding agent? [`AGENTS.md`](AGENTS.md) at the repo root carries the same tutor instructions.
 
 **Slash commands**
 
-- `/start`: onboard, pick a learning style and begin Module 1 (or the next one)
+- `/companion`: onboard, pick a learning style, get a tour of the repo, and ask anything (`/companion where do I start on Ledger?`). `/start` does the same.
 - `/progress`: see where you are, what's next, and any flagged weak spots
 
 **Skills Claude auto-invokes** (in `.claude/skills/`): just ask in plain language:
@@ -180,7 +180,7 @@ You can clone this repo directly from the Claude Code chat interface without lea
    ```
 3. Claude will clone the repo into a directory of your choice, set up the project, and open it, ready for you to start learning.
 
-From there, type `/start` to begin the AI-guided onboarding.
+From there, type `/companion` to begin the AI-guided onboarding.
 
 ### Recommended resource
 
