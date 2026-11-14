@@ -103,9 +103,7 @@ The **[FDE Companion](https://companion.traversaal.ai)** is the reading that goe
 - **Before day one,** do everything that's open (about two hours) and set up your work environment, so you arrive ready to build.
 - **During the course,** come back to the module you're in. New topics appear as the course reaches them, and the modules marked *coming soon* fill in. Each module below links its companion page.
 
-Its hands-on steps run in [`fde-companion-kit/`](fde-companion-kit/README.md): open that folder in VS Code and type `/companion`, and Claude Code checks your setup and tells you what's next.
-
-> The companion site numbers its modules 0–5; this README follows the syllabus, 1–6. Companion Module 0 is Module 1 here, and so on.
+Its hands-on steps run from this repo: open `multi-agent-course` in VS Code and type `/companion`, and Claude Code checks your setup and tells you what's next. The files they use are in [`fde-companion-kit/`](fde-companion-kit/README.md).
 
 ---
 
@@ -204,7 +202,7 @@ What forward deployed engineers do, leading without authority, communication, la
 **Key topics:** the FDE role · leadership · landing a role
 
 **Material in this repo:**
-- [FDE Companion](https://companion.traversaal.ai), Module 0 (what an FDE does, your FDE workbench, how LLMs work), with its hands-on steps in [`fde-companion-kit/`](fde-companion-kit/README.md)
+- [FDE Companion](https://companion.traversaal.ai): the Foundation (your FDE workbench) and Module 1 (what an FDE does, a first look at system design), with its hands-on steps in [`fde-companion-kit/`](fde-companion-kit/README.md)
 - Optional reading on leading without authority: [Leading AI Systems Across Teams](modules/Module_6_Leading_AI_Systems_Across_Teams/README.md)
 
 **🚀 Project kickoff: Ledger.** A procurement audit planner built by an agent team: skills, sub-agents, a human gate. It runs across Modules 1–2. Spec: [`FDE-03-assignments/Assignment_1_Ledger/`](FDE-03-assignments/Assignment_1_Ledger/).
@@ -319,7 +317,7 @@ Take agentic systems to production: deploy them, scale them, and keep them obser
 
 **Material in this repo:**
 - [AI Infra on Kubernetes](FDE-01-assignments/Bonus_AI_Infra_K8s/README.md): self-hosted model serving (vLLM on GKE) with manifests, a demo, and evals
-- [FDE Companion](https://companion.traversaal.ai), topic 5.1 *Why demos break in production*, with its client brief in [`fde-companion-kit/labs/m5-client-brief/`](fde-companion-kit/labs/m5-client-brief/)
+- [FDE Companion](https://companion.traversaal.ai), topic 6.1 *Why demos break in production*, with its client brief in [`fde-companion-kit/labs/m5-client-brief/`](fde-companion-kit/labs/m5-client-brief/)
 
 **🚀 Project kickoff: Capstone.** A problem of your choosing: your own problem statement, built and deployed, then demoed live on [Demo Day](#demo-day-showcase-your-capstone).
 

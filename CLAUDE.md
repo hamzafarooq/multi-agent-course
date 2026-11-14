@@ -49,14 +49,15 @@ sessions in all, then Demo Day. Four projects run alongside:
 - **VOXA** (workshop) — open-source voice agent; spec in `FDE-01-assignments/Assignment_2_voice_agent/`.
 
 Telemetry, observability and evaluations run through every project. The companion site,
-https://companion.traversaal.ai, is used before day one and throughout the course (it numbers
-modules 0–5; this list uses the syllabus's 1–6).
+https://companion.traversaal.ai, is used before day one and throughout the course, with the same module numbers as this list.
+When the learner types `/companion` or `/companion-explain`, or asks about a companion topic
+(numbered like 2.3), follow `fde-companion-kit/CLAUDE.md`.
 
 **Module folders still carry the 2026-03 names.** When the learner names a module by number, use
 this map — not the folder number — to find the material:
 
 1. **Welcome to the World of FDEs** — the FDE role, leading without authority, communication,
-   landing the role. No module folder: teach from the companion's Module 0 and `fde-companion-kit/`;
+   landing the role. No module folder: teach from the companion's Module 1 and `fde-companion-kit/`;
    `Module_6_Leading_AI_Systems_Across_Teams` is optional reading on leadership. Project kickoff: Ledger.
 2. **Agent Loop, Harness & System Design** — the agent loop, the harness, AI system design, evals
    and observability from day one. Folder: `Module_1_Agent_Foundations_Harness_System_Design`

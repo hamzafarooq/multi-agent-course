@@ -8,13 +8,13 @@ argument-hint: <term or question>
 
 The student asked about: `$ARGUMENTS`
 
-1. Look the term up in `glossary.md`. Use its definition, topic and book section as your anchor, so your explanation matches the site and the book.
+1. Look the term up in `fde-companion-kit/glossary.md`. Use its definition, topic and book section as your anchor, so your explanation matches the site and the book.
 
 2. Answer in this shape, short:
    - **One-line definition** in plain English.
    - **An analogy or a concrete example**, ideally from the companion (Parcelly's `lookup_order`, the tip splitter, Tidewell's tickets) or from FDE work with a client.
    - **Why it matters in the bootcamp**: one sentence.
-   - **Read more:** the book section and the companion topic, for example "Book §3.2 · 1.1". For terms the bootcamp covers later, name the module instead, for example "Module 3".
+   - **Read more:** the book section and the companion topic, for example "Book §3.2 · 2.2". For terms the bootcamp covers later, name the module instead, for example "Module 4".
 
 3. If the term isn't in the glossary, answer anyway in the same shape, and say if the companion doesn't cover it yet.
 
