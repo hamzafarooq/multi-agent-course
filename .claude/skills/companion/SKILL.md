@@ -32,12 +32,12 @@ The student typed: `$ARGUMENTS`
    - **The tour:** the five places in the repo map ("Where things are") in `fde-companion-kit/CLAUDE.md`, one line each, as links. Shape the last line to their role: a PM or founder starts with a starter project, an engineer can go straight to the current project.
    - Tell them their setup is done: tick the last step of **Your FDE workbench** on the site, and move on to **1.1 What an FDE does** at https://companion.traversaal.ai/m0/what-an-fde-does/.
 
-3. **A question** (`$ARGUMENTS` isn't empty): answer it from the repo, using "Answering questions" in `fde-companion-kit/CLAUDE.md`.
+3. **A question** (`$ARGUMENTS` isn't empty), about the repo, a module, a project or the course: answer it from the repo, using "Answering questions" in `fde-companion-kit/CLAUDE.md`.
 
 4. **Coming back, no question** (`ME.md` exists): greet them by name and run `git pull` (say what came in, if anything). Ask which of these they want:
    - **Next companion step:** progress lives on the site, so ask which topic they're on (like 2.3) and give that topic's hands-on step from the topic table. If it has nothing to do here, point them to the next one that does.
    - **Their project:** find the current one in the repo map, and start them with `START_HERE.md`.
-   - **Learn a module** with the course tutor: tell them to type `/start`.
+   - **A module:** answer their questions about it here; for a full guided lesson, quiz or build-along, use the course tutor's skills (`teach-module`, `quiz-me`, `build-along`) or `/start` the first time.
    - **Find something:** ask what they're looking for.
 
 5. Keep the whole reply short. End with the one thing to do next.
