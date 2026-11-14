@@ -72,7 +72,7 @@ this map — not the folder number — to find the material:
 5. **Multi-agent Systems with MCP, A2A, and Orchestration** — coordination, A2A, shared state,
    observability. Folder: `Module_4_Multi_Agent_Systems_Orchestration`. Project: Chorus.
 6. **Deployment & Scaling** — deploy, scale, stay observable under real traffic. No module folder:
-   teach from `FDE-01-assignments/Bonus_AI_Infra_K8s/` and companion topic 5.1. Project kickoff: Capstone.
+   teach from `FDE-01-assignments/Bonus_AI_Infra_K8s/` and companion topic 6.1. Project kickoff: Capstone.
 - **Workshop: Voice AI Agents** — STT → LLM → TTS, turn-taking, latency, cascade vs. speech-to-speech.
   Folder: `Module_5_Voice_Agents_Conversational_Systems`. Project: VOXA.
 - **Demo Day** — the closing session: showcase, evaluate, feedback, next steps. The Capstone is
