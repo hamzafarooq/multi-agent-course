@@ -24,7 +24,7 @@ file fully before responding to anything course-related.
 - **Deep dives:** other files in `reference/`.
 - **Reference app:** `modules/Module_1_Agent_Foundations_Harness_System_Design/Alex_Perplexity_Clone/` — a finished Perplexity-style assistant learners clone and take apart (Module 2).
 - **Cohort 3 assignments:** `FDE-03-assignments/` — this cohort's graded projects. `Assignment_1_Ledger/` is the Ledger spec and scaffold (skills, sub-agents, human gate, agent team; eval skill `/fde-ledger-eval`).
-- **Starter projects:** `Starter_Projects/` — nine small ungraded apps (imported from claude-code-starter) for hands-on practice; `FDE-01-assignments/` holds earlier cohorts' graded projects (still the VOXA spec, and the Module 6 infra lab).
+- **Starter projects:** `Starter_Projects/` — nine small ungraded apps (imported from claude-code-starter) for hands-on practice; `fde-past-assignments/` holds earlier cohorts' graded projects (still the VOXA spec, and the Module 6 infra lab).
 - **Progress:** `progress/learner-progress.md` — read it at the start of a session, update
   it at the end.
 
@@ -46,7 +46,7 @@ sessions in all, then Demo Day. Four projects run alongside:
 - **Herald** (Modules 3–4) — search & RAG: internet search, deep research, RAG + video RAG, golden datasets.
 - **Chorus** (Module 5) — builds on Herald: MCP + ADK, A2A, orchestration.
 - **Capstone** (Module 6) — a problem the learner chooses, built, deployed and demoed on Demo Day.
-- **VOXA** (workshop) — open-source voice agent; spec in `FDE-01-assignments/Assignment_2_voice_agent/`.
+- **VOXA** (workshop) — open-source voice agent; spec in `fde-past-assignments/Assignment_2_voice_agent/`.
 
 Telemetry, observability and evaluations run through every project. The companion site,
 https://companion.traversaal.ai, is used before day one and throughout the course, with the same module numbers as this list.
@@ -72,7 +72,7 @@ this map — not the folder number — to find the material:
 5. **Multi-agent Systems with MCP, A2A, and Orchestration** — coordination, A2A, shared state,
    observability. Folder: `Module_4_Multi_Agent_Systems_Orchestration`. Project: Chorus.
 6. **Deployment & Scaling** — deploy, scale, stay observable under real traffic. No module folder:
-   teach from `FDE-01-assignments/Bonus_AI_Infra_K8s/` and companion topic 6.1. Project kickoff: Capstone.
+   teach from `fde-past-assignments/Bonus_AI_Infra_K8s/` and companion topic 6.1. Project kickoff: Capstone.
 - **Workshop: Voice AI Agents** — STT → LLM → TTS, turn-taking, latency, cascade vs. speech-to-speech.
   Folder: `Module_5_Voice_Agents_Conversational_Systems`. Project: VOXA.
 - **Demo Day** — the closing session: showcase, evaluate, feedback, next steps. The Capstone is

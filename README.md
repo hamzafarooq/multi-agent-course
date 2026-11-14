@@ -117,9 +117,9 @@ Concepts are taught in the modules; the projects are where you ship. Each is a r
 | 2 | 📣 **Herald**: Search & RAG | 3–4 | Internet search and deep research, RAG and video RAG, measured against golden datasets | spec coming |
 | 3 | 🎼 **Chorus**: builds on Herald | 5 | Herald grown into a multi-agent system: MCP + ADK, A2A, and orchestration | spec coming |
 | 4 | 🏆 **Capstone**: a problem of your choosing | 6 → Demo Day | Your own problem statement, built, deployed, and demoed live on Demo Day | spec coming |
-| 🎙️ | **VOXA** (workshop project): open-source voice agent | Workshop | A streaming STT → LLM → TTS voice agent that holds a real-time conversation | [Voice Agent spec](FDE-01-assignments/Assignment_2_voice_agent/) |
+| 🎙️ | **VOXA** (workshop project): open-source voice agent | Workshop | A streaming STT → LLM → TTS voice agent that holds a real-time conversation | [Voice Agent spec](fde-past-assignments/Assignment_2_voice_agent/) |
 
-**Telemetry, observability, and evaluations run throughout every project.** Every project ships an `eval/` folder with a `rubric.json` and an `eval.py` that scores your running deployment, captures evidence, and produces a **Product Evaluation** report you submit with a 60–90s demo. [See a sample scorecard →](FDE-01-assignments/Assignment_1_Live_Translate/README.md#sample-scorecard)
+**Telemetry, observability, and evaluations run throughout every project.** Every project ships an `eval/` folder with a `rubric.json` and an `eval.py` that scores your running deployment, captures evidence, and produces a **Product Evaluation** report you submit with a 60–90s demo. [See a sample scorecard →](fde-past-assignments/Assignment_1_Live_Translate/README.md#sample-scorecard)
 
 ---
 
@@ -135,7 +135,7 @@ Concepts are taught in the modules; the projects are where you ship. Each is a r
 
 ### Layout
 
-- Content is organized **module by module** under `modules/`, aligned with the live sessions and project milestones. New project specs ship inside their module folders; the previous cohort's specs, still used for VOXA and as reference material, live under `FDE-01-assignments/`. Ungraded practice apps live in `Starter_Projects/`, and the companion's hands-on steps in `fde-companion-kit/`.
+- Content is organized **module by module** under `modules/`, aligned with the live sessions and project milestones. New project specs ship inside their module folders; the previous cohort's specs, still used for VOXA and as reference material, live under `fde-past-assignments/`. Ungraded practice apps live in `Starter_Projects/`, and the companion's hands-on steps in `fde-companion-kit/`.
 - **Google Colab Pro** is the preferred environment for the notebooks. You can also **clone locally** and run them in Jupyter or your IDE.
 - Most notebooks include their own dependencies via `!pip install`; where a module needs more, a `requirements.txt` sits alongside it.
 
@@ -316,7 +316,7 @@ Take agentic systems to production: deploy them, scale them, and keep them obser
 📖 **Companion:** [Module 5](https://companion.traversaal.ai/m5/)
 
 **Material in this repo:**
-- [AI Infra on Kubernetes](FDE-01-assignments/Bonus_AI_Infra_K8s/README.md): self-hosted model serving (vLLM on GKE) with manifests, a demo, and evals
+- [AI Infra on Kubernetes](fde-past-assignments/Bonus_AI_Infra_K8s/README.md): self-hosted model serving (vLLM on GKE) with manifests, a demo, and evals
 - [FDE Companion](https://companion.traversaal.ai), topic 6.1 *Why demos break in production*, with its client brief in [`fde-companion-kit/labs/m5-client-brief/`](fde-companion-kit/labs/m5-client-brief/)
 
 **🚀 Project kickoff: Capstone.** A problem of your choosing: your own problem statement, built and deployed, then demoed live on [Demo Day](#demo-day-showcase-your-capstone).
@@ -334,7 +334,7 @@ A dedicated 3–4 hour live workshop where you build an open-source voice agent 
 **Material in this repo:** [`modules/Module_5_Voice_Agents_Conversational_Systems/`](modules/Module_5_Voice_Agents_Conversational_Systems/README.md)
 
 **🎙️ Workshop project: VOXA.** An open-source voice agent: streaming STT → LLM → TTS with a knowledge router, evals, and telemetry, holding a real-time conversation.
-[Voice Agent spec →](FDE-01-assignments/Assignment_2_voice_agent/)
+[Voice Agent spec →](fde-past-assignments/Assignment_2_voice_agent/)
 
 ---
 
@@ -411,7 +411,7 @@ self-contained: read its README, copy `.env.example` to `.env`, run it. None shi
 
 Also worth a look, hosted elsewhere: [word-humanizer](https://github.com/hamzafarooq/word-humanizer/) ·
 [seo-writer](https://github.com/hamzafarooq/seo-writer) · [linkedin-growth](https://github.com/hamzafarooq/linkedin-growth).
-The previous cohorts' graded FDE projects live in [`FDE-01-assignments/`](FDE-01-assignments/README.md).
+The previous cohorts' graded FDE projects live in [`fde-past-assignments/`](fde-past-assignments/README.md).
 
 ---
 

@@ -350,7 +350,7 @@ The bonus assumes the semantic cache material, so attempt it after notebooks 3 a
 
 ### Set 2 — ARGUS (full-stack assignment)
 
-**[Moment Search at Scale](../../FDE-01-assignments/Assignment_3_Moment_Search_Scaled/README.md)** — starts Week 3, due before the Week 5 live session.
+**[Moment Search at Scale](../../fde-past-assignments/Assignment_3_Moment_Search_Scaled/README.md)** — starts Week 3, due before the Week 5 live session.
 
 *Full stack* here means full-stack SWE **and** AI engineering: the frontend, the agent logic, the
 ingestion pipeline, the caching, and the deployment — one product, entirely yours.

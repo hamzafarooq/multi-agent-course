@@ -31,7 +31,7 @@ The repo map for a new student. The tour in `/companion` is these five, one line
 | [`modules/`](../modules/) | The material for each module. Folder numbers are older than the syllabus: use the module map in the root `CLAUDE.md` to find the right folder. Ask `/companion` about any of it, or to be taught, quizzed or walked through a build. |
 | [`Starter_Projects/`](../Starter_Projects/) | Nine small, ungraded apps to practise building with Claude Code. Good for anyone who hasn't built with it before. |
 
-Also: `MCP/` (two MCP agent examples), `Full_Stack_Projects/Sprint_Zero/`, `FDE-01-assignments/` (earlier cohorts' projects; still the VOXA spec for the voice workshop and the Module 6 infra lab), `.claude/` (skills, sub-agents and commands the course uses), and `progress/learner-progress.md` (the student's profile, learning style and progress; read it every session, update it at the end).
+Also: `MCP/` (two MCP agent examples), `Full_Stack_Projects/Sprint_Zero/`, `fde-past-assignments/` (earlier cohorts' projects; still the VOXA spec for the voice workshop and the Module 6 infra lab), `.claude/` (skills, sub-agents and commands the course uses), and `progress/learner-progress.md` (the student's profile, learning style and progress; read it every session, update it at the end).
 
 ## Answering questions
 

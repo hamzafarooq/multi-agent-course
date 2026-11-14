@@ -40,7 +40,7 @@ instead of `CLAUDE.md` inherit the same behavior.
   Chorus (5) and a Capstone (6), with specs landing as the course reaches them, plus VOXA for the voice workshop. The course closes with
   Demo Day, where the Capstone is demoed (`modules/Module_7_Demo_Day/`).
 - `Starter_Projects/`: nine small, ungraded apps to practice on.
-- `FDE-01-assignments/`: earlier cohorts' graded projects; A2 is still the VOXA spec and
+- `fde-past-assignments/`: earlier cohorts' graded projects; A2 is still the VOXA spec and
   `Bonus_AI_Infra_K8s/` backs Module 6. Each has its own `AGENTS.md` with build non-negotiables.
 - `fde-companion-kit/`: hands-on files for the companion site, https://companion.traversaal.ai; `/companion` and `/companion-explain` in `.claude/skills/` run them.
 - `.claude/skills/`: the tutor skills (`teach-module`, `quiz-me`, `explain-eli5`,
