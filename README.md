@@ -116,6 +116,8 @@ Open `multi-agent-course` in VS Code, open the Claude panel, and type `/companio
 
 You never type commands: it runs them, says what each one does, and asks before changing anything but your progress file. `/start` does the same thing.
 
+**New to the words?** Harness, MCP, RAG, evals: every term is in the [glossary](fde-companion-kit/glossary.md) in plain words, with a line for anyone coming from data science. Type `/companion-explain harness` (any term) in VS Code, or use the Glossary on the companion site, where you can also hover any dotted word on a topic page or ask the chat *"what is MCP?"*.
+
 ---
 
 ## The Four Projects

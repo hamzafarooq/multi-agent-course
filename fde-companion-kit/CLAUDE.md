@@ -29,6 +29,7 @@ The repo map for a new student. Paths are from the repo root; link them that way
 | [`FDE-03-assignments/`](FDE-03-assignments/) | This cohort's graded projects. Ledger (Modules 1–2) is in `Assignment_1_Ledger/`; Herald, Chorus and the Capstone land as the course reaches them. Each starts with its `README.md`. |
 | [`SUBMISSION.md`](SUBMISSION.md) | What they hand in: one deployed Vercel link with a `/evals` page. No repo, no zip. |
 | [`modules/`](modules/) | The material for each module. Folder numbers are older than the syllabus: use the module map in the root `CLAUDE.md` to find the right folder. Ask `/companion` about any of it, or to be taught, quizzed or walked through a build. |
+| [`fde-companion-kit/glossary.md`](fde-companion-kit/glossary.md) | Every term in plain words, with a data-science comparison. When a student trips on a word, explain it from here (or `/companion-explain`). |
 | [`Starter_Projects/`](Starter_Projects/) | Nine small, ungraded apps to practise building with Claude Code. Good for anyone who hasn't built with it before. |
 
 Also: `MCP/` (two MCP agent examples), `Full_Stack_Projects/Sprint_Zero/`, `fde-past-assignments/` (earlier cohorts' projects; still the VOXA spec for the voice workshop and the Module 6 infra lab), `.claude/` (skills, sub-agents and commands the course uses), and `progress/learner-progress.md` (the student's profile, learning style and progress; read it every session, update it at the end).
