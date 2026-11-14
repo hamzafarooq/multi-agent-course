@@ -50,3 +50,6 @@ modules/Module_3_Production_Agentic_RAG_AI_Systems/updated-code/
 modules/Module_3_Production_Agentic_RAG_AI_Systems/cache.json
 modules/Module_3_Production_Agentic_RAG_AI_Systems/rag_cache.json
 modules/Module_3_Production_Agentic_RAG_AI_Systems/**/qdrant_data/.lock
+
+# The student's companion profile, written by /companion
+fde-companion-kit/ME.md
