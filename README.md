@@ -103,7 +103,18 @@ The **[FDE Companion](https://companion.traversaal.ai)** is the reading that goe
 - **Before day one,** do everything that's open (about two hours) and set up your work environment, so you arrive ready to build.
 - **During the course,** come back to the module you're in. New topics appear as the course reaches them, and the modules marked *coming soon* fill in. Each module below links its companion page.
 
-Its hands-on steps run from this repo: open `multi-agent-course` in VS Code and type `/companion`, and Claude Code checks your setup and tells you what's next. The files they use are in [`fde-companion-kit/`](fde-companion-kit/README.md).
+### Type `/companion`
+
+Open `multi-agent-course` in VS Code, open the Claude panel, and type `/companion`. It's the one command you need in this repo:
+
+- **Gets you set up.** Checks Git and that you've opened the right folder, pulls the latest course files, and asks your name, your role and how you like to learn (Socratic, lecture with checkpoints, or hands-on build-along).
+- **Shows you around.** A five-minute tour of the repo: where to start, this cohort's projects, how you submit, the module material, and the starter projects, with the first step picked for your role.
+- **Answers anything about the course.** *"/companion where do I start on Ledger?"*, *"where's the material for module 3?"*, *"what's the difference between a skill and a subagent?"* It reads the repo before answering and links you to the exact files.
+- **Teaches, quizzes and builds with you.** Ask it to teach a module, quiz you, or walk you through a hands-on exercise, in the style you picked.
+- **Remembers where you are.** Your progress and weak spots live in `progress/learner-progress.md`; next time, `/companion` picks up where you left off.
+- **Runs the companion's hands-on steps.** The topics on the site that have something to do here (Parcelly's orders, your tip splitter, a client brief) use the files in [`fde-companion-kit/`](fde-companion-kit/README.md).
+
+You never type commands: it runs them, says what each one does, and asks before changing anything but your progress file. `/start` does the same thing.
 
 ---
 
@@ -147,7 +158,7 @@ This repo is also set up to be **read and used with [Claude](https://claude.com/
 
 **Slash commands**
 
-- `/companion`: onboard, pick a learning style, get a tour of the repo, and ask anything (`/companion where do I start on Ledger?`). `/start` does the same.
+- `/companion`: set up, get a tour of the repo, and ask anything about the course (see [Type `/companion`](#type-companion)). `/start` does the same.
 - `/progress`: see where you are, what's next, and any flagged weak spots
 
 **Skills Claude auto-invokes** (in `.claude/skills/`): just ask in plain language:
