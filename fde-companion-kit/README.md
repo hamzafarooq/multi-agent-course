@@ -27,6 +27,6 @@ The Foundation page on the site walks you through each one.
 | `/companion` | Checks your setup, shows you around the repo, and answers questions about the course: `/companion where do I start on Ledger?` (in the repo's `.claude/skills/`). |
 | `/companion-explain <term>` | Explains any term from the companion, with the book section that covers it. |
 | `glossary.md` | Every term in the companion so far. |
-| `labs/` | The small files a few topics use: Parcelly's orders (2.2), your tip splitter (2.3, 2.4 and 3.1), and a client brief (6.1). |
+| `labs/` | The small files a few topics use: Parcelly's orders (2.2), your tip splitter (2.3, 2.4 and 3.1), the expense check you build in the Module 2 class (a skill, a subagent and an eval), and a client brief (6.1). |
 
 Everything you make here stays on your laptop. In the bootcamp you'll work in your own repos.

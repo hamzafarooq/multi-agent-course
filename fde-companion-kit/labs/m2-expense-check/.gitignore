@@ -1,0 +1,5 @@
+outputs/*
+!outputs/.gitkeep
+runs/
+scripts/
+__pycache__/

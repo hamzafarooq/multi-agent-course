@@ -1,0 +1,32 @@
+{
+  "_comment": "The shape of outputs/rules.json. Every numbered clause in policy.md goes in exactly one of rules or excluded.",
+  "source": "policy.md",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "clause": "2.3",
+      "quote": "A receipt must be attached to any claim of $25 or more.",
+      "applies_to": "any claim",
+      "threshold_low": 25,
+      "threshold_high": null,
+      "inclusive": true,
+      "unit": "USD",
+      "approver": null,
+      "action": "attach a receipt",
+      "parameters": {}
+    }
+  ],
+  "excluded": [
+    { "clause": "1.1", "reason": "Says what the policy is for. Nothing is required of anyone." }
+  ],
+  "_fields": {
+    "quote": "Copied from policy.md word for word. Never shortened, fixed or reworded.",
+    "threshold_low": "The amount a claim must be over (or at, if inclusive) for the rule to apply. A number, or null.",
+    "threshold_high": "The most that is allowed. A number, or null. Two limits in one clause: one rule per limit.",
+    "inclusive": "true when the policy says 'or more', 'up to', 'within'; false when it says 'over', 'longer than'. null when there is no threshold.",
+    "unit": "USD, USD per person, USD per night, days or hours.",
+    "approver": "The role that must approve or pre-approve (manager, director, vice president), or null.",
+    "action": "What someone must do, in a few plain words (attach a receipt, get director approval, list attendees).",
+    "parameters": "Figures the policy names but does not give, as {\"name\": null}. Never fill one in from memory."
+  }
+}

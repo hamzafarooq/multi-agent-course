@@ -1,0 +1,10 @@
+claim_id,clause,why
+C07,3.2,"Client meal at $85.00 a person ($340 for 4), approved by a manager, not a director"
+C11,2.3,"$42.00 claimed with no receipt"
+C15,4.2,"Business class on a 4.5 hour flight, with no pre-approval from a vice president"
+C19,4.3|5.1,"Chicago hotel at $280.00 a night ($560 for 2 nights), over the $220 limit; and $560 approved by a manager, not a director"
+C23,5.2,"Approved by the person who made the claim (E205)"
+C27,2.1,"Submitted 45 days after the money was spent"
+C31,2.2,"No business purpose given"
+C35,5.1,"$820.00 approved by a manager, not a director"
+C38,6.1,"A parking ticket"
