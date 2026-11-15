@@ -1,0 +1,41 @@
+claim_id,employee_id,spent_on,submitted_on,category,merchant,city,amount,people,has_receipt,client_present,attendees,cabin,flight_hours,nights,pre_approved_by,approved_by,approver_role,business_purpose
+C01,E107,2026-03-05,2026-03-10,taxi,Yellow Cab,Chicago,31.50,1,yes,no,,,,,,E200,manager,Ride to the Acme Freight site visit
+C02,E114,2026-03-08,2026-03-14,meal,Lou's Diner,Chicago,22.80,1,no,no,,,,,,E200,manager,Lunch during the warehouse audit
+C03,E121,2026-03-11,2026-03-18,flight,United Airlines,Dallas,412.00,1,yes,no,,economy,2.5,,,E200,manager,Flight to the Dallas depot review
+C04,E105,2026-03-14,2026-03-22,hotel,Hyatt Place,Dallas,398.00,1,yes,no,,,,2,,E200,manager,Hotel for the Dallas depot review
+C05,E112,2026-03-17,2026-03-26,per_diem,Per diem,Dallas,140.00,1,yes,no,,,,2,,E200,manager,Meals on the Dallas trip
+C06,E119,2026-03-20,2026-03-30,client_meal,Gibsons,Chicago,276.00,4,yes,yes,Buyer (Acme Freight); Ops lead (Acme Freight); Account manager (Northwind); Sales director (Northwind),,,,,E200,manager,Quarterly review dinner with Acme Freight
+C07,E103,2026-03-23,2026-04-03,client_meal,RPM Steak,Chicago,340.00,4,yes,yes,CFO (Harbor Foods); Controller (Harbor Foods); Account manager (Northwind); Analyst (Northwind),,,,,E200,manager,Contract renewal dinner with Harbor Foods
+C08,E110,2026-03-26,2026-04-07,ride_share,Lyft,Chicago,14.20,1,no,no,,,,,,E200,manager,Ride from the train station to the office
+C09,E117,2026-03-29,2026-04-02,software,Figma,Chicago,45.00,1,yes,no,,,,,,E200,manager,Design licence for the route planner prototype
+C10,E101,2026-04-01,2026-04-06,flight,Delta,Atlanta,389.00,1,yes,no,,economy,2,,,E200,manager,Flight to the Atlanta carrier meeting
+C11,E108,2026-04-04,2026-04-10,meal,Portillo's,Chicago,42.00,2,no,no,,,,,,E200,manager,Team lunch after the stock count
+C12,E115,2026-04-07,2026-04-14,car_rental,Hertz,Atlanta,186.00,1,yes,no,,,,,manager,E200,manager,Car for three depot visits around Atlanta
+C13,E122,2026-04-10,2026-04-18,client_meal,Girl & the Goat,Chicago,300.00,4,yes,yes,Buyer (Lakeside Retail); Planner (Lakeside Retail); Account manager (Northwind); Sales lead (Northwind),,,,,E200,manager,Peak season planning dinner with Lakeside Retail
+C14,E106,2026-03-04,2026-03-13,supplies,Staples,Chicago,64.90,1,yes,no,,,,,,E200,manager,Label printer ribbons
+C15,E113,2026-03-07,2026-03-17,flight,American Airlines,Seattle,1240.00,1,yes,no,,business,4.5,,,E201,director,Flight to the Seattle port meeting
+C16,E120,2026-03-10,2026-03-21,hotel,Marriott,Seattle,210.00,1,yes,no,,,,1,,E200,manager,Hotel for the Seattle port meeting
+C17,E104,2026-03-13,2026-03-25,alcohol,The Aviary,Chicago,58.00,3,yes,yes,Buyer (Acme Freight); Account manager (Northwind); Sales lead (Northwind),,,,,E200,manager,Drinks after the Acme Freight contract signing
+C18,E111,2026-03-16,2026-03-20,taxi,Flash Cab,Chicago,27.00,1,yes,no,,,,,,E200,manager,Ride to the customs broker
+C19,E118,2026-03-19,2026-03-24,hotel,Palmer House,Chicago,560.00,1,yes,no,,,,2,,E200,manager,Hotel during the Chicago hub launch
+C20,E102,2026-03-22,2026-03-28,training,Coursera,Chicago,49.00,1,yes,no,,,,,,E200,manager,Course on route optimisation
+C21,E109,2026-03-25,2026-04-01,meal,Eataly,Chicago,120.00,2,yes,no,,,,,,E200,manager,Working dinner during the launch weekend
+C22,E116,2026-03-28,2026-04-05,supplies,Amazon,Chicago,236.50,1,yes,no,,,,,,E200,manager,Barcode scanners for the returns desk
+C23,E205,2026-03-31,2026-04-09,meal,Chipotle,Chicago,16.75,1,yes,no,,,,,,E205,manager,Lunch on the night shift
+C24,E107,2026-04-03,2026-04-13,ride_share,Uber,New York,38.00,1,yes,no,,,,,,E200,manager,Ride to the Brooklyn warehouse
+C25,E114,2026-04-06,2026-04-17,hotel,Hilton Midtown,New York,900.00,1,yes,no,,,,3,,E201,director,Hotel for the New York client workshop
+C26,E121,2026-04-09,2026-04-21,flight,JetBlue,New York,356.00,1,yes,no,,economy,2.5,,,E200,manager,Flight to the New York client workshop
+C27,E105,2026-03-03,2026-04-17,taxi,Yellow Cab,Chicago,29.00,1,yes,no,,,,,,E200,manager,Ride to the airport for the Dallas trip
+C28,E112,2026-03-06,2026-03-11,per_diem,Per diem,New York,210.00,1,yes,no,,,,3,,E200,manager,Meals on the New York trip
+C29,E119,2026-03-10,2026-04-09,supplies,Uline,Chicago,88.00,1,yes,no,,,,,,E200,manager,Packing tape and pallet wrap
+C30,E103,2026-03-12,2026-03-19,software,Notion,Chicago,96.00,1,yes,no,,,,,,E200,manager,Team workspace for the hub launch
+C31,E110,2026-03-15,2026-03-23,meal,Pret A Manger,Chicago,12.40,1,no,no,,,,,,E200,manager,
+C32,E117,2026-03-18,2026-03-27,flight,British Airways,London,2980.00,1,yes,no,,business,8,,vice president,E201,director,Flight to the London partner summit
+C33,E101,2026-03-21,2026-03-31,hotel,Premier Inn,London,580.00,1,yes,no,,,,2,,E201,director,Hotel for the London partner summit
+C34,E108,2026-03-24,2026-04-04,taxi,Addison Lee,London,44.00,1,yes,no,,,,,,E200,manager,Ride from Heathrow to the summit
+C35,E115,2026-03-27,2026-04-08,equipment,Best Buy,Chicago,820.00,1,yes,no,,,,,,E200,manager,Laptop for the new dispatcher
+C36,E122,2026-03-30,2026-04-03,training,O'Reilly,Chicago,499.00,1,yes,no,,,,,,E200,manager,Annual learning licence
+C37,E106,2026-04-02,2026-04-07,supplies,Office Depot,Chicago,24.99,1,no,no,,,,,,E200,manager,Whiteboard markers
+C38,E113,2026-04-05,2026-04-11,fine,City of Chicago,Chicago,65.00,1,yes,no,,,,,,E200,manager,Parking ticket outside the depot
+C39,E120,2026-04-08,2026-04-15,equipment,Dell,Chicago,1450.00,1,yes,no,,,,,,E201,director,Docking stations for the planning team
+C40,E104,2026-03-02,2026-03-10,meal,Wildberry Cafe,Chicago,38.50,1,yes,no,,,,,,E200,manager,Breakfast before the early carrier call
