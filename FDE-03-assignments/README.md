@@ -5,13 +5,19 @@ scaffold: the data, the contract, the guardrails, the grader and a viewer are pr
 build the part the assignment teaches, then prove it with an evaluation from a real run.
 
 New to how these are structured? Read [`START_HERE.md`](../START_HERE.md) once. How to hand
-in: [`SUBMISSION.md`](../SUBMISSION.md). Every project is submitted as **one Vercel URL** that
-carries all three deliverables: the deployed product (`/`), the evaluation report your run
-produced (`/evals`), and a short demo video embedded on that page.
+in: [`SUBMISSION.md`](../SUBMISSION.md). Every project except Sprint Zero is submitted as
+**one Vercel URL** that carries all three deliverables: the deployed product (`/`), the
+evaluation report your run produced (`/evals`), and a short demo video embedded on that page.
 
 | # | Assignment | Modules | You build | Core skills |
 |---|---|---|---|---|
-| 1 | [**Ledger**: procurement audit planner](Assignment_1_Ledger/) | 1–2 | The harness: three skills, three sub-agents, a three-member agent team, one QA check, and your decisions at two human gates | Skills, sub-agents, human-in-the-loop gates, agent teams, least-privilege tools, deterministic guardrails, evals |
+| 1A | [**Ledger**: procurement audit planner](Assignment_1_Ledger/) | 1–2 | The harness: three skills, three sub-agents, a three-member agent team, one QA check, and your decisions at two human gates | Skills, sub-agents, human-in-the-loop gates, agent teams, least-privilege tools, deterministic guardrails, evals |
+| 1B | [**Sprint Zero**: a sub-agent product team](Assignment_1_Sprint_Zero/) | 1–2 | A working app from a reference product of your choice: your scope, your review of the six generated specs, and a core loop that passes QA | Scoping, spec-driven builds, sub-agent orchestration, API contracts, browser QA |
+
+**Sprint Zero is the exception.** It is open ended: you pick the product, and there is no
+rubric, grader or eval skill. You submit a demo video and the six spec docs, with no Vercel
+URL and no `/evals` page. The two sections below describe Ledger and the projects that
+follow it.
 
 Herald (Modules 3–4), Chorus (Module 5) and the Capstone (Module 6) land here as the course
 reaches them.
