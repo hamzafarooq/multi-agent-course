@@ -22,6 +22,15 @@ follow it.
 Herald (Modules 3–4), Chorus (Module 5) and the Capstone (Module 6) land here as the course
 reaches them.
 
+## Module 3 notebooks
+
+Two Colab notebooks for Module 3. Add `OPENAI_API_KEY` and `SERP_API_KEY` in Colab's **Secrets** panel (the key icon) and switch on notebook access for each.
+
+| Notebook | What you do |
+|---|---|
+| [ReAct vs Router 1: from scratch in Python](ReAct_vs_Router_1_Python.ipynb) · [Open in Colab](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/FDE-03-assignments/ReAct_vs_Router_1_Python.ipynb) | In class. Build three tools, a router and a ReAct loop by hand, run both on the same question, add a tool of your own, and score both on the same 12 questions |
+| [ReAct vs Router 2: with ADK 2.0](ReAct_vs_Router_2_ADK.ipynb) · [Open in Colab](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/FDE-03-assignments/ReAct_vs_Router_2_ADK.ipynb) | The Module 3 assignment. The same two designs in Google ADK (an `Agent` and a `Workflow`), your tool added, and the same eval, compared with your notebook 1 scores |
+
 ## How every assignment is graded
 
 - **A measurable rubric** (`eval/rubric.json`): about eighty points scored by arithmetic over
