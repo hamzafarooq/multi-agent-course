@@ -1,0 +1,9 @@
+google-adk==2.14.0
+litellm>=1.84,<1.106.3
+mcp
+requests
+python-dotenv
+nest_asyncio
+arize-phoenix-otel
+openinference-instrumentation-google-adk
+ipykernel

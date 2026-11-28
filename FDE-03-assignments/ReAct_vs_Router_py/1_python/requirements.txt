@@ -1,0 +1,6 @@
+openai
+requests
+python-dotenv
+arize-phoenix
+openinference-instrumentation-openai
+ipykernel

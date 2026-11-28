@@ -24,12 +24,15 @@ reaches them.
 
 ## Module 3 notebooks
 
-Two Colab notebooks for Module 3. Add `OPENAI_API_KEY` and `SERP_API_KEY` in Colab's **Secrets** panel (the key icon) and switch on notebook access for each.
+Two notebooks for Module 3, used in class. They are practice, not an assignment: nothing to hand in and nothing graded. Run them on Colab, or clone the repo and run the same code in VS Code.
 
-| Notebook | What you do |
-|---|---|
-| [ReAct vs Router 1: from scratch in Python](ReAct_vs_Router_1_Python.ipynb) · [Open in Colab](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/FDE-03-assignments/ReAct_vs_Router_1_Python.ipynb) | In class. Build three tools, a router and a ReAct loop by hand, run both on the same question, add a tool of your own, and score both on the same 12 questions |
-| [ReAct vs Router 2: with ADK 2.0](ReAct_vs_Router_2_ADK.ipynb) · [Open in Colab](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/FDE-03-assignments/ReAct_vs_Router_2_ADK.ipynb) | The Module 3 assignment. The same two designs in Google ADK (an `Agent` and a `Workflow`), your tool added, and the same eval, compared with your notebook 1 scores |
+**On Colab:** add `OPENAI_API_KEY` and `SERP_API_KEY` in Colab's **Secrets** panel (the key icon) and switch on notebook access for each.
+**In VS Code:** use [`ReAct_vs_Router_py/`](ReAct_vs_Router_py/): the same code as `.py` files, with a README on setup (a `.env` file for the keys, one virtual environment per part).
+
+| Notebook | VS Code | What you do |
+|---|---|---|
+| [ReAct vs Router 1: from scratch in Python](ReAct_vs_Router_1_Python.ipynb) · [Open in Colab](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/FDE-03-assignments/ReAct_vs_Router_1_Python.ipynb) | [`1_python/router_vs_react.py`](ReAct_vs_Router_py/1_python/router_vs_react.py) | Build three tools, a router and a ReAct loop by hand, run both on the same question, trace them in Phoenix, add a tool of your own, and score both on the same 12 questions |
+| [ReAct vs Router 2: with ADK 2.0](ReAct_vs_Router_2_ADK.ipynb) · [Open in Colab](https://colab.research.google.com/github/hamzafarooq/multi-agent-course/blob/main/FDE-03-assignments/ReAct_vs_Router_2_ADK.ipynb) | [`2_adk/router_vs_react_adk.py`](ReAct_vs_Router_py/2_adk/router_vs_react_adk.py) | The same two designs in Google ADK (an `Agent` and a `Workflow`), traced in Phoenix, your tool added, and the same eval, compared with your notebook 1 scores |
 
 ## How every assignment is graded
 
